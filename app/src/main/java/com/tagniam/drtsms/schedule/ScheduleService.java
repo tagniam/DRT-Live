@@ -1,6 +1,8 @@
 package com.tagniam.drtsms.schedule;
 
+import android.app.Activity;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,11 +25,47 @@ public class ScheduleService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         // Get stop id and send sms
         String stopId = intent.getStringExtra("stop_id");
-        SmsManager smsSender = SmsManager.getDefault();
-        smsSender.sendTextMessage(drtPhoneNumber, null, stopId, null, null);
+        sendSmsToDrt(stopId);
 
         // Wait for sms to be received
         registerDrtSmsReceiver();
+    }
+
+    /**
+     * Attempt to send the SMS containing the bus stop id to DRT. If the attempt fails, then intent
+     * with action SCHEDULE_FETCH_FAIL_ACTION will be broadcast.
+     * @param stopId bus stop id for DRT bus
+     */
+    private void sendSmsToDrt(String stopId) {
+        SmsManager smsSender = SmsManager.getDefault();
+
+        // Set up pending intents to track success/fail sent status
+        final String SENT = "SENT";
+        final String DELIVERED = "SENT";
+        PendingIntent sentPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(SENT), 0);
+        PendingIntent deliveredPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(DELIVERED), 0);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(SENT);
+        intentFilter.addAction(DELIVERED);
+
+        getApplicationContext().registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
+                        // Do nothing if the result is ok, rest will be handled by drt sms receiver
+                        break;
+                    default:
+                        // Sms failed, broadcast the fail
+                        Intent failedIntent = new Intent();
+                        failedIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
+                        sendBroadcast(failedIntent);
+                        break;
+                }
+            }
+        }, intentFilter);
+
+        smsSender.sendTextMessage(drtPhoneNumber, null, stopId, sentPI, deliveredPI);
     }
 
     /**
