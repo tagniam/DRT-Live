@@ -12,10 +12,8 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
 public class ScheduleService extends IntentService {
-    public static final String SCHEDULE_RECEIVED = "schedule_received";
-
     private DrtSmsReceiver drtSmsReceiver;
-    private final String drtPhoneNumber = "8447460497";
+    private final String DRT_PHONE_NO = "8447460497";
 
     public ScheduleService() {
         super(ScheduleService.class.getSimpleName());
@@ -65,7 +63,7 @@ public class ScheduleService extends IntentService {
             }
         }, intentFilter);
 
-        smsSender.sendTextMessage(drtPhoneNumber, null, stopId, sentPI, deliveredPI);
+        smsSender.sendTextMessage(DRT_PHONE_NO, null, stopId, sentPI, deliveredPI);
     }
 
     /**
@@ -89,7 +87,7 @@ public class ScheduleService extends IntentService {
 
                     // Only analyze if from DRT
                     // Note: apparently all SMS from DRT < 160 char, so don't need to concatenate msgs
-                    if (from.equals(drtPhoneNumber)) {
+                    if (from.equals(DRT_PHONE_NO)) {
                         broadcastSchedule(smsMessage.getMessageBody());
                         break;
                     }
