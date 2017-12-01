@@ -28,7 +28,7 @@
         </receiver>
 
         <service
-            android:name=".schedule.ScheduleService"
+            android:name=".schedule.SmsScheduleService"
             android:exported="false"></service>
     </application>
 

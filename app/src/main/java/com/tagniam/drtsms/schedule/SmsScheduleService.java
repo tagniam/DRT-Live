@@ -11,12 +11,12 @@ import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
-public class ScheduleService extends IntentService {
+public class SmsScheduleService extends IntentService {
     private DrtSmsReceiver drtSmsReceiver;
     private final String DRT_PHONE_NO = "8447460497";
 
-    public ScheduleService() {
-        super(ScheduleService.class.getSimpleName());
+    public SmsScheduleService() {
+        super(SmsScheduleService.class.getSimpleName());
     }
 
     @Override
@@ -87,6 +87,7 @@ public class ScheduleService extends IntentService {
 
                     // Only analyze if from DRT
                     // Note: apparently all SMS from DRT < 160 char, so don't need to concatenate msgs
+                    // TODO set message to read so that push notification isn't shown
                     if (from.equals(DRT_PHONE_NO)) {
                         broadcastSchedule(smsMessage.getMessageBody());
                         break;
