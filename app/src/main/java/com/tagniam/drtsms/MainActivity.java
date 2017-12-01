@@ -10,7 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.tagniam.drtsms.schedule.ScheduleService;
+import com.tagniam.drtsms.schedule.ScheduleFetcher;
+import com.tagniam.drtsms.schedule.SmsScheduleFetcher;
 
 public class MainActivity extends AppCompatActivity {
     private EditText stopIdInput;
@@ -29,23 +30,13 @@ public class MainActivity extends AppCompatActivity {
     protected void fetchSchedule(View view) {
         // Grab stop id
         String stopId = stopIdInput.getText().toString();
+        ScheduleFetcher scheduleFetcher = new SmsScheduleFetcher(getApplicationContext());
+        scheduleFetcher.fetch(stopId);
 
-        // Start service to send msg
-        Intent intent = new Intent();
-        intent.setClass(this, ScheduleService.class);
-        intent.putExtra("stop_id", stopId);
-        startService(intent);
-
-        // Wait for result
-        registerScheduleReceiver();
-    }
-
-    private void registerScheduleReceiver() {
+        // Wait to receive the schedule
         scheduleReceiver = new ScheduleReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ScheduleService.SCHEDULE_RECEIVED);
-
-        registerReceiver(scheduleReceiver, intentFilter);
+        registerReceiver(scheduleReceiver,
+                new IntentFilter(ScheduleFetcher.SCHEDULE_FETCH_COMPLETED_ACTION));
     }
 
     private class ScheduleReceiver extends BroadcastReceiver {

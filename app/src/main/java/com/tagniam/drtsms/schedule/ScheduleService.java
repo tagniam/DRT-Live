@@ -66,7 +66,7 @@ public class ScheduleService extends IntentService {
         private void broadcastSchedule(String msg) {
             // TODO refactor to send a BusTime object
             Intent resultIntent = new Intent();
-            resultIntent.setAction(SCHEDULE_RECEIVED);
+            resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_COMPLETED_ACTION);
             resultIntent.putExtra("result", msg);
             sendBroadcast(resultIntent);
         }
