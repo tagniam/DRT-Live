@@ -4,14 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.tagniam.drtsms.schedule.ScheduleService;
 
 public class MainActivity extends AppCompatActivity {
     private EditText stopIdInput;
@@ -54,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String result = intent.getStringExtra("result");
             scheduleDisplay.setText(result);
+            unregisterReceiver(scheduleReceiver);
         }
     }
 

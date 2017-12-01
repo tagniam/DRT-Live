@@ -1,4 +1,4 @@
-package com.tagniam.drtsms;
+package com.tagniam.drtsms.schedule;
 
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
