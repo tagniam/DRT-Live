@@ -29,7 +29,6 @@ public class DrtSmsListener extends BroadcastReceiver {
                 // Note: apparently all SMS from DRT < 160 char, so don't need to concatenate msgs
                 if (from.equals(drtPhoneNumber)) {
                     String msg = smsMessage.getMessageBody();
-                    // TODO update schedule
                 }
             }
         }
