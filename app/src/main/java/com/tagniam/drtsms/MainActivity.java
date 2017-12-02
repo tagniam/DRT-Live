@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tagniam.drtsms.schedule.MockScheduleFetcher;
 import com.tagniam.drtsms.schedule.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.SmsScheduleFetcher;
 
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void fetchSchedule(View view) {
         // Grab stop id
         String stopId = stopIdInput.getText().toString();
-        ScheduleFetcher scheduleFetcher = new SmsScheduleFetcher(getApplicationContext());
+        ScheduleFetcher scheduleFetcher = new MockScheduleFetcher(getApplicationContext());
         scheduleFetcher.fetch(stopId);
 
         // Wait to receive the schedule
