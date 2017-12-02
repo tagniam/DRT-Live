@@ -55,10 +55,9 @@ public class SmsScheduleService extends IntentService {
                         // Do nothing if the result is ok, rest will be handled by drt sms receiver
                         break;
                     default:
-                        // Sms failed, broadcast the fail
-                        Intent failedIntent = new Intent();
-                        failedIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
-                        sendBroadcast(failedIntent);
+                        // Sms failed, broadcast the fail and stop service
+                        sendBroadcast(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION));
+                        stopSelf();
                         break;
                 }
             }
