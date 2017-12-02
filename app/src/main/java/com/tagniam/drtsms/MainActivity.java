@@ -25,8 +25,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // UI links
         stopIdInput = findViewById(R.id.stopIdInput);
         scheduleDisplay = findViewById(R.id.scheduleDisplay);
+
+        // Start listening for incoming schedule fetches
+        scheduleReceiver = new ScheduleReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
+        intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
+
+        registerReceiver(scheduleReceiver, intentFilter);
     }
 
     protected void fetchSchedule(View view) {
@@ -34,14 +43,6 @@ public class MainActivity extends AppCompatActivity {
         String stopId = stopIdInput.getText().toString();
         ScheduleFetcher scheduleFetcher = new MockScheduleFetcher(getApplicationContext());
         scheduleFetcher.fetch(stopId);
-
-        // Wait to receive the schedule
-        scheduleReceiver = new ScheduleReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
-        intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
-
-        registerReceiver(scheduleReceiver, intentFilter);
     }
 
     private class ScheduleReceiver extends BroadcastReceiver {
