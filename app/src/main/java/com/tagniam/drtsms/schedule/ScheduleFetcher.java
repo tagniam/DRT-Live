@@ -11,6 +11,8 @@ public interface ScheduleFetcher {
     String SCHEDULE_FETCH_SUCCESS_ACTION = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SUCCESS_ACTION";
     // Action string for cancellation of schedule fetching
     String SCHEDULE_FETCH_FAIL_ACTION = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_FAIL_ACTION";
+    // TODO extra string for stop id input
+    // TODO extra string for schedule data output
 
     /**
      * Fetches the schedule of the stopId. A broadcast is sent with action SCHEDULE_FETCH_SUCCESS_ACTION,

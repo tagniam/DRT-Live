@@ -48,13 +48,16 @@ public class MainActivity extends AppCompatActivity {
     private class ScheduleReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION)) {
-                Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
-            }
-
-            else if (intent.getAction().equals(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION)) {
-                String result = intent.getStringExtra("result");
-                scheduleDisplay.setText(result);
+            switch(intent.getAction()) {
+                case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
+                    Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
+                    break;
+                case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
+                    String result = intent.getStringExtra("result");
+                    scheduleDisplay.setText(result);
+                    break;
+                default:
+                    break;
             }
 
             unregisterReceiver(scheduleReceiver);
