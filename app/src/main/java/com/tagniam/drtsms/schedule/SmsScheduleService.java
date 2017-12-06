@@ -13,8 +13,8 @@ import android.telephony.SmsMessage;
 
 public class SmsScheduleService extends IntentService {
     private DrtSmsReceiver drtSmsReceiver;
+    private BroadcastReceiver drtSmsSender;
     private final String DRT_PHONE_NO = "8447460497";
-    private boolean isSmsDelivered = false;
 
     public SmsScheduleService() {
         super(SmsScheduleService.class.getSimpleName());
@@ -47,27 +47,28 @@ public class SmsScheduleService extends IntentService {
         intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT);
         intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED);
 
-        getApplicationContext().registerReceiver(new BroadcastReceiver() {
+        // Set up broadcast receiver to track sms sent status
+        drtSmsSender = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
-                        if (!isSmsDelivered) {
-                            sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED));
-                            isSmsDelivered = true;
-                        }
+                        // No need for sender anymore
+                        getApplicationContext().unregisterReceiver(drtSmsSender);
                         break;
                     default:
                         // Sms failed, broadcast the fail and stop service
                         sendBroadcast(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION));
+                        getApplicationContext().unregisterReceiver(drtSmsSender);
                         stopSelf();
                         break;
                 }
             }
-        }, intentFilter);
+        };
+        getApplicationContext().registerReceiver(drtSmsSender, intentFilter);
 
+        // Send sms message
         smsSender.sendTextMessage(DRT_PHONE_NO, null, stopId, sentPI, deliveredPI);
-        sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT));
     }
 
     /**
@@ -110,6 +111,7 @@ public class SmsScheduleService extends IntentService {
             resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
             resultIntent.putExtra("result", msg);
             sendBroadcast(resultIntent);
+            getApplicationContext().unregisterReceiver(drtSmsReceiver);
         }
     }
 }
