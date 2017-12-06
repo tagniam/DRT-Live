@@ -3,6 +3,11 @@ package com.tagniam.drtsms.schedule.fetcher;
 import android.content.Context;
 import android.content.Intent;
 
+import com.tagniam.drtsms.schedule.data.Schedule;
+import com.tagniam.drtsms.schedule.data.SmsSchedule;
+import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
+
+import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,11 +52,16 @@ public class MockScheduleFetcher implements ScheduleFetcher {
                 // Emulate success sms, send result back and end timer
                 else if (step == 4) {
                     // Send a success right away with string
-                    Intent resultIntent = new Intent();
-                    resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
-                    resultIntent.putExtra("result", MOCK_MSG);
-                    context.sendBroadcast(resultIntent);
-                    timer.cancel();
+                    try {
+                        Schedule schedule = new SmsSchedule(MOCK_MSG);
+                        Intent resultIntent = new Intent();
+                        resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
+                        resultIntent.putExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
+                        context.sendBroadcast(resultIntent);
+                        timer.cancel();
+                    } catch (StopNotFoundException e) {
+                        // Won't happen
+                    }
                 }
 
                 step++;
