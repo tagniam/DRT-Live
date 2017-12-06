@@ -45,4 +45,15 @@ public class SmsSchedule implements Schedule {
     public List<BusTime> getBusTimes() {
         return busTimes;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder ret = new StringBuilder();
+        ret.append("Stop number: ").append(stopNumber).append(" ");
+        ret.append("Bus times:\n");
+        for (BusTime busTime : busTimes) {
+            ret.append(busTime).append("\n");
+        }
+        return ret.toString();
+    }
 }

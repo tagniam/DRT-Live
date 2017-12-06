@@ -133,4 +133,13 @@ public class SmsBusTime implements BusTime {
     public List<Date> getTimes() {
         return times;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder ret = new StringBuilder();
+        ret.append("Route: ").append(route).append(", ");
+        ret.append("Direction: ").append(direction).append(", ");
+        ret.append("Times: ").append(times);
+        return ret.toString();
+    }
 }
