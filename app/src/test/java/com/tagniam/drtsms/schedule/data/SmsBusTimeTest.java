@@ -12,8 +12,8 @@ import static org.junit.Assert.*;
  * Created by jr on 06/12/17.
  */
 public class SmsBusTimeTest {
-    private final String TEST_MSG_1 = "Rt 900 WB: 7:09p| 12:25a| 5:59a\r\n";
-    private final String TEST_MSG_2 = "Rt 916 Counter Clockwise: 7:16p| 7:44p| 8:12p| 8:42p\r\n";
+    private final String TEST_MSG_1 = "Rt 900 WB: 7:09p| 12:25a| 5:59a";
+    private final String TEST_MSG_2 = "Rt 916 Counter Clockwise: 7:16p| 7:44p| 8:12p| 8:42p";
 
     @Test
     public void test_getRoute() {
