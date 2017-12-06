@@ -14,6 +14,7 @@ import android.telephony.SmsMessage;
 public class SmsScheduleService extends IntentService {
     private DrtSmsReceiver drtSmsReceiver;
     private final String DRT_PHONE_NO = "8447460497";
+    private boolean isSmsDelivered = false;
 
     public SmsScheduleService() {
         super(SmsScheduleService.class.getSimpleName());
@@ -41,17 +42,20 @@ public class SmsScheduleService extends IntentService {
         PendingIntent sentPI = PendingIntent.getBroadcast(getApplicationContext(), 0,
                 new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT), 0);
         PendingIntent deliveredPI = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_RECEIVED), 0);
+                new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED), 0);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT);
-        intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_RECEIVED);
+        intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED);
 
         getApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
-                        // Do nothing if the result is ok, rest will be handled by drt sms receiver
+                        if (!isSmsDelivered) {
+                            sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED));
+                            isSmsDelivered = true;
+                        }
                         break;
                     default:
                         // Sms failed, broadcast the fail and stop service
@@ -63,6 +67,7 @@ public class SmsScheduleService extends IntentService {
         }, intentFilter);
 
         smsSender.sendTextMessage(DRT_PHONE_NO, null, stopId, sentPI, deliveredPI);
+        sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT));
     }
 
     /**

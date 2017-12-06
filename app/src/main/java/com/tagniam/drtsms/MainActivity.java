@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tagniam.drtsms.schedule.MockScheduleFetcher;
 import com.tagniam.drtsms.schedule.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.SmsScheduleFetcher;
 
@@ -34,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
         intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
+        intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT);
+        intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED);
 
         registerReceiver(scheduleReceiver, intentFilter);
     }
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     protected void fetchSchedule(View view) {
         // Grab stop id
         String stopId = stopIdInput.getText().toString();
-        ScheduleFetcher scheduleFetcher = new MockScheduleFetcher(getApplicationContext());
+        ScheduleFetcher scheduleFetcher = new SmsScheduleFetcher(getApplicationContext());
         scheduleFetcher.fetch(stopId);
     }
 
@@ -51,16 +52,23 @@ public class MainActivity extends AppCompatActivity {
             switch(intent.getAction()) {
                 case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
                     Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
+                    unregisterReceiver(scheduleReceiver);
+                    break;
+                case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
+                    Toast.makeText(getApplicationContext(), "Sms sent", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED:
+                    Toast.makeText(getApplicationContext(), "Sms received", Toast.LENGTH_SHORT).show();
                     break;
                 case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
                     String result = intent.getStringExtra("result");
                     scheduleDisplay.setText(result);
+                    unregisterReceiver(scheduleReceiver);
                     break;
                 default:
                     break;
             }
 
-            unregisterReceiver(scheduleReceiver);
         }
     }
 

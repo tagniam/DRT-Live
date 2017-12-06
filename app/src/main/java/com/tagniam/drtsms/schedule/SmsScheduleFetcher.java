@@ -13,7 +13,7 @@ public class SmsScheduleFetcher implements ScheduleFetcher {
     // More progress action strings
     public static final String SCHEDULE_FETCH_SMS_SENT = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_SENT";
     // Action string for cancellation of schedule fetching
-    public static final String SCHEDULE_FETCH_SMS_RECEIVED = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_RECEIVED";
+    public static final String SCHEDULE_FETCH_SMS_DELIVERED = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_DELIVERED";
 
     public SmsScheduleFetcher(Context context) {
         this.context = context;
