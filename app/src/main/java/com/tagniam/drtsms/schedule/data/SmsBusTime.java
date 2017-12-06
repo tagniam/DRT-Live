@@ -64,7 +64,7 @@ public class SmsBusTime implements BusTime {
      *             hh:mm{a|p}
      */
     private void parseTimes(String info) {
-        String[] timeParts = info.split("| ");
+        String[] timeParts = info.split("\\| ");
 
         // Generate date time objects for each time part
         for (String part : timeParts) {
@@ -114,6 +114,10 @@ public class SmsBusTime implements BusTime {
      * @return in new form hh:mm {AM/PM}
      */
     private String convertToSimpleTime(String time) {
+        // Remove any \r\n from time string
+        time = time.replace("\r", "");
+        time = time.replace("\n", "");
+
         String hhmm = time.substring(0, time.length()-1);
         String amPmMarker = Character.toUpperCase(time.charAt(time.length()-1)) + "M";
         return hhmm + " " + amPmMarker;
