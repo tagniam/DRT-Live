@@ -11,6 +11,12 @@ import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
+import com.tagniam.drtsms.schedule.data.Schedule;
+import com.tagniam.drtsms.schedule.data.SmsSchedule;
+import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
+
+import java.io.Serializable;
+
 public class SmsScheduleService extends IntentService {
     private DrtSmsReceiver drtSmsReceiver;
     private BroadcastReceiver drtSmsSender;
@@ -106,11 +112,20 @@ public class SmsScheduleService extends IntentService {
          * @param msg the text msg response from DRT
          */
         private void broadcastSchedule(String msg) {
-            // TODO refactor to send a BusTime object
-            Intent resultIntent = new Intent();
-            resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
-            resultIntent.putExtra("result", msg);
-            sendBroadcast(resultIntent);
+            // Create schedule from msg
+            try {
+                Schedule schedule = new SmsSchedule(msg);
+
+                Intent resultIntent = new Intent();
+                resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
+                resultIntent.putExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
+                sendBroadcast(resultIntent);
+
+            } catch (StopNotFoundException e) {
+                // Stop number not found
+                sendBroadcast(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION));
+            }
+
             getApplicationContext().unregisterReceiver(drtSmsReceiver);
         }
     }

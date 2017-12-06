@@ -2,6 +2,7 @@ package com.tagniam.drtsms.schedule.data;
 
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * Created by jr on 06/12/17.
  */
 
-public class SmsSchedule implements Schedule {
+public class SmsSchedule implements Schedule, Serializable {
     private List<BusTime> busTimes = new ArrayList<>();
     private String stopNumber;
     private static final String STOP_NOT_FOUND_REGEX = "Stop Number .* not found\\.";

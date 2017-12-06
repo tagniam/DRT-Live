@@ -1,5 +1,6 @@
 package com.tagniam.drtsms.schedule.data;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ import java.util.Locale;
  * Created by jr on 06/12/17.
  */
 
-public class SmsBusTime implements BusTime {
+public class SmsBusTime implements BusTime, Serializable {
     private String route;
     private String direction;
     private List<Date> times = new ArrayList<>();

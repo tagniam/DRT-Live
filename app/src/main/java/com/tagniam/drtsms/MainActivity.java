@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.MockScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     protected void fetchSchedule(View view) {
         // Grab stop id
         String stopId = stopIdInput.getText().toString();
-        ScheduleFetcher scheduleFetcher = new MockScheduleFetcher(getApplicationContext());
+        ScheduleFetcher scheduleFetcher = new SmsScheduleFetcher(getApplicationContext());
         scheduleFetcher.fetch(stopId);
     }
 
@@ -62,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Sms received", Toast.LENGTH_SHORT).show();
                     break;
                 case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
-                    String result = intent.getStringExtra("result");
-                    scheduleDisplay.setText(result);
+                    Schedule schedule = (Schedule)intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
+                    scheduleDisplay.setText(schedule.toString());
                     unregisterReceiver(scheduleReceiver);
                     break;
                 default:
