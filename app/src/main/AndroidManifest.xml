@@ -22,7 +22,7 @@
         </activity>
 
         <service
-            android:name=".schedule.SmsScheduleService"
+            android:name=".schedule.fetcher.SmsScheduleService"
             android:exported="false"></service>
     </application>
 

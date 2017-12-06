@@ -1,4 +1,4 @@
-package com.tagniam.drtsms.schedule;
+package com.tagniam.drtsms.schedule.fetcher;
 
 import android.app.Activity;
 import android.app.IntentService;

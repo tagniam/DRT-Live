@@ -11,9 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tagniam.drtsms.schedule.MockScheduleFetcher;
-import com.tagniam.drtsms.schedule.ScheduleFetcher;
-import com.tagniam.drtsms.schedule.SmsScheduleFetcher;
+import com.tagniam.drtsms.schedule.fetcher.MockScheduleFetcher;
+import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
+import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
 
 public class MainActivity extends AppCompatActivity {
     private EditText stopIdInput;

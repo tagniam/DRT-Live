@@ -1,8 +1,7 @@
-package com.tagniam.drtsms.schedule;
+package com.tagniam.drtsms.schedule.fetcher;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import java.util.Timer;
 import java.util.TimerTask;
