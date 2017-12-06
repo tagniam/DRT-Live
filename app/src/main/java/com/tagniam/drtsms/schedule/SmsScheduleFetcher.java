@@ -10,6 +10,11 @@ import android.content.Intent;
 public class SmsScheduleFetcher implements ScheduleFetcher {
     private Context context;
 
+    // More progress action strings
+    public static final String SCHEDULE_FETCH_SMS_SENT = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_SENT";
+    // Action string for cancellation of schedule fetching
+    public static final String SCHEDULE_FETCH_SMS_RECEIVED = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_RECEIVED";
+
     public SmsScheduleFetcher(Context context) {
         this.context = context;
     }

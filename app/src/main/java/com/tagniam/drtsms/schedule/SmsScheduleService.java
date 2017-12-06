@@ -12,9 +12,6 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
 public class SmsScheduleService extends IntentService {
-    public static final String SMS_SENT = "com.tagniam.drtsms.schedule.SMS_SENT";
-    public static final String SMS_DELIVERED = "com.tagniam.drtsms.schedule.SMS_DELIVERED";
-
     private DrtSmsReceiver drtSmsReceiver;
     private final String DRT_PHONE_NO = "8447460497";
 
@@ -41,11 +38,13 @@ public class SmsScheduleService extends IntentService {
         SmsManager smsSender = SmsManager.getDefault();
 
         // Set up pending intents to track success/fail sent status
-        PendingIntent sentPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(SMS_SENT), 0);
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(SMS_DELIVERED), 0);
+        PendingIntent sentPI = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT), 0);
+        PendingIntent deliveredPI = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_RECEIVED), 0);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(SMS_SENT);
-        intentFilter.addAction(SMS_DELIVERED);
+        intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT);
+        intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_RECEIVED);
 
         getApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
