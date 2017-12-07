@@ -13,17 +13,39 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tagniam.drtsms.schedule.adapter.ScheduleAdapter;
+import com.tagniam.drtsms.schedule.data.BusTime;
 import com.tagniam.drtsms.schedule.data.Schedule;
+import com.tagniam.drtsms.schedule.data.SmsBusTime;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
   private ScheduleReceiver scheduleReceiver;
+  private final String TEST_MSG_1 = "Rt 900 WB: 7:09p| 12:25a| 5:59a";
+  private final String TEST_MSG_2 = "Rt 916 Counter Clockwise: 7:16p| 7:44p| 8:12p| 8:42p";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    // Schedule view setup
+    RecyclerView scheduleView = findViewById(R.id.scheduleDisplay);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+    scheduleView.setLayoutManager(layoutManager);
+
+    // Mock bus time objects for now
+    List<BusTime> busTimeList = new ArrayList<>();
+    busTimeList.add(new SmsBusTime(TEST_MSG_1));
+    busTimeList.add(new SmsBusTime(TEST_MSG_2));
+
+    // Sets up adapter, contents of schedule view
+    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(busTimeList);
+    scheduleView.setAdapter(scheduleAdapter);
 
     // Start listening for incoming schedule fetches
     scheduleReceiver = new ScheduleReceiver();
