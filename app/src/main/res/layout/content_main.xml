@@ -4,10 +4,26 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
+    <EditText
+      android:id="@+id/stopIdInput"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ems="10"
+      android:inputType="number"/>
+    <Button
+      android:id="@+id/submit"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentTop="true"
+      android:text="Fetch"
+      android:onClick="fetchSchedule"/>
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/scheduleDisplay"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+      android:id="@+id/scheduleDisplay"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentStart="true"
+      android:layout_below="@+id/submit">
 
     </android.support.v7.widget.RecyclerView>
 </android.widget.RelativeLayout>
