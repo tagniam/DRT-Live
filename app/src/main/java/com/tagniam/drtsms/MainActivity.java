@@ -52,14 +52,17 @@ public class MainActivity extends AppCompatActivity {
     public void onReceive(Context context, Intent intent) {
       switch (intent.getAction()) {
         case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
-          Toast.makeText(getApplicationContext(), "Didn't work", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), getString(R.string.progress_schedule_fetch_fail),
+                  Toast.LENGTH_SHORT).show();
           unregisterReceiver(scheduleReceiver);
           break;
         case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
-          Toast.makeText(getApplicationContext(), "Sms sent", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), getString(R.string.progress_schedule_fetch_sms_sent),
+                  Toast.LENGTH_SHORT).show();
           break;
         case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED:
-          Toast.makeText(getApplicationContext(), "Sms received", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), getString(R.string.progress_schedule_fetch_sms_delivered),
+                  Toast.LENGTH_SHORT).show();
           break;
         case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
           Schedule schedule =
