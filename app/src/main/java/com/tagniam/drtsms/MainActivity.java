@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tagniam.drtsms.schedule.adapter.ScheduleAdapter;
@@ -30,33 +27,40 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+      super.onCreate(savedInstanceState);
+      setContentView(R.layout.activity_main);
 
-    // Schedule view setup
-    RecyclerView scheduleView = findViewById(R.id.scheduleDisplay);
-    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-    scheduleView.setLayoutManager(layoutManager);
+      // Schedule view setup
+      RecyclerView scheduleView = findViewById(R.id.scheduleDisplay);
+      LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+      scheduleView.setLayoutManager(layoutManager);
 
-    // Mock bus time objects for now
-    List<BusTime> busTimeList = new ArrayList<>();
-    busTimeList.add(new SmsBusTime(TEST_MSG_1));
-    busTimeList.add(new SmsBusTime(TEST_MSG_2));
+      // Mock bus time objects for now
+      List<BusTime> busTimeList = new ArrayList<>();
+      busTimeList.add(new SmsBusTime(TEST_MSG_1));
+      busTimeList.add(new SmsBusTime(TEST_MSG_2));
 
-    // Sets up adapter, contents of schedule view
-    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(busTimeList);
-    scheduleView.setAdapter(scheduleAdapter);
+      // Sets up adapter, contents of schedule view
+      ScheduleAdapter scheduleAdapter = new ScheduleAdapter(busTimeList);
+      scheduleView.setAdapter(scheduleAdapter);
 
-    // Start listening for incoming schedule fetches
-    scheduleReceiver = new ScheduleReceiver();
-    IntentFilter intentFilter = new IntentFilter();
-    intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
-    intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
-    intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT);
-    intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED);
-
-    registerReceiver(scheduleReceiver, intentFilter);
+      listenForScheduleFetches();
   }
+
+    /**
+     * Start listening to incoming schedule fetches.
+     */
+    private void listenForScheduleFetches() {
+        // Start listening for incoming schedule fetches
+        scheduleReceiver = new ScheduleReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
+        intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
+        intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT);
+        intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED);
+
+        registerReceiver(scheduleReceiver, intentFilter);
+    }
 
   /*
   protected void fetchSchedule(View view) {
