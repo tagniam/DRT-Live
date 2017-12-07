@@ -44,6 +44,8 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   @Override
   public void onBindViewHolder(BusTimeHolder holder, int position) {
     holder.route.setText(busTimes.get(position).getRoute());
+    holder.direction.setText(busTimes.get(position).getDirection());
+    holder.times.setText(busTimes.get(position).getTimes().toString());
   }
 
   /**
@@ -60,10 +62,14 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
    */
   static class BusTimeHolder extends RecyclerView.ViewHolder {
     TextView route;
+    TextView direction;
+    TextView times;
 
     BusTimeHolder(View itemView) {
       super(itemView);
       route = itemView.findViewById(R.id.route);
+      direction = itemView.findViewById(R.id.direction);
+      times = itemView.findViewById(R.id.times);
     }
   }
 }
