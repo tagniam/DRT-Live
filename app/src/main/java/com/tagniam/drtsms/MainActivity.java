@@ -9,24 +9,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.tagniam.drtsms.schedule.adapter.ScheduleAdapter;
-import com.tagniam.drtsms.schedule.data.BusTime;
 import com.tagniam.drtsms.schedule.data.Schedule;
-import com.tagniam.drtsms.schedule.data.SmsBusTime;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-  private final String TEST_MSG_1 = "Rt 900 WB: 7:09p| 12:25a| 5:59a";
-  private final String TEST_MSG_2 = "Rt 916 Counter Clockwise: 7:16p| 7:44p| 8:12p| 8:42p";
   private EditText stopIdInput;
-  private Button submit;
   private ScheduleReceiver scheduleReceiver;
+  private RecyclerView scheduleView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,23 +27,19 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     stopIdInput = findViewById(R.id.stopIdInput);
-    submit = findViewById(R.id.submit);
 
+    setupScheduleView();
+    listenForScheduleFetches();
+  }
+
+  /**
+   * Sets up the recycler view where the schedule will be displayed.
+   */
+  private void setupScheduleView() {
     // Schedule view setup
-    RecyclerView scheduleView = findViewById(R.id.scheduleDisplay);
+    scheduleView = findViewById(R.id.scheduleDisplay);
     LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
     scheduleView.setLayoutManager(layoutManager);
-
-    // Mock bus time objects for now
-    List<BusTime> busTimeList = new ArrayList<>();
-    busTimeList.add(new SmsBusTime(TEST_MSG_1));
-    busTimeList.add(new SmsBusTime(TEST_MSG_2));
-
-    // Sets up adapter, contents of schedule view
-    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(busTimeList);
-    scheduleView.setAdapter(scheduleAdapter);
-
-    listenForScheduleFetches();
   }
 
   /**
@@ -68,11 +57,27 @@ public class MainActivity extends AppCompatActivity {
     registerReceiver(scheduleReceiver, intentFilter);
   }
 
+  /**
+   * Fetches the schedule.
+   *
+   * @param view View object
+   */
   public void fetchSchedule(View view) {
     // Grab stop id
     String stopId = stopIdInput.getText().toString();
     ScheduleFetcher scheduleFetcher = new SmsScheduleFetcher(getApplicationContext());
     scheduleFetcher.fetch(stopId);
+  }
+
+  /**
+   * Updates the schedule view with the fetched schedule.
+   *
+   * @param schedule fetched schedule
+   */
+  private void populateScheduleView(Schedule schedule) {
+    // Get bus time objects
+    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(schedule.getBusTimes());
+    scheduleView.setAdapter(scheduleAdapter);
   }
 
   private class ScheduleReceiver extends BroadcastReceiver {
@@ -104,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
           Schedule schedule =
               (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
-          Toast.makeText(getApplicationContext(), schedule.toString(), Toast.LENGTH_SHORT).show();
+          populateScheduleView(schedule);
           unregisterReceiver(scheduleReceiver);
           break;
         default:
