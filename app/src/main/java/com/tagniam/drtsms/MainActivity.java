@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,18 +18,12 @@ import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
 
 public class MainActivity extends AppCompatActivity {
-  private EditText stopIdInput;
-  private TextView scheduleDisplay;
   private ScheduleReceiver scheduleReceiver;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
-    // UI links
-    stopIdInput = findViewById(R.id.stopIdInput);
-    scheduleDisplay = findViewById(R.id.scheduleDisplay);
 
     // Start listening for incoming schedule fetches
     scheduleReceiver = new ScheduleReceiver();
@@ -40,12 +36,13 @@ public class MainActivity extends AppCompatActivity {
     registerReceiver(scheduleReceiver, intentFilter);
   }
 
+  /*
   protected void fetchSchedule(View view) {
     // Grab stop id
     String stopId = stopIdInput.getText().toString();
     ScheduleFetcher scheduleFetcher = new SmsScheduleFetcher(getApplicationContext());
     scheduleFetcher.fetch(stopId);
-  }
+  }*/
 
   private class ScheduleReceiver extends BroadcastReceiver {
     @Override
@@ -67,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
           Schedule schedule =
               (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
-          scheduleDisplay.setText(schedule.toString());
+          Toast.makeText(getApplicationContext(), schedule.toString(),
+                  Toast.LENGTH_SHORT).show();
           unregisterReceiver(scheduleReceiver);
           break;
         default:
