@@ -43,9 +43,9 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
    */
   @Override
   public void onBindViewHolder(BusTimeHolder holder, int position) {
-    holder.route.setText("Route " + busTimes.get(position).getRoute());
-    holder.direction.setText("Direction: " + busTimes.get(position).getDirection());
-    holder.times.setText("Times: " + formatTimes(busTimes.get(position).getTimes()));
+    holder.route.setText(busTimes.get(position).getRoute());
+    holder.direction.setText(busTimes.get(position).getDirection());
+    holder.times.setText(formatTimes(busTimes.get(position).getTimes()));
   }
 
   /**
@@ -67,7 +67,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
     StringBuilder str = new StringBuilder();
     for (Date time : times) {
-      str.append(dateFormat.format(time) + "| ");
+      str.append(dateFormat.format(time) + ", ");
     }
     return str.toString().substring(0, str.length() - 2);
   }
