@@ -1,7 +1,6 @@
 package com.tagniam.drtsms.schedule.data;
 
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ public class SmsSchedule implements Schedule, Serializable {
     if (msg.matches(STOP_NOT_FOUND_REGEX)) {
       throw new StopNotFoundException();
     }
+    // TODO another possible message: "There were no passing times by stop #.
 
     String[] info = msg.split("\r\n");
     // Extract bus number, second string
