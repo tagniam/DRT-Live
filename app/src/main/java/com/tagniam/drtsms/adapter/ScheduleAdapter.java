@@ -45,7 +45,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     BusTime curr = busTimes.get(position);
     holder.route.setText(curr.getRoute());
     holder.direction.setText(curr.getDirection());
-    holder.times.setText(BusTime.Helper.getRelativeTimes(new Date(), curr.getTimes()));
   }
 
   /**
@@ -64,13 +63,11 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
     TextView route;
     TextView direction;
-    TextView times;
 
     BusTimeHolder(View itemView) {
       super(itemView);
       route = itemView.findViewById(R.id.route);
       direction = itemView.findViewById(R.id.direction);
-      times = itemView.findViewById(R.id.times);
     }
   }
 }

@@ -45,6 +45,7 @@
           android:layout_weight="0.7"
           android:padding="10dp"
           android:orientation="horizontal">
+            <!--
             <TextView
               android:id="@+id/times"
               android:textStyle="bold"
@@ -52,7 +53,7 @@
               android:layout_height="wrap_content"
               android:gravity="center"
               android:text="10:48a"
-              android:textColor="#F07925"/>
+              android:textColor="#F07925"/>-->
         </LinearLayout>
     </LinearLayout>
 
