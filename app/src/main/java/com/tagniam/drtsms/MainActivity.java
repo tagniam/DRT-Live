@@ -11,7 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.tagniam.drtsms.schedule.adapter.ScheduleAdapter;
+import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
           Schedule schedule =
               (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
           populateScheduleView(schedule);
-          unregisterReceiver(scheduleReceiver);
           break;
         default:
           break;

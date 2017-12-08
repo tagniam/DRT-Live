@@ -1,15 +1,15 @@
-package com.tagniam.drtsms.schedule.adapter;
+package com.tagniam.drtsms.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.tagniam.drtsms.R;
 import com.tagniam.drtsms.schedule.data.BusTime;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /** Created by jr on 07/12/17. */
@@ -43,9 +43,9 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
    */
   @Override
   public void onBindViewHolder(BusTimeHolder holder, int position) {
-    holder.route.setText(busTimes.get(position).getRoute());
-    holder.direction.setText(busTimes.get(position).getDirection());
-    holder.times.setText(busTimes.get(position).getTimes().toString());
+    holder.route.setText("Route " + busTimes.get(position).getRoute());
+    holder.direction.setText("Direction: " + busTimes.get(position).getDirection());
+    holder.times.setText("Times: " + formatTimes(busTimes.get(position).getTimes()));
   }
 
   /**
@@ -55,6 +55,21 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   @Override
   public int getItemCount() {
     return busTimes.size();
+  }
+
+  /**
+   * Formats the list of times to be readable.
+   *
+   * @param times List of Date
+   * @return time string in format {time}| {time}|...
+   */
+  private String formatTimes(List<Date> times) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+    StringBuilder str = new StringBuilder();
+    for (Date time : times) {
+      str.append(dateFormat.format(time) + "| ");
+    }
+    return str.toString().substring(0, str.length() - 2);
   }
 
   /**
