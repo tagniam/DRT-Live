@@ -22,7 +22,7 @@ public class SmsScheduleFetcher implements ScheduleFetcher {
     // Create intent
     Intent intent = new Intent();
     intent.setClass(context, SmsScheduleService.class);
-    intent.putExtra("stop_id", stopId);
+    intent.putExtra(ScheduleFetcher.SCHEDULE_FETCH_STOP_ID, stopId);
     context.startService(intent);
   }
 }

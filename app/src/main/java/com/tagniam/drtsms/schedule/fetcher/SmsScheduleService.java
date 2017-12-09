@@ -10,11 +10,10 @@ import android.content.IntentFilter;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
-
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.data.SmsSchedule;
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
-
+import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import java.io.Serializable;
 
 public class SmsScheduleService extends IntentService {
@@ -29,7 +28,7 @@ public class SmsScheduleService extends IntentService {
   @Override
   protected void onHandleIntent(Intent intent) {
     // Get stop id and send sms
-    String stopId = intent.getStringExtra("stop_id");
+    String stopId = intent.getStringExtra(ScheduleFetcher.SCHEDULE_FETCH_STOP_ID);
     sendSmsToDrt(stopId);
 
     // Wait for sms to be received
@@ -101,7 +100,6 @@ public class SmsScheduleService extends IntentService {
 
           // Only analyze if from DRT
           // Note: apparently all SMS from DRT < 160 char, so don't need to concatenate msgs
-          // TODO set message to read so that push notification isn't shown
           if (from.equals(DRT_PHONE_NO)) {
             broadcastSchedule(smsMessage.getMessageBody());
             break;
@@ -125,8 +123,8 @@ public class SmsScheduleService extends IntentService {
         resultIntent.putExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
         sendBroadcast(resultIntent);
 
-      } catch (StopNotFoundException e) {
-        // Stop number not found
+      } catch (StopNotFoundException | StopTimesNotAvailableException e) {
+        // Stop number not found or not available
         sendBroadcast(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION));
       }
 

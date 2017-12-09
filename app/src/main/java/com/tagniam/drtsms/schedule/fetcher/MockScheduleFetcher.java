@@ -2,11 +2,10 @@ package com.tagniam.drtsms.schedule.fetcher;
 
 import android.content.Context;
 import android.content.Intent;
-
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.data.SmsSchedule;
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
-
+import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,7 +58,7 @@ public class MockScheduleFetcher implements ScheduleFetcher {
                     ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
                 context.sendBroadcast(resultIntent);
                 timer.cancel();
-              } catch (StopNotFoundException e) {
+              } catch (StopTimesNotAvailableException | StopNotFoundException e) {
                 // Won't happen
               }
             }

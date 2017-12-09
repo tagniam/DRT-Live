@@ -7,7 +7,8 @@ public interface ScheduleFetcher {
       "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SUCCESS_ACTION";
   // Action string for cancellation of schedule fetching
   String SCHEDULE_FETCH_FAIL_ACTION = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_FAIL_ACTION";
-  // TODO extra string for stop id input
+  // Input string for stop id input
+  String SCHEDULE_FETCH_STOP_ID = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_STOP_ID";
   // Extra string for schedule data output
   String SCHEDULE_FETCH_RESULT = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_RESULT";
 

@@ -1,6 +1,7 @@
 package com.tagniam.drtsms.schedule.data;
 
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
+import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 /** Created by jr on 06/12/17. */
 public class SmsSchedule implements Schedule, Serializable {
   private static final String STOP_NOT_FOUND_REGEX = "Stop Number .* not found\\.";
+  private static final String STOP_TIMES_NOT_AVAILABLE = "There were no passing times by stop .*\\.";
   private List<BusTime> busTimes = new ArrayList<>();
   private String stopNumber;
 
@@ -17,12 +19,16 @@ public class SmsSchedule implements Schedule, Serializable {
    *
    * @param msg msg from DRT
    */
-  public SmsSchedule(String msg) throws StopNotFoundException {
+  public SmsSchedule(String msg) throws StopNotFoundException, StopTimesNotAvailableException {
     // DRT can't find that stop number
     if (msg.matches(STOP_NOT_FOUND_REGEX)) {
       throw new StopNotFoundException();
     }
-    // TODO another possible message: "There were no passing times by stop #.
+
+    // No times available for this stop
+    else if (msg.matches(STOP_TIMES_NOT_AVAILABLE)) {
+      throw new StopTimesNotAvailableException();
+    }
 
     String[] info = msg.split("\r\n");
     // Extract bus number, second string
