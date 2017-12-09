@@ -79,7 +79,8 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
           LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       params.weight = 1.0f;
       params.gravity = Gravity.CENTER_HORIZONTAL;
-      params.setMargins(8, 0, 8, 0);
+      int dotMargin = (int) context.getResources().getDimension(R.dimen.card_dot_marginHorizontal);
+      params.setMargins(dotMargin, 0, dotMargin, 0);
 
       // Add current dot
       holder.timeDots.addView(dots[i], params);

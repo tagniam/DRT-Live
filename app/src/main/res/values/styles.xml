@@ -8,4 +8,51 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+  <!-- Time text style. -->
+  <style name="TimeText" parent="AppTheme">
+    <item name="android:textStyle">bold|italic</item>
+    <item name="android:textColor">@color/colorTimeText</item>
+    <item name="android:textSize">@dimen/card_fontSize_large</item>
+    <item name="android:gravity">center</item>
+  </style>
+
+  <!-- Route text style. -->
+  <style name="RouteText" parent="AppTheme">
+    <item name="android:textStyle">bold</item>
+    <item name="android:gravity">center_horizontal</item>
+    <item name="android:textColor">@color/colorRouteText</item>
+    <item name="android:textSize">@dimen/card_fontSize_large</item>
+  </style>
+
+  <!-- Direction text style. -->
+  <style name="DirectionText" parent="AppTheme">
+    <item name="android:gravity">center_horizontal</item>
+    <item name="android:textColor">@color/colorRouteText</item>
+    <item name="android:textSize">@dimen/card_fontSize_small</item>
+  </style>
+
+  <!-- Time dots style. -->
+  <style name="TimeDots" parent="AppTheme">
+    <item name="android:layout_gravity">center</item>
+    <item name="android:layout_marginLeft">20dp</item>
+    <item name="android:layout_marginRight">20dp</item>
+  </style>
+
+  <!-- Card style. -->
+  <style name="ScheduleCard" parent="CardView">
+    <item name="android:layout_gravity">center</item>
+    <item name="cardElevation">@dimen/card_elevation</item>
+
+    <item name="android:layout_marginTop">@dimen/card_marginVertical</item>
+    <item name="android:layout_marginBottom">@dimen/card_marginVertical</item>
+    <item name="android:layout_marginLeft">@dimen/card_marginHorizontal</item>
+    <item name="android:layout_marginRight">@dimen/card_marginHorizontal</item>
+
+    <item name="android:layout_height">@dimen/card_height</item>
+  </style>
+
+  <!-- Route/direction layout style. -->
+  <style name="RouteDirection" parent="AppTheme">
+    <item name="android:background">@color/colorRouteDirectionBg</item>
+  </style>
 </resources>
