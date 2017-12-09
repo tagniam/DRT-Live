@@ -49,7 +49,28 @@ public class SmsBusTime implements BusTime, Serializable {
     }
 
     // Remove last space
-    direction = directionParts.toString().substring(0, directionParts.length() - 1);
+    direction = directionLongForm(
+        directionParts.substring(0, directionParts.length() - 1));
+  }
+
+  /**
+   * Convert shortform directions like "NB" to longform like "Northbound".
+   *
+   * @param direction direction string from SMS
+   * @return longform direction
+   */
+  private String directionLongForm(String direction) {
+    switch (direction) {
+      case "NB":
+        return "Northbound";
+      case "WB":
+        return "Westbound";
+      case "EB":
+        return "Eastbound";
+      case "SB":
+        return "Southbound";
+    }
+    return direction;
   }
 
   /**
