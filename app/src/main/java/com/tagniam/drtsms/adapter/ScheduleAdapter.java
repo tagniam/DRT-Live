@@ -24,6 +24,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
   /**
    * Setup the adapter with a list of bus times.
+   * @param context application context
    * @param busTimes list of bus time objects
    */
   public ScheduleAdapter(Context context, List<BusTime> busTimes) {
@@ -44,40 +45,50 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   }
 
   /**
-   * Specifies the content of each item in the schedule view.
-   * @param holder BusTimeHolder to be modified
-   * @param position item in the list to be displayed
+   * Sets up the layout of the route and direction.
+   *
+   * @param holder current BusTimeHolder
+   * @param busTime current BusTime data to display
    */
-  @Override
-  public void onBindViewHolder(BusTimeHolder holder, int position) {
-    BusTime curr = busTimes.get(position);
-    holder.route.setText(curr.getRoute());
-    holder.direction.setText(curr.getDirection());
+  private void setupRouteDirectionLayout(BusTimeHolder holder, BusTime busTime) {
+    holder.route.setText(busTime.getRoute());
+    holder.direction.setText(busTime.getDirection());
+  }
 
+  /**
+   * Sets up the layout of the time display and tab indicators.
+   * @param holder current BusTimeHolder
+   * @param busTime current BusTime data to display
+   */
+  private void setupTimeLayout(BusTimeHolder holder, BusTime busTime) {
     // Creates the tab layout for the times
-    TimePagerAdapter timePagerAdapter = new TimePagerAdapter(context, curr);
+    TimePagerAdapter timePagerAdapter = new TimePagerAdapter(context, busTime);
     holder.timePager.setAdapter(timePagerAdapter);
 
-    // Initialize dots
-    final int numTimes = curr.getTimes().size();
+    // Initialize dots for tab indicators
+    final int numTimes = busTime.getTimes().size();
     final ImageView[] dots = new ImageView[numTimes];
 
     for (int i = 0; i < numTimes; i++) {
+      // Create new dot, by default inactive
       dots[i] = new ImageView(context);
       dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.nonactive_dot));
 
+      // Layout parameters
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
           LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       params.weight = 1.0f;
       params.gravity = Gravity.CENTER_HORIZONTAL;
-
       params.setMargins(8, 0, 8, 0);
 
+      // Add current dot
       holder.timeDots.addView(dots[i], params);
-
-      dots[0].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.active_dot));
     }
 
+    // First dot will be active
+    dots[0].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.active_dot));
+
+    // Listener for when page is scrolled
     holder.timePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
       @Override
@@ -87,6 +98,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
       @Override
       public void onPageSelected(int position) {
+        // Update dot at `position` to be the active dot
         for (int i = 0; i < numTimes; i++) {
           dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.nonactive_dot));
         }
@@ -100,6 +112,21 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
       }
     });
+
+  }
+
+  /**
+   * Specifies the content of each item in the schedule view.
+   *
+   * @param holder BusTimeHolder to be modified
+   * @param position item in the list to be displayed
+   */
+  @Override
+  public void onBindViewHolder(BusTimeHolder holder, int position) {
+    BusTime curr = busTimes.get(position);
+
+    setupRouteDirectionLayout(holder, curr);
+    setupTimeLayout(holder, curr);
   }
 
   /**
