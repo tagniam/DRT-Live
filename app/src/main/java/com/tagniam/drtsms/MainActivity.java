@@ -77,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
    */
   private void populateScheduleView(Schedule schedule) {
     // Get bus time objects
-    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(schedule.getBusTimes());
+    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
+        schedule.getBusTimes());
     scheduleView.setAdapter(scheduleAdapter);
   }
 
