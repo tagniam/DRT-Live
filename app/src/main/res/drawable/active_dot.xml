@@ -5,8 +5,8 @@
   android:useLevel="true">
 
   <size
-    android:height="5dip"
-    android:width="5dip"/>
+    android:height="3dip"
+    android:width="3dip"/>
 
   <solid android:color="#bebebe"/>
 </shape>

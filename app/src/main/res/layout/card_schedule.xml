@@ -49,13 +49,15 @@
               android:id="@+id/timePager"
               android:layout_width="match_parent"
               android:layout_height="0dp"
-              android:layout_weight="0.5"/>
+              android:layout_weight="0.85"/>
 
             <LinearLayout
               android:id="@+id/timeDots"
               android:layout_width="match_parent"
               android:layout_height="0dp"
-              android:layout_weight="0.5"
+              android:layout_weight="0.15"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
               android:layout_gravity="center"
               android:orientation="horizontal">
 

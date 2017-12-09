@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,8 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
           LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      params.weight = 1.0f;
+      params.gravity = Gravity.CENTER_HORIZONTAL;
 
       params.setMargins(8, 0, 8, 0);
 
