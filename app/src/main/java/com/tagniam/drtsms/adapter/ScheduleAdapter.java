@@ -59,8 +59,8 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     holder.timePager.setAdapter(timePagerAdapter);
 
     // Initialize dots
-    int numTimes = curr.getTimes().size();
-    ImageView[] dots = new ImageView[numTimes];
+    final int numTimes = curr.getTimes().size();
+    final ImageView[] dots = new ImageView[numTimes];
 
     for (int i = 0; i < numTimes; i++) {
       dots[i] = new ImageView(context);
@@ -77,6 +77,29 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
       dots[0].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.active_dot));
     }
+
+    holder.timePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+      @Override
+      public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+      }
+
+      @Override
+      public void onPageSelected(int position) {
+        for (int i = 0; i < numTimes; i++) {
+          dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.nonactive_dot));
+        }
+
+        dots[position].setImageDrawable(ContextCompat.getDrawable(context,
+            R.drawable.active_dot));
+      }
+
+      @Override
+      public void onPageScrollStateChanged(int state) {
+
+      }
+    });
   }
 
   /**
