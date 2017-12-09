@@ -68,7 +68,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
           LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-      params.setMargins(0, 0, 0, 0);
+      params.setMargins(8, 0, 8, 0);
 
       holder.timeDots.addView(dots[i], params);
 
@@ -101,8 +101,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
       direction = itemView.findViewById(R.id.direction);
       timePager = itemView.findViewById(R.id.timePager);
       timeDots = itemView.findViewById(R.id.timeDots);
-
-
     }
   }
 }
