@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
@@ -27,6 +30,23 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     stopIdInput = findViewById(R.id.stopIdInput);
+    stopIdInput.setOnKeyListener(new OnKeyListener() {
+      @Override
+      public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        // Get schedule on enter
+        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) &&
+            (i == KeyEvent.KEYCODE_ENTER)) {
+          // Hide soft keyboard
+          InputMethodManager imm = (InputMethodManager) getSystemService(
+              Context.INPUT_METHOD_SERVICE);
+          imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+          // Fetch schedule
+          fetchSchedule();
+          return true;
+        }
+        return false;
+      }
+    });
 
     setupScheduleView();
     listenForScheduleFetches();
@@ -59,10 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
   /**
    * Fetches the schedule.
-   *
-   * @param view View object
    */
-  public void fetchSchedule(View view) {
+  public void fetchSchedule() {
     // Grab stop id
     String stopId = stopIdInput.getText().toString();
     ScheduleFetcher scheduleFetcher = new SmsScheduleFetcher(getApplicationContext());
