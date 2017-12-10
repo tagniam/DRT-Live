@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <dimen name="card_fontSize_large">32sp</dimen>
-  <dimen name="card_fontSize_small">14sp</dimen>
+  <dimen name="card_fontSize_small">13sp</dimen>
 
   <dimen name="card_elevation">5dp</dimen>
   <dimen name="card_marginHorizontal">10dp</dimen>
   <dimen name="card_marginVertical">10dp</dimen>
-  <dimen name="card_height">75dp</dimen>
+  <dimen name="card_height">80dp</dimen>
   <dimen name="card_dot_size">3dp</dimen>
   <dimen name="card_dot_marginHorizontal">8dp</dimen>
 </resources>
