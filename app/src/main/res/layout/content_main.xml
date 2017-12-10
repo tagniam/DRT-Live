@@ -6,16 +6,10 @@
 
     <EditText
       android:id="@+id/stopIdInput"
+      style="@style/StopIdInput"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:ems="10"
-      android:background="#fff"
-      android:textSize="20sp"
-      android:drawableStart="@drawable/bus"
-      android:drawablePadding="10dp"
-      android:padding="15dp"
-      android:hint="Stop #"
-      android:inputType="number"/>
+      android:layout_height="wrap_content"/>
+
     <android.support.v7.widget.RecyclerView
       android:id="@+id/scheduleDisplay"
       android:layout_width="match_parent"

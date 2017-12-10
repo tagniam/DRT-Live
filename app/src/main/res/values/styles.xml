@@ -55,4 +55,17 @@
   <style name="RouteDirection" parent="AppTheme">
     <item name="android:background">@color/colorRouteDirectionBg</item>
   </style>
+
+  <!-- Stop id input style. -->
+  <style name="StopIdInput" parent="AppTheme">
+    <item name="android:ems">10</item>
+    <item name="android:background">#fff</item>
+    <item name="android:textSize">@dimen/stop_id_input_textSize</item>
+    <item name="android:drawableStart">@drawable/bus</item>
+    <item name="android:drawablePadding">@dimen/stop_id_input_drawablePadding</item>
+    <item name="android:padding">@dimen/stop_id_input_padding</item>
+    <item name="android:hint">@string/stop_id_hint</item>
+    <item name="android:inputType">number</item>
+    <item name="android:imeOptions">flagNoExtractUi</item>
+  </style>
 </resources>
