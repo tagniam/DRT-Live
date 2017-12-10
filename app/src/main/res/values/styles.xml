@@ -66,6 +66,5 @@
     <item name="android:padding">@dimen/stop_id_input_padding</item>
     <item name="android:hint">@string/stop_id_hint</item>
     <item name="android:inputType">number</item>
-    <item name="android:imeOptions">flagNoExtractUi</item>
   </style>
 </resources>
