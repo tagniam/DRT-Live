@@ -1,12 +1,11 @@
 package com.tagniam.drtsms.schedule.data;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 /** Created by jr on 06/12/17. */
 public class SmsBusTimeTest {
@@ -26,7 +25,7 @@ public class SmsBusTimeTest {
     BusTime busTime = new SmsBusTime(TEST_MSG_1);
     BusTime busTime2 = new SmsBusTime(TEST_MSG_2);
 
-    assertEquals("WB", busTime.getDirection());
+    assertEquals("Westbound", busTime.getDirection());
     assertEquals("Counter Clockwise", busTime2.getDirection());
   }
 

@@ -1,10 +1,10 @@
 package com.tagniam.drtsms.schedule.data;
 
-import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
-
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
+import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
+import org.junit.Test;
 
 /** Created by jr on 06/12/17. */
 public class SmsScheduleTest {
@@ -16,19 +16,20 @@ public class SmsScheduleTest {
   private final String ERROR_MSG = "Stop Number 93108 not found.";
 
   @Test
-  public void test_getStopNumber() throws StopNotFoundException {
+  public void test_getStopNumber() throws StopNotFoundException, StopTimesNotAvailableException {
     Schedule schedule = new SmsSchedule(TEST_MSG);
     assertEquals("MOCK1604", schedule.getStopNumber());
   }
 
   @Test
-  public void test_getBusTimes() throws StopNotFoundException {
+  public void test_getBusTimes() throws StopNotFoundException, StopTimesNotAvailableException {
     Schedule schedule = new SmsSchedule(TEST_MSG);
     assertEquals(2, schedule.getBusTimes().size());
   }
 
   @Test(expected = StopNotFoundException.class)
-  public void test_invalidStopNumber() throws StopNotFoundException {
+  public void test_invalidStopNumber()
+      throws StopNotFoundException, StopTimesNotAvailableException {
     Schedule schedule = new SmsSchedule(ERROR_MSG);
   }
 }
