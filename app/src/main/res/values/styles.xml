@@ -67,4 +67,12 @@
     <item name="android:hint">@string/stop_id_hint</item>
     <item name="android:inputType">number</item>
   </style>
+
+  <style name="StatusLine" parent="AppTheme">
+    <item name="android:gravity">center</item>
+    <item name="android:paddingBottom">10dp</item>
+    <item name="android:layout_alignParentBottom">true</item>
+    <item name="android:text">Waiting for response from DRT...</item>
+
+  </style>
 </resources>
