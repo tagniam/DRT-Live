@@ -13,14 +13,19 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.MockScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+  private TextView statusLine;
   private EditText stopIdInput;
   private ScheduleReceiver scheduleReceiver;
   private RecyclerView scheduleView;
@@ -30,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+    statusLine = findViewById(R.id.statusLine);
     stopIdInput = findViewById(R.id.stopIdInput);
     stopIdInput.setOnKeyListener(new OnKeyListener() {
       @Override
@@ -94,9 +100,15 @@ public class MainActivity extends AppCompatActivity {
    * @param schedule fetched schedule
    */
   private void populateScheduleView(Schedule schedule) {
+    Date now = new Date();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.CANADA);
+    // Update message
+    statusLine.setText(getString(R.string.progress_schedule_fetch_last_updated,
+        dateFormat.format(now)));
+
     // Get bus time objects
     ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
-        schedule.getBusTimes());
+        schedule.getBusTimes(), now);
     scheduleView.setAdapter(scheduleAdapter);
   }
 
@@ -105,26 +117,14 @@ public class MainActivity extends AppCompatActivity {
     public void onReceive(Context context, Intent intent) {
       switch (intent.getAction()) {
         case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
-          Toast.makeText(
-              getApplicationContext(),
-              getString(R.string.progress_schedule_fetch_fail),
-              Toast.LENGTH_SHORT)
-              .show();
+          statusLine.setText(getString(R.string.progress_schedule_fetch_fail));
           unregisterReceiver(scheduleReceiver);
           break;
         case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
-          Toast.makeText(
-              getApplicationContext(),
-              getString(R.string.progress_schedule_fetch_sms_sent),
-              Toast.LENGTH_SHORT)
-              .show();
+          statusLine.setText(getString(R.string.progress_schedule_fetch_sms_sent));
           break;
         case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED:
-          Toast.makeText(
-              getApplicationContext(),
-              getString(R.string.progress_schedule_fetch_sms_delivered),
-              Toast.LENGTH_SHORT)
-              .show();
+          statusLine.setText(getString(R.string.progress_schedule_fetch_sms_delivered));
           break;
         case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
           Schedule schedule =

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.tagniam.drtsms.R;
 import com.tagniam.drtsms.schedule.data.BusTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /** Created by jr on 07/12/17. */
@@ -21,15 +22,18 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
   private Context context;
   private List<BusTime> busTimes = new ArrayList<>();
+  private Date now;
 
   /**
    * Setup the adapter with a list of bus times.
    * @param context application context
    * @param busTimes list of bus time objects
+   * @param now the current time
    */
-  public ScheduleAdapter(Context context, List<BusTime> busTimes) {
+  public ScheduleAdapter(Context context, List<BusTime> busTimes, Date now) {
     this.context = context;
     this.busTimes = busTimes;
+    this.now = now;
   }
 
   /**
@@ -62,7 +66,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
    */
   private void setupTimeLayout(BusTimeHolder holder, BusTime busTime) {
     // Creates the tab layout for the times
-    TimePagerAdapter timePagerAdapter = new TimePagerAdapter(context, busTime);
+    TimePagerAdapter timePagerAdapter = new TimePagerAdapter(context, busTime, now);
     holder.timePager.setAdapter(timePagerAdapter);
 
     // Initialize dots for tab indicators

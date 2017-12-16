@@ -23,9 +23,8 @@ public class TimePagerAdapter extends PagerAdapter {
   private LayoutInflater layoutInflater;
   private List<String> times = new ArrayList<>();
 
-  public TimePagerAdapter(Context context, BusTime busTime) {
+  TimePagerAdapter(Context context, BusTime busTime, Date now) {
     this.context = context;
-    Date now = new Date();
 
     for (Date time : busTime.getTimes()) {
       times.add(BusTime.Helper.getRelativeTime(now, time));

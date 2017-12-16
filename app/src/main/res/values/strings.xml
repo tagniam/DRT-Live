@@ -4,4 +4,5 @@
     <string name="progress_schedule_fetch_sms_sent">SMS sent&#8230;</string>
     <string name="progress_schedule_fetch_sms_delivered">Waiting for response from DRT&#8230;</string>
     <string name="stop_id_hint">Stop #</string>
+    <string name="progress_schedule_fetch_last_updated">Last updated: %1$s</string>
 </resources>
