@@ -11,18 +11,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /** Created by jr on 01/12/17. */
-public class MockScheduleFetcher implements ScheduleFetcher {
-  private final String MOCK_MSG =
+public class MockScheduleFetcher extends ScheduleFetcher {
+  private static final String MOCK_MSG =
       "Stop MOCK1604:\r\n"
           + "Rt 900 WB: 7:09p| 7:25p| 7:40p| 7:54p| 8:09p| 8:29p| 8:49p\r\n"
           + "Rt 916 WB: 7:16p| 7:44p| 8:12p| 8:42p\r\n"
           + "std msg rates may apply";
-  private Context context;
   private int step;
   private Timer timer = new Timer();
 
-  public MockScheduleFetcher(Context context) {
-    this.context = context;
+  MockScheduleFetcher(Context context) {
+    super(context);
   }
 
   /**
@@ -39,12 +38,12 @@ public class MockScheduleFetcher implements ScheduleFetcher {
           public void run() {
             // Emulate sending sms
             if (step == 0) {
-              context.sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT));
+              getApplicationContext().sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT));
             }
 
             // Emulate delivered sms
             else if (step == 1) {
-              context.sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED));
+              getApplicationContext().sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED));
             }
 
             // Emulate success sms, send result back and end timer
@@ -56,7 +55,7 @@ public class MockScheduleFetcher implements ScheduleFetcher {
                 resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
                 resultIntent.putExtra(
                     ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
-                context.sendBroadcast(resultIntent);
+                getApplicationContext().sendBroadcast(resultIntent);
                 timer.cancel();
               } catch (StopTimesNotAvailableException | StopNotFoundException e) {
                 // Won't happen

@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
   public void fetchSchedule() {
     // Grab stop id
     String stopId = stopIdInput.getText().toString();
-    ScheduleFetcher scheduleFetcher = new MockScheduleFetcher(getApplicationContext());
+    ScheduleFetcher scheduleFetcher = ScheduleFetcher.getInstance(getApplicationContext());
     scheduleFetcher.fetch(stopId);
   }
 

@@ -1,16 +1,42 @@
 package com.tagniam.drtsms.schedule.fetcher;
 
+import android.content.Context;
+
 /** Created by jr on 01/12/17. */
-public interface ScheduleFetcher {
+public abstract class ScheduleFetcher {
   // Action string for completion of schedule fetching
-  String SCHEDULE_FETCH_SUCCESS_ACTION =
+  public static final String SCHEDULE_FETCH_SUCCESS_ACTION =
       "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SUCCESS_ACTION";
   // Action string for cancellation of schedule fetching
-  String SCHEDULE_FETCH_FAIL_ACTION = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_FAIL_ACTION";
+  public static final String SCHEDULE_FETCH_FAIL_ACTION = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_FAIL_ACTION";
   // Input string for stop id input
-  String SCHEDULE_FETCH_STOP_ID = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_STOP_ID";
+  static final String SCHEDULE_FETCH_STOP_ID = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_STOP_ID";
   // Extra string for schedule data output
-  String SCHEDULE_FETCH_RESULT = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_RESULT";
+  public static final String SCHEDULE_FETCH_RESULT = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_RESULT";
+
+  private Context context;
+  private static final boolean DEBUG = false;
+
+  ScheduleFetcher(Context context) {
+    this.context = context;
+  }
+
+  /**
+   * Returns an instance of a ScheduleFetcher. If debug mode is on, a mock fetcher is returned.
+   * Otherwise the normal SMS fetcher is returned.
+   *
+   * @param context application context
+   * @return schedule fetcher
+   */
+  public static ScheduleFetcher getInstance(Context context) {
+    if (DEBUG) {
+      return new MockScheduleFetcher(context);
+    }
+
+    else {
+      return new SmsScheduleFetcher(context);
+    }
+  }
 
   /**
    * Fetches the schedule of the stopId. A broadcast is sent with action
@@ -18,5 +44,9 @@ public interface ScheduleFetcher {
    *
    * @param stopId id of the DRT stop to be queried for schedule
    */
-  void fetch(String stopId);
+  public abstract void fetch(String stopId);
+
+  final Context getApplicationContext() {
+    return context;
+  }
 }
