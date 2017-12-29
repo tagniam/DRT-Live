@@ -2,6 +2,7 @@ package com.tagniam.drtsms.database;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
  * Created by jr on 28/12/17.
@@ -10,7 +11,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "routes")
 public class Route {
   @PrimaryKey
-  public final int id;
+  public int id;
   public String routeLongName;
   public int routeType;
   public String routeTextColor;
@@ -21,10 +22,9 @@ public class Route {
   public String routeDesc;
   public String routeShortName;
 
-  public Route(int id, String routeLongName, int routeType, String routeTextColor,
+  public Route(String routeLongName, int routeType, String routeTextColor,
       String routeColor, String agencyId, String routeId, String routeUrl, String routeDesc,
       String routeShortName) {
-    this.id = id;
     this.routeLongName = routeLongName;
     this.routeType = routeType;
     this.routeTextColor = routeTextColor;

@@ -1,7 +1,6 @@
 package com.tagniam.drtsms.database;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import java.util.List;
 
 /**
@@ -14,7 +13,7 @@ public class RouteRepository {
   private List<Route> allRoutes;
 
   RouteRepository(Application application) {
-    RouteRoomDatabase db = RouteRoomDatabase.getDatabase(application);
+    GtfsRoomDatabase db = GtfsRoomDatabase.getDatabase(application);
     mRouteDao = db.routeDao();
     allRoutes = mRouteDao.getAllRoutes();
   }

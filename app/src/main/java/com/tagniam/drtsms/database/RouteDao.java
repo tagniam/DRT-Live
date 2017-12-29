@@ -1,5 +1,7 @@
 package com.tagniam.drtsms.database;
 
+import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import java.util.List;
 
@@ -7,7 +9,15 @@ import java.util.List;
  * Created by jr on 28/12/17.
  */
 
+@Dao
 public interface RouteDao {
-  @Query("SELECT * from routes")
+
+  @Insert
+  void insert(Route route);
+
+  @Query("DELETE FROM routes")
+  void deleteAll();
+
+  @Query("SELECT * FROM routes")
   List<Route> getAllRoutes();
 }
