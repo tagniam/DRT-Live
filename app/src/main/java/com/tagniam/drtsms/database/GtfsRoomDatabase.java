@@ -17,22 +17,7 @@ import com.tagniam.drtsms.database.routes.RouteDao;
 @Database(entities = {Route.class}, version = 1)
 public abstract class GtfsRoomDatabase extends RoomDatabase {
 
-  public abstract RouteDao routeDao();
-
   private static GtfsRoomDatabase instance;
-
-  public static GtfsRoomDatabase getDatabase(final Context context) {
-    if (instance == null) {
-      synchronized (GtfsRoomDatabase.class) {
-        if (instance == null) {
-          instance = Room.databaseBuilder(context.getApplicationContext(), GtfsRoomDatabase.class,
-              "route").addCallback(sRoomDatabaseCallback).build();
-        }
-      }
-    }
-    return instance;
-  }
-
   private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
 
     @Override
@@ -41,6 +26,20 @@ public abstract class GtfsRoomDatabase extends RoomDatabase {
     }
 
   };
+
+  public static GtfsRoomDatabase getDatabase(final Context context) {
+    if (instance == null) {
+      synchronized (GtfsRoomDatabase.class) {
+        if (instance == null) {
+          instance = Room.databaseBuilder(context.getApplicationContext(), GtfsRoomDatabase.class,
+              "gtfs").addCallback(sRoomDatabaseCallback).build();
+        }
+      }
+    }
+    return instance;
+  }
+
+  public abstract RouteDao routeDao();
 
   private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
