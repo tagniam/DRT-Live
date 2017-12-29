@@ -1,4 +1,4 @@
-package com.tagniam.drtsms.database;
+package com.tagniam.drtsms.database.routes;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;

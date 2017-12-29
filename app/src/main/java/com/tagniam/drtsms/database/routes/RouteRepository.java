@@ -1,6 +1,7 @@
-package com.tagniam.drtsms.database;
+package com.tagniam.drtsms.database.routes;
 
 import android.app.Application;
+import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import java.util.List;
 
 /**

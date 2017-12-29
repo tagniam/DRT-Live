@@ -1,4 +1,4 @@
-package com.tagniam.drtsms.database;
+package com.tagniam.drtsms.database.routes;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;

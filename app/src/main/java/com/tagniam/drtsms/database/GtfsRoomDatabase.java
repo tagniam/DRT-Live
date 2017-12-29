@@ -7,6 +7,8 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import com.tagniam.drtsms.database.routes.Route;
+import com.tagniam.drtsms.database.routes.RouteDao;
 
 /**
  * Created by jr on 28/12/17.
@@ -19,7 +21,7 @@ public abstract class GtfsRoomDatabase extends RoomDatabase {
 
   private static GtfsRoomDatabase instance;
 
-  static GtfsRoomDatabase getDatabase(final Context context) {
+  public static GtfsRoomDatabase getDatabase(final Context context) {
     if (instance == null) {
       synchronized (GtfsRoomDatabase.class) {
         if (instance == null) {
