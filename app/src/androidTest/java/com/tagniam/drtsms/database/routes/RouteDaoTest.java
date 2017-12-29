@@ -1,4 +1,4 @@
-package com.tagniam.drtsms.database;
+package com.tagniam.drtsms.database.routes;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 import android.arch.persistence.room.Room;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.routes.Route;
 import com.tagniam.drtsms.database.routes.RouteDao;
 import java.util.List;
