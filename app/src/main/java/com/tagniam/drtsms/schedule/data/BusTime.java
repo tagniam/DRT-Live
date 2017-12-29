@@ -13,6 +13,12 @@ import java.util.concurrent.TimeUnit;
 
 /** Specifies the times and information for buses. */
 public interface BusTime {
+  // Directions
+  String NORTHBOUND = "NB";
+  String EASTBOUND = "EB";
+  String SOUTHBOUND = "SB";
+  String WESTBOUND = "WB";
+
   String getRoute();
 
   String getDirection();
