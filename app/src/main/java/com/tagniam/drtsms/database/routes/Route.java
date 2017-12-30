@@ -1,8 +1,8 @@
 package com.tagniam.drtsms.database.routes;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 /**
  * Created by jr on 28/12/17.
@@ -10,16 +10,35 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName = "routes")
 public class Route {
-  @PrimaryKey
+
+  @PrimaryKey(autoGenerate = true)
   public int id;
+
+  @ColumnInfo(name = "route_long_name")
   public String routeLongName;
+
+  @ColumnInfo(name = "route_type")
   public int routeType;
+
+  @ColumnInfo(name = "route_text_color")
   public String routeTextColor;
+
+  @ColumnInfo(name = "route_color")
   public String routeColor;
+
+  @ColumnInfo(name = "agency_id")
   public String agencyId;
+
+  @ColumnInfo(name = "route_id")
   public String routeId;
+
+  @ColumnInfo(name = "route_url")
   public String routeUrl;
+
+  @ColumnInfo(name = "route_desc")
   public String routeDesc;
+
+  @ColumnInfo(name = "route_short_name")
   public String routeShortName;
 
   public Route(String routeLongName, int routeType, String routeTextColor,
