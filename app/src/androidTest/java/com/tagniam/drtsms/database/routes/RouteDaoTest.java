@@ -35,7 +35,7 @@ public class RouteDaoTest {
 
   @Test
   public void insert() throws Exception {
-    mDao.insert(new Route("PULSE", 3, "000000",
+    mDao.insert(new Route("PULSE", "3", "000000",
        "00ffcc", null, "900_merged_992530", null,
         null, "900"));
     List<Route> routes = mDatabase.routeDao().getAllRoutes();

@@ -32,7 +32,7 @@ public abstract class GtfsRoomDatabase extends RoomDatabase {
   public static GtfsRoomDatabase getDatabase(final Context context) {
     if (instance == null) {
       instance = RoomAsset.databaseBuilder(context.getApplicationContext(), GtfsRoomDatabase.class,
-          DB_NAME).openHelperFactory(new AssetSQLiteOpenHelperFactory()).build();
+          DB_NAME).build();
     }
     return instance;
   }
@@ -50,7 +50,7 @@ public abstract class GtfsRoomDatabase extends RoomDatabase {
     @Override
     protected Void doInBackground(final Void... params) {
       mDao.deleteAll();
-      mDao.insert(new Route("Brock",3,"ffffff","006633", null, "112_merged_992564", null, null, "112"));
+      mDao.insert(new Route("Brock","3","ffffff","006633", null, "112_merged_992564", null, null, "112"));
 
       return null;
     }
