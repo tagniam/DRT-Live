@@ -1,6 +1,7 @@
 package com.tagniam.drtsms.database.routes;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 import android.arch.persistence.room.Room;
@@ -34,12 +35,12 @@ public class RouteDaoTest {
   }
 
   @Test
-  public void insert() throws Exception {
+  public void test_findLongNameByShortName() throws Exception {
     mDao.insert(new Route("PULSE", "3", "000000",
        "00ffcc", null, "900_merged_992530", null,
         null, "900"));
-    List<Route> routes = mDatabase.routeDao().getAllRoutes();
-    assertThat(routes.size(), equalTo(1));
+    String longName = mDao.findLongNameByShortName("900");
+    assertThat(longName, is("PULSE"));
   }
 
 }

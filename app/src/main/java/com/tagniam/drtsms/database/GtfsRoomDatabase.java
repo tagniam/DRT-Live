@@ -9,7 +9,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import com.fstyle.library.helper.AssetSQLiteOpenHelperFactory;
-import com.huma.room_for_asset.RoomAsset;
 import com.tagniam.drtsms.database.routes.Route;
 import com.tagniam.drtsms.database.routes.RouteDao;
 

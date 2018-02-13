@@ -15,9 +15,7 @@ public interface RouteDao {
   @Insert
   void insert(Route route);
 
-  @Query("DELETE FROM routes")
-  void deleteAll();
+  @Query("SELECT route_long_name FROM routes WHERE route_short_name = :shortName LIMIT 1")
+  String findLongNameByShortName(String shortName);
 
-  @Query("SELECT * FROM routes")
-  List<Route> getAllRoutes();
 }
