@@ -30,6 +30,13 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="Northbound"/>
+
+            <TextView
+              android:id="@+id/name"
+              style="@style/NameText"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Brock"/>
         </LinearLayout>
 
         <LinearLayout

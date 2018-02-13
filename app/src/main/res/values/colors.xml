@@ -6,6 +6,7 @@
     <color name="colorTimeText">#F07925</color>
     <color name="colorRouteText">#FFF</color>
     <color name="colorDirectionText">#FFF</color>
+    <color name="colorNameText">#FFF</color>
     <color name="colorRouteDirectionBg">#00703C</color>
     <color name="colorDotActive">#EE6B00</color>
     <color name="colorDotNonActive">#D1D3D4</color>

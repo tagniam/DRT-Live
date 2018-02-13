@@ -1,6 +1,7 @@
 package com.tagniam.drtsms.adapter;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.tagniam.drtsms.R;
+import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.schedule.data.BusTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +25,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   private Context context;
   private List<BusTime> busTimes = new ArrayList<>();
   private Date now;
+  private GtfsRoomDatabase db;
 
   /**
    * Setup the adapter with a list of bus times.
@@ -34,6 +37,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     this.context = context;
     this.busTimes = busTimes;
     this.now = now;
+    this.db = GtfsRoomDatabase.getDatabase(context);
   }
 
   /**
@@ -54,9 +58,23 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
    * @param holder current BusTimeHolder
    * @param busTime current BusTime data to display
    */
-  private void setupRouteDirectionLayout(BusTimeHolder holder, BusTime busTime) {
-    holder.route.setText(busTime.getRoute());
+  private void setupRouteDirectionLayout(final BusTimeHolder holder, BusTime busTime) {
     holder.direction.setText(busTime.getDirection());
+
+    final String shortName = busTime.getRoute();
+    holder.route.setText(shortName);
+    // Set long name with database
+    new AsyncTask<Void, Void, String>() {
+      @Override
+      protected String doInBackground(Void... params) {
+        return db.routeDao().findLongNameByShortName(shortName);
+      }
+
+      @Override
+      protected void onPostExecute(String longName) {
+        holder.name.setText(longName);
+      }
+    };
   }
 
   /**
@@ -150,6 +168,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
     TextView route;
     TextView direction;
+    TextView name;
     ViewPager timePager;
     LinearLayout timeDots;
 
@@ -157,6 +176,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
       super(itemView);
       route = itemView.findViewById(R.id.route);
       direction = itemView.findViewById(R.id.direction);
+      name = itemView.findViewById(R.id.name);
       timePager = itemView.findViewById(R.id.timePager);
       timeDots = itemView.findViewById(R.id.timeDots);
     }
