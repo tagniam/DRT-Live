@@ -18,6 +18,9 @@ public interface BusTime {
   String EASTBOUND = "EB";
   String SOUTHBOUND = "SB";
   String WESTBOUND = "WB";
+  String COUNTER_CLOCKWISE = "Counter Clockwise";
+  String CLOCKWISE = "Clockwise";
+  String LOOP = "LP";
 
   String getRoute();
 

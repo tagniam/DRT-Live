@@ -26,6 +26,7 @@
 
   <!-- Direction text style. -->
   <style name="DirectionText" parent="AppTheme">
+    <item name="android:textAllCaps">true</item>
     <item name="android:gravity">center_horizontal</item>
     <item name="android:textColor">@color/colorDirectionText</item>
     <item name="android:textSize">@dimen/card_fontSize_extra_small</item>

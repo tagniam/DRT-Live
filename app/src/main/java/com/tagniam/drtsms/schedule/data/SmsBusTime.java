@@ -62,13 +62,19 @@ public class SmsBusTime implements BusTime, Serializable {
   private String directionLongForm(String direction) {
     switch (direction) {
       case NORTHBOUND:
-        return "NORTHBOUND";
+        return "Northbound";
       case WESTBOUND:
-        return "WESTBOUND";
+        return "Westbound";
       case EASTBOUND:
-        return "EASTBOUND";
+        return "Eastbound";
       case SOUTHBOUND:
-        return "SOUTHBOUND";
+        return "Southbound";
+      case LOOP:
+        return "Loop";
+      case CLOCKWISE:
+        return "Clockwise";
+      case COUNTER_CLOCKWISE:
+        return "Counter Clockwise";
     }
     return direction;
   }
