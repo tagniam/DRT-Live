@@ -60,21 +60,8 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
    */
   private void setupRouteDirectionLayout(final BusTimeHolder holder, BusTime busTime) {
     holder.direction.setText(busTime.getDirection());
-
-    final String shortName = busTime.getRoute();
-    holder.route.setText(shortName);
-    // Set long name with database
-    new AsyncTask<Void, Void, String>() {
-      @Override
-      protected String doInBackground(Void... params) {
-        return db.routeDao().findLongNameByShortName(shortName);
-      }
-
-      @Override
-      protected void onPostExecute(String longName) {
-        holder.name.setText(longName);
-      }
-    };
+    holder.route.setText(busTime.getRoute());
+    new AsyncDisplayRouteNames(db, holder).execute();
   }
 
   /**
@@ -179,6 +166,33 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
       name = itemView.findViewById(R.id.name);
       timePager = itemView.findViewById(R.id.timePager);
       timeDots = itemView.findViewById(R.id.timeDots);
+    }
+  }
+
+  /**
+   * AsyncTask to display the route's long name.
+   */
+  private static class AsyncDisplayRouteNames extends AsyncTask<Void, Void, String> {
+
+    private GtfsRoomDatabase db;
+    private BusTimeHolder holder;
+
+    AsyncDisplayRouteNames(GtfsRoomDatabase db, BusTimeHolder holder) {
+      this.db = db;
+      this.holder = holder;
+    }
+
+    /**
+     * Find bus's long name.
+     */
+    @Override
+    protected String doInBackground(Void... params) {
+      return db.routeDao().findLongNameByShortName(holder.route.getText().toString());
+    }
+
+    @Override
+    protected void onPostExecute(String longName) {
+      holder.name.setText(longName);
     }
   }
 }

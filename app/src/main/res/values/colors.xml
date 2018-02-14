@@ -5,7 +5,7 @@
     <color name="colorAccent">#FCB216</color>
     <color name="colorTimeText">#F07925</color>
     <color name="colorRouteText">#FFF</color>
-    <color name="colorDirectionText">#FFF</color>
+    <color name="colorDirectionText">#F79220</color>
     <color name="colorNameText">#FFF</color>
     <color name="colorRouteDirectionBg">#00703C</color>
     <color name="colorDotActive">#EE6B00</color>
