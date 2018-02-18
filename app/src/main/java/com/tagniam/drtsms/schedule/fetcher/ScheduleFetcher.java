@@ -9,13 +9,12 @@ public abstract class ScheduleFetcher {
       "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SUCCESS_ACTION";
   // Action string for cancellation of schedule fetching
   public static final String SCHEDULE_FETCH_FAIL_ACTION = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_FAIL_ACTION";
-  // Input string for stop id input
-  static final String SCHEDULE_FETCH_STOP_ID = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_STOP_ID";
   // Extra string for schedule data output
   public static final String SCHEDULE_FETCH_RESULT = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_RESULT";
-
+  // Input string for stop id input
+  static final String SCHEDULE_FETCH_STOP_ID = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_STOP_ID";
+  private static final boolean DEBUG = true;
   private Context context;
-  private static final boolean DEBUG = false;
 
   ScheduleFetcher(Context context) {
     this.context = context;
