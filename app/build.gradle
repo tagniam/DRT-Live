@@ -37,4 +37,7 @@ dependencies {
     // Lifecycle components
     implementation "android.arch.lifecycle:extensions:$rootProject.archLifecycleVersion"
     annotationProcessor "android.arch.lifecycle:compiler:$rootProject.archLifecycleVersion"
+
+    // osmdroid
+    implementation 'org.osmdroid:osmdroid-android:6.0.0'
 }

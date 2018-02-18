@@ -10,13 +10,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.schedule.data.Schedule;
-import com.tagniam.drtsms.schedule.fetcher.MockScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
 import java.text.SimpleDateFormat;
@@ -29,11 +30,22 @@ public class MainActivity extends AppCompatActivity {
   private EditText stopIdInput;
   private ScheduleReceiver scheduleReceiver;
   private RecyclerView scheduleView;
+  private Button displayMap;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    // Display route map
+    displayMap = findViewById(R.id.displayMap);
+    displayMap.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Intent intent = new Intent(view.getContext(), MapActivity.class);
+        startActivity(intent);
+      }
+    });
 
     statusLine = findViewById(R.id.statusLine);
     stopIdInput = findViewById(R.id.stopIdInput);
