@@ -1,22 +1,20 @@
 package com.tagniam.drtsms.database;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import com.fstyle.library.helper.AssetSQLiteOpenHelperFactory;
 import com.tagniam.drtsms.database.routes.Route;
 import com.tagniam.drtsms.database.routes.RouteDao;
+import com.tagniam.drtsms.database.stops.Stop;
+import com.tagniam.drtsms.database.stops.StopDao;
 
 /**
  * Created by jr on 28/12/17.
  */
 
-@Database(entities = {Route.class}, version = 1)
+@Database(entities = {Route.class, Stop.class}, version = 1)
 public abstract class GtfsRoomDatabase extends RoomDatabase {
 
   private static final String DB_NAME = "gtfs.db";
@@ -31,5 +29,7 @@ public abstract class GtfsRoomDatabase extends RoomDatabase {
   }
 
   public abstract RouteDao routeDao();
+
+  public abstract StopDao stopDao();
 
 }
