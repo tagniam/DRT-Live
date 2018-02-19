@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     Date now = new Date();
     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.CANADA);
     // Update message
+    statusLine.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
     statusLine.setText(getString(R.string.progress_schedule_fetch_last_updated,
         dateFormat.format(now)));
 
@@ -142,9 +143,12 @@ public class MainActivity extends AppCompatActivity {
           unregisterReceiver(scheduleReceiver);
           break;
         case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
+          statusLine.setVisibility(View.VISIBLE);
+          statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
           statusLine.setText(getString(R.string.progress_schedule_fetch_sms_sent));
           break;
         case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED:
+          statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
           statusLine.setText(getString(R.string.progress_schedule_fetch_sms_delivered));
           break;
         case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
