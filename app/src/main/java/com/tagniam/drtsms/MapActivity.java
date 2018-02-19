@@ -5,10 +5,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -37,6 +37,7 @@ public class MapActivity extends AppCompatActivity {
   private static final double ZOOM = 10.f;
   private static final double ZOOM_2 = 18.f;
   private MapView map;
+  private Button chooseStop;
   private DisposableSingleObserver<List<IGeoPoint>> loadStopsObserver;
   private List<Stop> stops;
   private int selectedStopIdx = -1;
@@ -53,7 +54,9 @@ public class MapActivity extends AppCompatActivity {
     map.setMultiTouchControls(true);
 
     // Choose stop button
-    findViewById(R.id.chooseStop).setOnClickListener(new OnClickListener() {
+    chooseStop = findViewById(R.id.chooseStop);
+    chooseStop.setVisibility(View.GONE);
+    chooseStop.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         chooseStop();
@@ -191,9 +194,11 @@ public class MapActivity extends AppCompatActivity {
         @Override
         public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
           Toast.makeText(map.getContext()
-              , "You clicked " + stops.get(point).stopCode
+              , stops.get(point).stopName
               , Toast.LENGTH_SHORT).show();
-          Log.d("Zoom: ", Double.toString(map.getZoomLevelDouble()));
+
+          // Enable the "choose" button
+          chooseStop.setVisibility(View.VISIBLE);
           selectedStopIdx = point;
         }
       });
