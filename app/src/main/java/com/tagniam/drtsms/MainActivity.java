@@ -13,8 +13,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
   private EditText stopIdInput;
   private ScheduleReceiver scheduleReceiver;
   private RecyclerView scheduleView;
-  private Button displayMap;
+  private ImageView displayMap;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
