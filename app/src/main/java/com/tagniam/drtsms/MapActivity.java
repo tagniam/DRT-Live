@@ -15,7 +15,9 @@ import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay;
@@ -24,18 +26,24 @@ import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
 
 public class MapActivity extends AppCompatActivity {
 
+  private static final GeoPoint CENTER = new GeoPoint(43.90546, -78.9563);
+  private static final double ZOOM = 9.f;
   private MapView map;
-  private GtfsRoomDatabase db;
+  private DisposableSingleObserver<List<IGeoPoint>> loadStopsObserver;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_map);
 
+    // Setup map
     map = findViewById(R.id.map);
     map.setTileSource(TileSourceFactory.MAPNIK);
     map.setBuiltInZoomControls(true);
     map.setMultiTouchControls(true);
+    IMapController controller = map.getController();
+    controller.setCenter(CENTER);
+    controller.setZoom(ZOOM);
 
     // Load stop points from database
     Single<List<IGeoPoint>> loadStops =
@@ -56,9 +64,10 @@ public class MapActivity extends AppCompatActivity {
                 }
               }
             })
-            .subscribeOn(Schedulers.newThread());
+            .subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread());
 
-    DisposableSingleObserver<List<IGeoPoint>> loadStopsObserver = loadStops.subscribeWith(
+    // Display stops on map after querying db
+    loadStopsObserver = loadStops.subscribeWith(
         new DisposableSingleObserver<List<IGeoPoint>>() {
           @Override
           public void onSuccess(List<IGeoPoint> stops) {
@@ -93,12 +102,13 @@ public class MapActivity extends AppCompatActivity {
 
             // add overlay
             map.getOverlays().add(sfpo);
-
           }
 
           @Override
           public void onError(Throwable e) {
-
+            Toast.makeText(map.getContext(), "Something went wrong with the map",
+                Toast.LENGTH_SHORT).show();
+            finish();
           }
         });
   }
@@ -113,6 +123,13 @@ public class MapActivity extends AppCompatActivity {
   protected void onPause() {
     super.onPause();
     map.onPause();
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    map.onDetach();
+    loadStopsObserver.dispose();
   }
 
 }
