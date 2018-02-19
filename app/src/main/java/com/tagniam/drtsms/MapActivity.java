@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Toast;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -82,6 +83,7 @@ public class MapActivity extends AppCompatActivity {
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
       intent.putExtra(Stop.EXTRA_STOP, stops.get(selectedStopIdx));
       startActivity(intent);
+      finish();
     }
   }
 
@@ -101,6 +103,13 @@ public class MapActivity extends AppCompatActivity {
   protected void onDestroy() {
     super.onDestroy();
     loadStopsObserver.dispose();
+  }
+
+  @Override
+  public void finish() {
+    ViewGroup view = (ViewGroup) getWindow().getDecorView();
+    view.removeAllViews();
+    super.finish();
   }
 
   /**
