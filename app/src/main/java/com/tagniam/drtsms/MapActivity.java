@@ -30,6 +30,7 @@ public class MapActivity extends AppCompatActivity {
   private static final double ZOOM = 9.f;
   private MapView map;
   private DisposableSingleObserver<List<IGeoPoint>> loadStopsObserver;
+  private List<Stop> stops;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +55,16 @@ public class MapActivity extends AppCompatActivity {
               public void subscribe(SingleEmitter<List<IGeoPoint>> emitter) throws Exception {
                 try {
                   GtfsRoomDatabase db = GtfsRoomDatabase.getDatabase(getApplicationContext());
-                  List<IGeoPoint> stops = new ArrayList<>();
+                  List<IGeoPoint> points = new ArrayList<>();
+                  stops = new ArrayList<>();
+
                   for (Stop stop : db.stopDao().loadAllStops()) {
-                    stops.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
+                    // Save actual stop objects for later
+                    stops.add(stop);
+                    points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
                   }
-                  emitter.onSuccess(stops);
+
+                  emitter.onSuccess(points);
                 } catch (Exception e) {
                   emitter.onError(e);
                 }
@@ -70,16 +76,14 @@ public class MapActivity extends AppCompatActivity {
     loadStopsObserver = loadStops.subscribeWith(
         new DisposableSingleObserver<List<IGeoPoint>>() {
           @Override
-          public void onSuccess(List<IGeoPoint> stops) {
+          public void onSuccess(List<IGeoPoint> points) {
             // wrap them in a theme
-            SimplePointTheme pt = new SimplePointTheme(stops, true);
+            SimplePointTheme pt = new SimplePointTheme(points, false);
 
             // create label style
             Paint pointStyle = new Paint();
             pointStyle.setStyle(Paint.Style.FILL);
-            pointStyle.setColor(Color.parseColor("#0000ff"));
-            pointStyle.setTextAlign(Paint.Align.CENTER);
-            pointStyle.setTextSize(24);
+            pointStyle.setColor(Color.parseColor("#48C873"));
 
             // set some visual options for the overlay
             // we use here MAXIMUM_OPTIMIZATION algorithm, which works well with >100k points
@@ -95,7 +99,7 @@ public class MapActivity extends AppCompatActivity {
               @Override
               public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
                 Toast.makeText(map.getContext()
-                    , "You clicked " + ((LabelledGeoPoint) points.get(point)).getLabel()
+                    , "You clicked " + stops.get(point).stopCode
                     , Toast.LENGTH_SHORT).show();
               }
             });
