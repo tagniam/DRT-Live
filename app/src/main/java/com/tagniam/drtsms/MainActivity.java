@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
+import com.tagniam.drtsms.database.stops.Stop;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
@@ -66,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
         return false;
       }
     });
+
+    // If we came from the map activity, set the stop number automatically and fetch
+    Intent intent = getIntent();
+    Stop stop = (Stop) intent.getSerializableExtra(Stop.EXTRA_STOP);
+    if (stop != null) {
+      stopIdInput.setText(stop.stopCode);
+      fetchSchedule();
+    }
 
     setupScheduleView();
     listenForScheduleFetches();

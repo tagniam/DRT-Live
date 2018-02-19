@@ -1,9 +1,12 @@
 package com.tagniam.drtsms;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Toast;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -31,6 +34,7 @@ public class MapActivity extends AppCompatActivity {
   private MapView map;
   private DisposableSingleObserver<List<IGeoPoint>> loadStopsObserver;
   private List<Stop> stops;
+  private int selectedStopIdx = -1;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,14 @@ public class MapActivity extends AppCompatActivity {
     controller.setCenter(CENTER);
     controller.setZoom(ZOOM);
 
+    // Choose stop button
+    findViewById(R.id.chooseStop).setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        chooseStop();
+      }
+    });
+
     setupMapPoints();
   }
 
@@ -59,6 +71,18 @@ public class MapActivity extends AppCompatActivity {
 
     // Display stops on map after querying db
     loadStopsObserver = loadStops.subscribeWith(new DisplayStops());
+  }
+
+  /**
+   * Choose the current stop for schedule fetching, back in the main activity.
+   */
+  private void chooseStop() {
+    if (selectedStopIdx != -1) {
+      Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      intent.putExtra(Stop.EXTRA_STOP, stops.get(selectedStopIdx));
+      startActivity(intent);
+    }
   }
 
   @Override
@@ -76,7 +100,6 @@ public class MapActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    map.onDetach();
     loadStopsObserver.dispose();
   }
 
@@ -136,6 +159,7 @@ public class MapActivity extends AppCompatActivity {
           Toast.makeText(map.getContext()
               , "You clicked " + stops.get(point).stopCode
               , Toast.LENGTH_SHORT).show();
+          selectedStopIdx = point;
         }
       });
 

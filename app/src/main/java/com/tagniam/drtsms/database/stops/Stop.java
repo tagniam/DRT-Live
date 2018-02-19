@@ -4,19 +4,20 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+import java.io.Serializable;
 
 /**
  * Created by jr on 18/02/18.
  */
 
 @Entity(tableName = "stops")
-public class Stop {
+public class Stop implements Serializable {
 
+  public static String EXTRA_STOP = "com.tagniam.drtsms.schedule.database.stops.stop";
   @PrimaryKey
   @NonNull
   @ColumnInfo(name = "stop_id")
   public String stopId;
-
   @ColumnInfo(name = "stop_lat")
   public double stopLat;
   @ColumnInfo(name = "wheelchair_boarding")
