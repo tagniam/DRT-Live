@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions;
@@ -31,7 +34,8 @@ import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
 public class MapActivity extends AppCompatActivity {
 
   private static final GeoPoint CENTER = new GeoPoint(43.90546, -78.9563);
-  private static final double ZOOM = 9.f;
+  private static final double ZOOM = 10.f;
+  private static final double ZOOM_2 = 18.f;
   private MapView map;
   private DisposableSingleObserver<List<IGeoPoint>> loadStopsObserver;
   private List<Stop> stops;
@@ -47,9 +51,6 @@ public class MapActivity extends AppCompatActivity {
     map.setTileSource(TileSourceFactory.MAPNIK);
     map.setBuiltInZoomControls(true);
     map.setMultiTouchControls(true);
-    IMapController controller = map.getController();
-    controller.setCenter(CENTER);
-    controller.setZoom(ZOOM);
 
     // Choose stop button
     findViewById(R.id.chooseStop).setOnClickListener(new OnClickListener() {
@@ -60,6 +61,7 @@ public class MapActivity extends AppCompatActivity {
     });
 
     setupMapPoints();
+    setupMyLocationOverlay();
   }
 
   /**
@@ -72,6 +74,29 @@ public class MapActivity extends AppCompatActivity {
 
     // Display stops on map after querying db
     loadStopsObserver = loadStops.subscribeWith(new DisplayStops());
+  }
+
+  /**
+   * Displays a 'my location button' on the map.
+   */
+  private void setupMyLocationOverlay() {
+    MyLocationNewOverlay myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(
+        getApplicationContext()), map);
+    myLocationNewOverlay.enableFollowLocation();
+    myLocationNewOverlay.enableMyLocation();
+    IMapController controller = map.getController();
+
+    if (myLocationNewOverlay.isMyLocationEnabled()) {
+      map.getOverlays().add(myLocationNewOverlay);
+
+      // Set center of the map
+      controller.setCenter(myLocationNewOverlay.getMyLocation());
+      controller.setZoom(ZOOM_2);
+    } else {
+      // Default to area center
+      controller.setCenter(CENTER);
+      controller.setZoom(ZOOM);
+    }
   }
 
   /**
@@ -168,6 +193,7 @@ public class MapActivity extends AppCompatActivity {
           Toast.makeText(map.getContext()
               , "You clicked " + stops.get(point).stopCode
               , Toast.LENGTH_SHORT).show();
+          Log.d("Zoom: ", Double.toString(map.getZoomLevelDouble()));
           selectedStopIdx = point;
         }
       });
