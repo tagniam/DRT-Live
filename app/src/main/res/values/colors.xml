@@ -3,6 +3,7 @@
     <color name="colorPrimary">#00703C</color>
     <color name="colorPrimaryDark">#005A30</color>
     <color name="colorAccent">#FCB216</color>
+    <color name="colorError">#ED2349</color>
     <color name="colorTimeText">#F07925</color>
     <color name="colorRouteText">#FFF</color>
     <color name="colorDirectionText">#FCB216</color>

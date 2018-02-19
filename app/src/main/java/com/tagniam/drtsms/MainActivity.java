@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
       switch (intent.getAction()) {
         case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
           statusLine.setText(getString(R.string.progress_schedule_fetch_fail));
-          unregisterReceiver(scheduleReceiver);
+          statusLine.setBackgroundColor(getResources().getColor(R.color.colorError));
           break;
         case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
           statusLine.setVisibility(View.VISIBLE);
