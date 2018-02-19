@@ -46,75 +46,19 @@ public class MapActivity extends AppCompatActivity {
     controller.setCenter(CENTER);
     controller.setZoom(ZOOM);
 
+    setupMapPoints();
+  }
+
+  /**
+   * Display the stop points on the map.
+   */
+  private void setupMapPoints() {
     // Load stop points from database
-    Single<List<IGeoPoint>> loadStops =
-        Single.create(
-            new SingleOnSubscribe<List<IGeoPoint>>() {
-
-              @Override
-              public void subscribe(SingleEmitter<List<IGeoPoint>> emitter) throws Exception {
-                try {
-                  GtfsRoomDatabase db = GtfsRoomDatabase.getDatabase(getApplicationContext());
-                  List<IGeoPoint> points = new ArrayList<>();
-                  stops = new ArrayList<>();
-
-                  for (Stop stop : db.stopDao().loadAllStops()) {
-                    // Save actual stop objects for later
-                    stops.add(stop);
-                    points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
-                  }
-
-                  emitter.onSuccess(points);
-                } catch (Exception e) {
-                  emitter.onError(e);
-                }
-              }
-            })
-            .subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread());
+    Single<List<IGeoPoint>> loadStops = Single.create(new LoadStops())
+        .subscribeOn(Schedulers.newThread()).subscribeOn(Schedulers.newThread());
 
     // Display stops on map after querying db
-    loadStopsObserver = loadStops.subscribeWith(
-        new DisposableSingleObserver<List<IGeoPoint>>() {
-          @Override
-          public void onSuccess(List<IGeoPoint> points) {
-            // wrap them in a theme
-            SimplePointTheme pt = new SimplePointTheme(points, false);
-
-            // create label style
-            Paint pointStyle = new Paint();
-            pointStyle.setStyle(Paint.Style.FILL);
-            pointStyle.setColor(Color.parseColor("#48C873"));
-
-            // set some visual options for the overlay
-            // we use here MAXIMUM_OPTIMIZATION algorithm, which works well with >100k points
-            SimpleFastPointOverlayOptions opt = SimpleFastPointOverlayOptions.getDefaultStyle()
-                .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
-                .setRadius(7).setIsClickable(true).setCellSize(15).setPointStyle(pointStyle);
-
-            // create the overlay with the theme
-            final SimpleFastPointOverlay sfpo = new SimpleFastPointOverlay(pt, opt);
-
-            // onClick callback
-            sfpo.setOnClickListener(new SimpleFastPointOverlay.OnClickListener() {
-              @Override
-              public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
-                Toast.makeText(map.getContext()
-                    , "You clicked " + stops.get(point).stopCode
-                    , Toast.LENGTH_SHORT).show();
-              }
-            });
-
-            // add overlay
-            map.getOverlays().add(sfpo);
-          }
-
-          @Override
-          public void onError(Throwable e) {
-            Toast.makeText(map.getContext(), "Something went wrong with the map",
-                Toast.LENGTH_SHORT).show();
-            finish();
-          }
-        });
+    loadStopsObserver = loadStops.subscribeWith(new DisplayStops());
   }
 
   @Override
@@ -136,4 +80,78 @@ public class MapActivity extends AppCompatActivity {
     loadStopsObserver.dispose();
   }
 
+  /**
+   * Loads stops and corresponding geo-points from the database.
+   */
+  private class LoadStops implements SingleOnSubscribe<List<IGeoPoint>> {
+
+    @Override
+    public void subscribe(SingleEmitter<List<IGeoPoint>> emitter) throws Exception {
+      try {
+        GtfsRoomDatabase db = GtfsRoomDatabase.getDatabase(getApplicationContext());
+        List<IGeoPoint> points = new ArrayList<>();
+        stops = new ArrayList<>();
+
+        for (Stop stop : db.stopDao().loadAllStops()) {
+          // Save actual stop objects for later
+          stops.add(stop);
+          points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
+        }
+
+        emitter.onSuccess(points);
+      } catch (Exception e) {
+        emitter.onError(e);
+      }
+    }
+  }
+
+  /**
+   * Loads the points onto the map UI.
+   */
+  private class DisplayStops extends DisposableSingleObserver<List<IGeoPoint>> {
+
+    @Override
+    public void onSuccess(List<IGeoPoint> points) {
+      // wrap them in a theme
+      SimplePointTheme pt = new SimplePointTheme(points, false);
+
+      // create label style
+      Paint pointStyle = new Paint();
+      pointStyle.setStyle(Paint.Style.FILL);
+      pointStyle.setColor(Color.parseColor("#48C873"));
+
+      // set some visual options for the overlay
+      // we use here MAXIMUM_OPTIMIZATION algorithm, which works well with >100k points
+      SimpleFastPointOverlayOptions opt = SimpleFastPointOverlayOptions.getDefaultStyle()
+          .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
+          .setRadius(7).setIsClickable(true).setCellSize(15).setPointStyle(pointStyle);
+
+      // create the overlay with the theme
+      final SimpleFastPointOverlay sfpo = new SimpleFastPointOverlay(pt, opt);
+
+      // onClick callback
+      sfpo.setOnClickListener(new SimpleFastPointOverlay.OnClickListener() {
+        @Override
+        public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
+          Toast.makeText(map.getContext()
+              , "You clicked " + stops.get(point).stopCode
+              , Toast.LENGTH_SHORT).show();
+        }
+      });
+
+      // add overlay
+      map.getOverlays().add(sfpo);
+    }
+
+    @Override
+    public void onError(final Throwable e) {
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          Toast.makeText(map.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+          finish();
+        }
+      });
+    }
+  }
 }
