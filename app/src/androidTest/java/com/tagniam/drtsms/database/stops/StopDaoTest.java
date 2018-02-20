@@ -19,12 +19,25 @@ public class StopDaoTest {
 
   private GtfsRoomDatabase mDatabase;
   private StopDao mDao;
+  private List<Stop> stops;
 
   @Before
   public void setUp() throws Exception {
     mDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
         GtfsRoomDatabase.class).build();
     mDao = mDatabase.stopDao();
+
+    // Setup mock data
+    stops = new ArrayList<>();
+    stops.add(new Stop("Pick GO1:1", 43.831147, 1, "2549",
+        -79.084237, null, null, null, null,
+        "Pickering Station", "0", null));
+    stops.add(new Stop("Pick GO2:2", 33.831147, 1, "2548",
+        -69.084237, null, null, null, null,
+        "Pickering Station 2", "0", null));
+    for (Stop stop : stops) {
+      mDao.insert(stop);
+    }
   }
 
   @After
@@ -34,18 +47,6 @@ public class StopDaoTest {
 
   @Test
   public void test_loadAllStops() throws Exception {
-    List<Stop> stops = new ArrayList<>();
-    stops.add(new Stop("Pick GO1:1", 43.831147, 1, "2549",
-        -79.084237, null, null, null, null,
-        "Pickering Station", "0", null));
-    stops.add(new Stop("Pick GO2:2", 33.831147, 1, "2548",
-        -69.084237, null, null, null, null,
-        "Pickering Station 2", "0", null));
-
-    for (Stop stop : stops) {
-      mDao.insert(stop);
-    }
-
     List<Stop> dbStops = mDao.loadAllStops();
     for (int i = 0; i < stops.size(); i++) {
       Stop stop = stops.get(i), dbStop = dbStops.get(i);
@@ -63,7 +64,13 @@ public class StopDaoTest {
       assertThat(dbStop.locationType, is(stop.locationType));
       assertThat(dbStop.zoneId, is(stop.zoneId));
     }
+  }
 
+  @Test
+  public void test_findStopsByNameOrCode() throws Exception {
+    List<Stop> dbStops = mDao.findStopsByNameOrCode("2548");
+    assertThat(dbStops.size(), is(1));
+    assertThat(dbStops.get(0).stopName, is("Pickering Station 2"));
   }
 
 }
