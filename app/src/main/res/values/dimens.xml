@@ -13,5 +13,5 @@
 
   <dimen name="stop_id_input_textSize">20sp</dimen>
   <dimen name="stop_id_input_drawablePadding">10dp</dimen>
-  <dimen name="stop_id_input_padding">15dp</dimen>
+  <dimen name="stop_id_input_padding">5dp</dimen>
 </resources>

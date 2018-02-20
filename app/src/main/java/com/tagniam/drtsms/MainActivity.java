@@ -8,13 +8,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -28,12 +26,27 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
   private TextView statusLine;
-  private EditText stopIdInput;
+  private SearchView stopIdInput;
   private ScheduleReceiver scheduleReceiver;
   private RecyclerView scheduleView;
   private ImageView displayMap;
 
-  @Override
+  // Query listener for searchview
+  private SearchView.OnQueryTextListener onQueryTextListener =
+      new OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+          fetchSchedule(query);
+          return true;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String s) {
+          // TODO display matches
+          return false;
+        }
+      };
+
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
@@ -49,7 +62,12 @@ public class MainActivity extends AppCompatActivity {
     });
 
     statusLine = findViewById(R.id.statusLine);
+
     stopIdInput = findViewById(R.id.stopIdInput);
+    stopIdInput.setOnQueryTextListener(onQueryTextListener);
+    stopIdInput.setIconifiedByDefault(false);
+
+    /*
     stopIdInput.setOnKeyListener(new OnKeyListener() {
       @Override
       public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -67,13 +85,14 @@ public class MainActivity extends AppCompatActivity {
         return false;
       }
     });
+    */
 
     // If we came from the map activity, set the stop number automatically and fetch
     Intent intent = getIntent();
     Stop stop = (Stop) intent.getSerializableExtra(Stop.EXTRA_STOP);
     if (stop != null) {
-      stopIdInput.setText(stop.stopCode);
-      fetchSchedule();
+      stopIdInput.setQuery(stop.stopCode, true);
+      fetchSchedule(stop.stopCode);
     }
 
     setupScheduleView();
@@ -108,9 +127,7 @@ public class MainActivity extends AppCompatActivity {
   /**
    * Fetches the schedule.
    */
-  public void fetchSchedule() {
-    // Grab stop id
-    String stopId = stopIdInput.getText().toString();
+  public void fetchSchedule(String stopId) {
     ScheduleFetcher scheduleFetcher = ScheduleFetcher.getInstance(getApplicationContext());
     scheduleFetcher.fetch(stopId);
   }

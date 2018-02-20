@@ -73,7 +73,7 @@
     <item name="android:drawableStart">@drawable/bus</item>
     <item name="android:drawablePadding">@dimen/stop_id_input_drawablePadding</item>
     <item name="android:padding">@dimen/stop_id_input_padding</item>
-    <item name="android:hint">@string/stop_id_hint</item>
+    <item name="android:queryHint">@string/stop_id_hint</item>
     <item name="android:inputType">number</item>
   </style>
 

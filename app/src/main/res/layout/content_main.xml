@@ -5,12 +5,6 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-    <EditText
-      android:id="@+id/stopIdInput"
-      style="@style/StopIdInput"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"/>
-
     <android.support.v7.widget.RecyclerView
       android:id="@+id/scheduleDisplay"
       android:layout_width="match_parent"
@@ -26,45 +20,21 @@
       style="@style/StatusLine"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"/>
+    <SearchView
+      android:id="@+id/stopIdInput"
+      style="@style/StopIdInput"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    </SearchView>
+
     <ImageView
       android:id="@+id/displayMap"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_weight="1"
       android:layout_marginBottom="15dp"
-      android:layout_marginEnd="17dp"
+      android:layout_marginEnd="60dp"
       android:layout_above="@+id/scheduleDisplay"
       android:layout_alignParentEnd="true"
       app:srcCompat="@drawable/location"/>
-
 </android.widget.RelativeLayout>
-
-<!--
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <EditText
-        android:id="@+id/stopIdInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:ems="10"
-        android:inputType="number" />
-
-    <Button
-        android:id="@+id/fetchSchedule"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:onClick="fetchSchedule"
-        android:text="Fetch" />
-
-    <TextView
-        android:id="@+id/scheduleDisplay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Enter a stop id..." />
-
-</LinearLayout>-->
