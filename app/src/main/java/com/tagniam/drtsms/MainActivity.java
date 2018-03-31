@@ -5,21 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
@@ -27,21 +22,9 @@ import com.tagniam.drtsms.database.stops.Stop;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
           return true;
         }
 
+        /**
+         * Query the database for stop IDs/names containing the given query.
+         * @param query
+         */
         private void findMatchingStops(String query) {
           final String dbQuery = "%" + query + "%";
           final Handler handler = new Handler();
@@ -77,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
               final Cursor cursor = GtfsRoomDatabase.getDatabase(getApplicationContext()).
                   stopDao().
-                  findStopsByNameOrCodeCursor(dbQuery);
+                  findStopsByNameOrId(dbQuery);
 
               handler.post(new Runnable() {
                 @Override

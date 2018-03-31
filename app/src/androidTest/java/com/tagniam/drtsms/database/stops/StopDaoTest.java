@@ -67,17 +67,20 @@ public class StopDaoTest {
   }
 
   @Test
-  public void test_findStopsByNameOrCode() throws Exception {
-    List<Stop> dbStops = mDao.findStopsByNameOrCode("2548");
-    assertThat(dbStops.size(), is(1));
-    assertThat(dbStops.get(0).stopName, is("Pickering Station 2"));
-  }
-
-  @Test
-  public void test_findStopsByNameOrCodeCursor() throws Exception {
-    Cursor cursor = mDao.findStopsByNameOrCodeCursor("2548");
+  public void test_findStopsByNameOrId_Name() throws Exception {
+    Cursor cursor = mDao.findStopsByNameOrId("%Station 2%");
     assertThat(cursor.moveToFirst(), is(true));
     String stopName = cursor.getString(cursor.getColumnIndexOrThrow("stop_name"));
+    cursor.close();
     assertThat(stopName, is("Pickering Station 2"));
   }
+  @Test
+  public void test_findStopsByNameOrId_Id() throws Exception {
+    Cursor cursor = mDao.findStopsByNameOrId("%2548%");
+    assertThat(cursor.moveToFirst(), is(true));
+    String stopName = cursor.getString(cursor.getColumnIndexOrThrow("stop_name"));
+    cursor.close();
+    assertThat(stopName, is("Pickering Station 2"));
+  }
+
 }

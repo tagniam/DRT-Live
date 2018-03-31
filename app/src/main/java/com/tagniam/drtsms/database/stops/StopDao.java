@@ -21,9 +21,6 @@ public interface StopDao {
   @Query("SELECT * FROM stops")
   List<Stop> loadAllStops();
 
-  @Query("SELECT * FROM stops WHERE stop_name LIKE :query OR stop_code LIKE :query")
-  List<Stop> findStopsByNameOrCode(String query);
-
   @Query("SELECT stop_id AS _id, * FROM stops WHERE stop_name LIKE :query OR stop_code LIKE :query")
-  Cursor findStopsByNameOrCodeCursor(String query);
+  Cursor findStopsByNameOrId(String query);
 }
