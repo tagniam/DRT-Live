@@ -7,8 +7,11 @@ import java.util.Date;
 import java.util.List;
 import org.junit.Test;
 
-/** Created by jr on 06/12/17. */
+/**
+ * Created by jr on 06/12/17.
+ */
 public class SmsBusTimeTest {
+
   private final String TEST_MSG_1 = "Rt 900 WB: 7:09p| 12:25a| 5:59a";
   private final String TEST_MSG_2 = "Rt 916 Counter Clockwise: 7:16p| 7:44p| 8:12p| 8:42p";
 

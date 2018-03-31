@@ -10,8 +10,11 @@ import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/** Created by jr on 01/12/17. */
+/**
+ * Created by jr on 01/12/17.
+ */
 public class MockScheduleFetcher extends ScheduleFetcher {
+
   private static final String MOCK_MSG =
       "Stop MOCK1604:\r\n"
           + "Rt 900 WB: 7:09p| 7:25p| 7:40p| 7:54p| 8:09p| 8:29p| 8:49p\r\n"
@@ -38,12 +41,14 @@ public class MockScheduleFetcher extends ScheduleFetcher {
           public void run() {
             // Emulate sending sms
             if (step == 0) {
-              getApplicationContext().sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT));
+              getApplicationContext()
+                  .sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT));
             }
 
             // Emulate delivered sms
             else if (step == 1) {
-              getApplicationContext().sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED));
+              getApplicationContext()
+                  .sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED));
             }
 
             // Emulate success sms, send result back and end timer

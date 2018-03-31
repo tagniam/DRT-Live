@@ -22,21 +22,21 @@ public class RouteDaoTest {
   private RouteDao mDao;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     mDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
         GtfsRoomDatabase.class).build();
     mDao = mDatabase.routeDao();
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     mDatabase.close();
   }
 
   @Test
-  public void test_findLongNameByShortName() throws Exception {
+  public void test_findLongNameByShortName() {
     mDao.insert(new Route("PULSE", "3", "000000",
-       "00ffcc", null, "900_merged_992530", null,
+        "00ffcc", null, "900_merged_992530", null,
         null, "900"));
     String longName = mDao.findLongNameByShortName("900");
     assertThat(longName, is("PULSE"));

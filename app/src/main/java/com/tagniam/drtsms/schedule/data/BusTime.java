@@ -9,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/** Created by jr on 06/12/17. */
-
 /** Specifies the times and information for buses. */
 public interface BusTime {
+
   // Directions
   String NORTHBOUND = "NB";
   String EASTBOUND = "EB";
@@ -69,7 +68,7 @@ public interface BusTime {
 
       if (hours == 0) {
         str.append(minutes).append(" min");
-      } else if (hours != 0 && minutes == 0) {
+      } else if (minutes == 0) {
         str.append(hours).append(" hr");
       } else {
         str.append(hours).append(" hr ").append(minutes).append(" min");

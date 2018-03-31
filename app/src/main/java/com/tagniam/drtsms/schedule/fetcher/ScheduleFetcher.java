@@ -2,8 +2,11 @@ package com.tagniam.drtsms.schedule.fetcher;
 
 import android.content.Context;
 
-/** Created by jr on 01/12/17. */
+/**
+ * Created by jr on 01/12/17.
+ */
 public abstract class ScheduleFetcher {
+
   // Action string for completion of schedule fetching
   public static final String SCHEDULE_FETCH_SUCCESS_ACTION =
       "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SUCCESS_ACTION";
@@ -30,9 +33,7 @@ public abstract class ScheduleFetcher {
   public static ScheduleFetcher getInstance(Context context) {
     if (DEBUG) {
       return new MockScheduleFetcher(context);
-    }
-
-    else {
+    } else {
       return new SmsScheduleFetcher(context);
     }
   }

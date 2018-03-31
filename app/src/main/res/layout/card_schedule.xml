@@ -6,60 +6,58 @@
   android:layout_width="match_parent"
   >
 
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
     <LinearLayout
-      android:layout_width="match_parent"
+      style="@style/RouteDirection"
+      android:layout_width="0dp"
       android:layout_height="match_parent"
-      android:orientation="horizontal">
+      android:layout_weight="0.3"
+      android:orientation="vertical">
+      <TextView
+        android:id="@+id/route"
+        style="@style/RouteText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-        <LinearLayout
-          style="@style/RouteDirection"
-          android:layout_width="0dp"
-          android:layout_height="match_parent"
-          android:layout_weight="0.3"
-          android:orientation="vertical">
-            <TextView
-              android:id="@+id/route"
-              style="@style/RouteText"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="112"/>
-
-            <TextView
-              android:id="@+id/name"
-              style="@style/NameText"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="Brock"/>
-            <TextView
-              android:id="@+id/direction"
-              style="@style/DirectionText"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="COUNTER CLOCKWISE"/>
-        </LinearLayout>
-
-        <LinearLayout
-          android:layout_width="0dp"
-          android:layout_height="match_parent"
-          android:layout_weight="0.7"
-          android:orientation="vertical">
-
-            <android.support.v4.view.ViewPager
-              android:id="@+id/timePager"
-              android:layout_width="match_parent"
-              android:layout_height="0dp"
-              android:layout_weight="0.85"/>
-
-            <LinearLayout
-              android:id="@+id/timeDots"
-              style="@style/TimeDots"
-              android:layout_width="match_parent"
-              android:layout_height="0dp"
-              android:layout_weight="0.15"
-              android:orientation="horizontal">
-
-            </LinearLayout>
-        </LinearLayout>
+      <TextView
+        android:id="@+id/name"
+        style="@style/NameText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+      <TextView
+        android:id="@+id/direction"
+        style="@style/DirectionText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="0.7"
+      android:orientation="vertical">
+
+      <android.support.v4.view.ViewPager
+        android:id="@+id/timePager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.85"/>
+
+      <LinearLayout
+        android:id="@+id/timeDots"
+        style="@style/TimeDots"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.15"
+        android:orientation="horizontal">
+
+      </LinearLayout>
+    </LinearLayout>
+  </LinearLayout>
 
 </android.support.v7.widget.CardView>

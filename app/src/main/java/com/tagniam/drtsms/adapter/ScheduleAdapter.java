@@ -15,20 +15,22 @@ import android.widget.TextView;
 import com.tagniam.drtsms.R;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.schedule.data.BusTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/** Created by jr on 07/12/17. */
+/**
+ * Created by jr on 07/12/17.
+ */
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTimeHolder> {
 
   private Context context;
-  private List<BusTime> busTimes = new ArrayList<>();
+  private List<BusTime> busTimes;
   private Date now;
   private GtfsRoomDatabase db;
 
   /**
    * Setup the adapter with a list of bus times.
+   *
    * @param context application context
    * @param busTimes list of bus time objects
    * @param now the current time
@@ -42,6 +44,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
   /**
    * Initializes the view holder and specifies the layout of each item in the schedule view.
+   *
    * @param parent parent ViewGroup
    * @param viewType type of view
    * @return BusTimeHolder with card view layout
@@ -49,7 +52,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   @Override
   public BusTimeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     return new BusTimeHolder(LayoutInflater.from(parent.getContext()).inflate(
-            R.layout.card_schedule, parent, false));
+        R.layout.card_schedule, parent, false));
   }
 
   /**
@@ -66,6 +69,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
   /**
    * Sets up the layout of the time display and tab indicators.
+   *
    * @param holder current BusTimeHolder
    * @param busTime current BusTime data to display
    */
@@ -141,6 +145,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
   /**
    * Returns the number of bus times in the schedule view.
+   *
    * @return # of bus times in schedule view
    */
   @Override

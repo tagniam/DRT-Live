@@ -23,7 +23,7 @@ public class StopDaoTest {
   private List<Stop> stops;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     mDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
         GtfsRoomDatabase.class).build();
     mDao = mDatabase.stopDao();
@@ -41,12 +41,12 @@ public class StopDaoTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     mDatabase.close();
   }
 
   @Test
-  public void test_loadAllStops() throws Exception {
+  public void test_loadAllStops() {
     List<Stop> dbStops = mDao.loadAllStops();
     for (int i = 0; i < stops.size(); i++) {
       Stop stop = stops.get(i), dbStop = dbStops.get(i);
@@ -67,15 +67,16 @@ public class StopDaoTest {
   }
 
   @Test
-  public void test_findStopsByNameOrId_Name() throws Exception {
+  public void test_findStopsByNameOrId_Name() {
     Cursor cursor = mDao.findStopsByNameOrId("%Station 2%");
     assertThat(cursor.moveToFirst(), is(true));
     String stopName = cursor.getString(cursor.getColumnIndexOrThrow("stop_name"));
     cursor.close();
     assertThat(stopName, is("Pickering Station 2"));
   }
+
   @Test
-  public void test_findStopsByNameOrId_Id() throws Exception {
+  public void test_findStopsByNameOrId_Id() {
     Cursor cursor = mDao.findStopsByNameOrId("%2548%");
     assertThat(cursor.moveToFirst(), is(true));
     String stopName = cursor.getString(cursor.getColumnIndexOrThrow("stop_name"));

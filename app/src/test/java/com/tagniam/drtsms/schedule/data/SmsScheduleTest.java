@@ -6,8 +6,11 @@ import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import org.junit.Test;
 
-/** Created by jr on 06/12/17. */
+/**
+ * Created by jr on 06/12/17.
+ */
 public class SmsScheduleTest {
+
   private final String TEST_MSG =
       "Stop MOCK1604:\r\n"
           + "Rt 900 WB: 7:09p| 7:25p| 7:40p| 7:54p| 8:09p| 8:29p| 8:49p\r\n"

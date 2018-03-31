@@ -6,8 +6,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Created by jr on 06/12/17. */
+/**
+ * Created by jr on 06/12/17.
+ */
 public class SmsSchedule implements Schedule, Serializable {
+
   private static final String STOP_NOT_FOUND_REGEX = "Stop Number .* not found\\.";
   private static final String STOP_TIMES_NOT_AVAILABLE = "There were no passing times by stop .*\\.";
   private List<BusTime> busTimes = new ArrayList<>();

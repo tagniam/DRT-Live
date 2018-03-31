@@ -17,6 +17,7 @@ import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import java.io.Serializable;
 
 public class SmsScheduleService extends IntentService {
+
   private final String DRT_PHONE_NO = "8447460497";
   private DrtSmsReceiver drtSmsReceiver;
   private BroadcastReceiver drtSmsSender;
@@ -83,15 +84,20 @@ public class SmsScheduleService extends IntentService {
     smsSender.sendTextMessage(DRT_PHONE_NO, null, stopId, sentPI, deliveredPI);
   }
 
-  /** Registers a BroadcastReceiver and waits for the DRT sms to be received. */
+  /**
+   * Registers a BroadcastReceiver and waits for the DRT sms to be received.
+   */
   private void registerDrtSmsReceiver() {
     drtSmsReceiver = new DrtSmsReceiver();
     IntentFilter intentFilter = new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
     getApplicationContext().registerReceiver(drtSmsReceiver, intentFilter);
   }
 
-  /** Used to execute code on receiving the SMS from DRT. */
+  /**
+   * Used to execute code on receiving the SMS from DRT.
+   */
   private class DrtSmsReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
       if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {

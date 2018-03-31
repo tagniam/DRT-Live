@@ -8,12 +8,10 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.tagniam.drtsms.MainActivity;
 import com.tagniam.drtsms.R;
-import com.tagniam.drtsms.database.stops.Stop;
 
 public class StopCursorAdapter extends CursorAdapter {
+
   private LayoutInflater layoutInflater;
   private SearchView searchView;
 
@@ -37,7 +35,7 @@ public class StopCursorAdapter extends CursorAdapter {
     searchStopName.setText(stopName);
 
     TextView searchStopId = view.findViewById(R.id.search_stop_id);
-    searchStopId.setText("Stop #" + stopId);
+    searchStopId.setText(context.getResources().getString(R.string.search_stop_id, stopId));
 
     view.setOnClickListener(new View.OnClickListener() {
       @Override

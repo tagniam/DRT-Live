@@ -1,6 +1,5 @@
 package com.tagniam.drtsms;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import com.tagniam.drtsms.database.stops.Stop;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -58,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * Query the database for stop IDs/names containing the given query.
-         * @param query
+         * @param query query from the search view
          */
         private void findMatchingStops(String query) {
           final String dbQuery = "%" + query.replace(" ", "%") + "%";
@@ -106,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
     stopIdInput.setOnQueryTextListener(onQueryTextListener);
 
     // Remove underline from search view
-    int searchPlateId = stopIdInput.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+    int searchPlateId = stopIdInput.getContext().getResources()
+        .getIdentifier("android:id/search_plate", null, null);
     findViewById(searchPlateId).setBackground(null);
 
     // If we came from the map activity, set the stop number automatically and fetch
@@ -168,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
 
   /**
    * Updates the status line based on the action we get from the schedule fetcher.
-   * @param action
    */
   private void updateStatusLine(String action) {
     switch (action) {
@@ -197,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private class ScheduleReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
       String action = intent.getAction();

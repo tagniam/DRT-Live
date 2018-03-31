@@ -9,8 +9,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/** Created by jr on 06/12/17. */
+/**
+ * Created by jr on 06/12/17.
+ */
 public class SmsBusTime implements BusTime, Serializable {
+
   private String route;
   private String direction;
   private List<Date> times = new ArrayList<>();
@@ -19,10 +22,10 @@ public class SmsBusTime implements BusTime, Serializable {
    * Generates the bus time through the given line in a DRT sms.
    *
    * @param msg single line from DRT sms listing bus name, direction and times, in the following
-   *     form:
-   *     <p>Rt {route} {direction}: {time}| {time}| ...
+   * form:
+   * <p>Rt {route} {direction}: {time}| {time}| ...
    */
-  public SmsBusTime(String msg) {
+  SmsBusTime(String msg) {
     String[] info = msg.split(": ");
 
     // Parse first part, contains route and direction
@@ -83,7 +86,7 @@ public class SmsBusTime implements BusTime, Serializable {
    * Extracts the times of the bus time.
    *
    * @param info single line in the form: {time}| {time}| {time}| ... where each time is in the
-   *     form: hh:mm{a|p}
+   * form: hh:mm{a|p}
    */
   private void parseTimes(String info) {
     String[] timeParts = info.split("\\| ");
@@ -160,10 +163,8 @@ public class SmsBusTime implements BusTime, Serializable {
 
   @Override
   public String toString() {
-    StringBuilder ret = new StringBuilder();
-    ret.append("Route: ").append(route).append(", ");
-    ret.append("Direction: ").append(direction).append(", ");
-    ret.append("Times: ").append(times);
-    return ret.toString();
+    return "Route: " + route + ", " +
+        "Direction: " + direction + ", " +
+        "Times: " + times;
   }
 }
