@@ -61,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
          * @param query
          */
         private void findMatchingStops(String query) {
-          query = query.replace(" ", "%");
-          final String dbQuery = "%" + query + "%";
+          final String dbQuery = "%" + query.replace(" ", "%") + "%";
 
           final Handler handler = new Handler();
 
