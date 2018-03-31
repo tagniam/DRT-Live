@@ -121,43 +121,56 @@ public class MainActivity extends AppCompatActivity {
    * @param schedule fetched schedule
    */
   private void populateScheduleView(Schedule schedule) {
-    Date now = new Date();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.CANADA);
-    // Update message
-    statusLine.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-    statusLine.setText(getString(R.string.progress_schedule_fetch_last_updated,
-        dateFormat.format(now)));
-
     // Get bus time objects
     ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
-        schedule.getBusTimes(), now);
+        schedule.getBusTimes(), new Date());
     scheduleView.setAdapter(scheduleAdapter);
+  }
+
+  /**
+   * Updates the status line based on the action we get from the schedule fetcher.
+   * @param action
+   */
+  private void updateStatusLine(String action) {
+    switch (action) {
+      case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
+        statusLine.setText(getString(R.string.progress_schedule_fetch_fail));
+        statusLine.setBackgroundColor(getResources().getColor(R.color.colorError));
+        break;
+      case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
+        statusLine.setVisibility(View.VISIBLE);
+        statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        statusLine.setText(getString(R.string.progress_schedule_fetch_sms_sent));
+        break;
+      case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED:
+        statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        statusLine.setText(getString(R.string.progress_schedule_fetch_sms_delivered));
+        break;
+      case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.CANADA);
+        statusLine.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        statusLine.setText(getString(R.string.progress_schedule_fetch_last_updated,
+            dateFormat.format(new Date())));
+        break;
+      default:
+        break;
+    }
   }
 
   private class ScheduleReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      switch (intent.getAction()) {
-        case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
-          statusLine.setText(getString(R.string.progress_schedule_fetch_fail));
-          statusLine.setBackgroundColor(getResources().getColor(R.color.colorError));
-          break;
-        case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
-          statusLine.setVisibility(View.VISIBLE);
-          statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-          statusLine.setText(getString(R.string.progress_schedule_fetch_sms_sent));
-          break;
-        case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED:
-          statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-          statusLine.setText(getString(R.string.progress_schedule_fetch_sms_delivered));
-          break;
-        case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
-          Schedule schedule =
-              (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
-          populateScheduleView(schedule);
-          break;
-        default:
-          break;
+      String action = intent.getAction();
+      if (action == null) {
+        return;
+      }
+
+      updateStatusLine(action);
+      // We got the message from DRT! Yay!
+      if (action.equals(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION)) {
+        Schedule schedule =
+            (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
+        populateScheduleView(schedule);
       }
     }
   }
