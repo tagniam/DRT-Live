@@ -27,7 +27,6 @@
       android:layout_height="wrap_content">
     </SearchView>
 
-    <!--
     <ImageView
       android:id="@+id/displayMap"
       android:layout_width="wrap_content"
@@ -37,5 +36,5 @@
       android:layout_marginEnd="60dp"
       android:layout_above="@+id/scheduleDisplay"
       android:layout_alignParentEnd="true"
-      app:srcCompat="@drawable/location"/>-->
+      app:srcCompat="@drawable/location"/>
 </android.widget.RelativeLayout>

@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     // Display route map
-    /*
     displayMap = findViewById(R.id.displayMap);
     displayMap.setOnClickListener(new OnClickListener() {
       @Override
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(view.getContext(), MapActivity.class);
         startActivity(intent);
       }
-    });*/
+    });
 
     statusLine = findViewById(R.id.statusLine);
 
