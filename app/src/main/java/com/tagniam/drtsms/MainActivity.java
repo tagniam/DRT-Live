@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +22,11 @@ import com.tagniam.drtsms.database.stops.Stop;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -59,28 +63,32 @@ public class MainActivity extends AppCompatActivity {
          * @param query query from the search view
          */
         private void findMatchingStops(String query) {
-          final String dbQuery = "%" + query.replace(" ", "%") + "%";
-
-          final Handler handler = new Handler();
+          query = "%" + query.replace(" ", "%") + "%";
 
           // Query the database in a new thread
-          Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-              final Cursor cursor = GtfsRoomDatabase.getDatabase(getApplicationContext()).
-                  stopDao().
-                  findStopsByNameOrId(dbQuery);
-
-              handler.post(new Runnable() {
+          Single.just(query)
+              .map(new Function<String, Cursor>() {
                 @Override
-                public void run() {
+                public Cursor apply(String s) {
+                  return GtfsRoomDatabase.getDatabase(getApplicationContext())
+                      .stopDao().findStopsByNameOrId(s);
+                }
+              })
+              .subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(new DisposableSingleObserver<Cursor>() {
+
+                @Override
+                public void onSuccess(Cursor cursor) {
                   stopIdInput.setSuggestionsAdapter(new StopCursorAdapter(MainActivity.this,
                       cursor, stopIdInput));
                 }
+
+                @Override
+                public void onError(Throwable e) {
+                  updateStatusLine(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
+                }
               });
-            }
-          };
-          new Thread(runnable).start();
         }
       };
 

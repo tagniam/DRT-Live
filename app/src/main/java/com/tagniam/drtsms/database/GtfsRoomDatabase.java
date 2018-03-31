@@ -14,7 +14,7 @@ import com.tagniam.drtsms.database.stops.StopDao;
  * Created by jr on 28/12/17.
  */
 
-@Database(entities = {Route.class, Stop.class}, version = 1)
+@Database(entities = {Route.class, Stop.class}, version = 1, exportSchema = false)
 public abstract class GtfsRoomDatabase extends RoomDatabase {
 
   private static final String DB_NAME = "gtfs.db";
