@@ -9,24 +9,23 @@ import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.tagniam.drtsms.MainActivity;
 import com.tagniam.drtsms.R;
+import com.tagniam.drtsms.database.stops.Stop;
 
 public class StopCursorAdapter extends CursorAdapter {
   private LayoutInflater layoutInflater;
-  private Context context;
   private SearchView searchView;
 
   public StopCursorAdapter(Context context, Cursor cursor, SearchView sv) {
     super(context, cursor, false);
-    this.context = context;
     this.searchView = sv;
     this.layoutInflater = LayoutInflater.from(context);
   }
 
   @Override
   public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    View v = layoutInflater.inflate(R.layout.search_item, parent, false);
-    return v;
+    return layoutInflater.inflate(R.layout.search_item, parent, false);
   }
 
   @Override
@@ -38,16 +37,13 @@ public class StopCursorAdapter extends CursorAdapter {
     searchStopName.setText(stopName);
 
     TextView searchStopId = view.findViewById(R.id.search_stop_id);
-    searchStopId.setText("Id " + stopId);
+    searchStopId.setText(stopId);
 
     view.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        //take next action based user selected item
-        TextView name = view.findViewById(R.id.search_stop_name);
-        searchView.setIconified(true);
-        Toast.makeText(context, "Selected suggestion " + name.getText(),
-            Toast.LENGTH_LONG).show();
+        TextView stopId = view.findViewById(R.id.search_stop_id);
+        searchView.setQuery(stopId.getText(), true);
       }
     });
 
