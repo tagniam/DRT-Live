@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onQueryTextSubmit(String query) {
           fetchSchedule(query);
+          stopIdInput.clearFocus();
           return true;
         }
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     // Display route map
+    /*
     displayMap = findViewById(R.id.displayMap);
     displayMap.setOnClickListener(new OnClickListener() {
       @Override
@@ -59,33 +61,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(view.getContext(), MapActivity.class);
         startActivity(intent);
       }
-    });
+    });*/
 
     statusLine = findViewById(R.id.statusLine);
 
     stopIdInput = findViewById(R.id.stopIdInput);
     stopIdInput.setOnQueryTextListener(onQueryTextListener);
     stopIdInput.setIconifiedByDefault(false);
-
-    /*
-    stopIdInput.setOnKeyListener(new OnKeyListener() {
-      @Override
-      public boolean onKey(View view, int i, KeyEvent keyEvent) {
-        // Get schedule on enter
-        if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) &&
-            (i == KeyEvent.KEYCODE_ENTER)) {
-          // Hide soft keyboard
-          InputMethodManager imm = (InputMethodManager) getSystemService(
-              Context.INPUT_METHOD_SERVICE);
-          imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-          // Fetch schedule
-          fetchSchedule();
-          return true;
-        }
-        return false;
-      }
-    });
-    */
 
     // If we came from the map activity, set the stop number automatically and fetch
     Intent intent = getIntent();
