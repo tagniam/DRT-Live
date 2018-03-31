@@ -72,6 +72,8 @@
     <item name="android:textSize">@dimen/stop_id_input_textSize</item>
     <item name="android:padding">@dimen/stop_id_input_padding</item>
     <item name="android:queryHint">@string/stop_id_hint</item>
+    <item name="android:imeOptions">flagNoExtractUi</item>
+    <item name="android:iconifiedByDefault">false</item>
   </style>
 
   <style name="StatusLine" parent="AppTheme">

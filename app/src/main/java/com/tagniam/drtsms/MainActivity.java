@@ -41,8 +41,11 @@ public class MainActivity extends AppCompatActivity {
       new OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
-          fetchSchedule(query);
-          stopIdInput.clearFocus();
+          // Check that only numbers are in query
+          if (android.text.TextUtils.isDigitsOnly(query)) {
+            fetchSchedule(query);
+            stopIdInput.clearFocus();
+          }
           return true;
         }
 
@@ -100,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
     stopIdInput = findViewById(R.id.stopIdInput);
     stopIdInput.setOnQueryTextListener(onQueryTextListener);
-    stopIdInput.setIconifiedByDefault(false);
 
     // Remove underline from search view
     int searchPlateId = stopIdInput.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
