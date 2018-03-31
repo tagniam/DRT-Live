@@ -16,15 +16,20 @@ import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import com.tagniam.drtsms.MapFragment.OnStopClickListener;
+import android.widget.Toast;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.schedule.data.Schedule;
+import com.tagniam.drtsms.schedule.fetcher.RxMockScheduleFetcher;
+import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.Date;
@@ -33,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
   private TextView statusLine;
   private SearchView stopIdInput;
-  private ScheduleReceiver scheduleReceiver;
+  //private ScheduleReceiver scheduleReceiver;
   private RecyclerView scheduleView;
   private BottomSheetBehavior bottomSheetBehavior;
   private MapFragment map;
@@ -123,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
 
     setupScheduleView();
-    listenForScheduleFetches();
+    //listenForScheduleFetches();
   }
 
   /**
@@ -139,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   /**
    * Start listening to incoming schedule fetches.
    */
+  /*
   private void listenForScheduleFetches() {
     // Start listening for incoming schedule fetches
     scheduleReceiver = new ScheduleReceiver();
@@ -150,13 +156,42 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
     registerReceiver(scheduleReceiver, intentFilter);
   }
+  */
 
   /**
    * Fetches the schedule.
    */
   public void fetchSchedule(String stopId) {
-    ScheduleFetcher scheduleFetcher = ScheduleFetcher.getInstance(getApplicationContext());
-    scheduleFetcher.fetch(stopId);
+    //ScheduleFetcher scheduleFetcher = ScheduleFetcher.getInstance(getApplicationContext());
+    //scheduleFetcher.fetch(stopId);
+
+    Observable.create(new RxMockScheduleFetcher())
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new DisposableObserver<Intent>() {
+          @Override
+          public void onNext(Intent intent) {
+            // Unpack intent
+            if (intent.getAction() == null) {
+              return;
+            }
+            updateStatusLine(intent.getAction());
+            Schedule schedule = RxScheduleFetcher.Intents.getScheduleFromIntent(intent);
+            if (schedule != null) {
+              populateScheduleView(schedule);
+            }
+          }
+
+          @Override
+          public void onError(Throwable e) {
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+          }
+
+          @Override
+          public void onComplete() {
+            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+          }
+        });
   }
 
   /**
@@ -208,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     stopIdInput.setQuery(stopCode, false);
   }
 
+  /*
   private class ScheduleReceiver extends BroadcastReceiver {
 
     @Override
@@ -226,4 +262,5 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
       }
     }
   }
+  */
 }
