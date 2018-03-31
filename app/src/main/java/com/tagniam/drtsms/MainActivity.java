@@ -1,5 +1,6 @@
 package com.tagniam.drtsms;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import com.tagniam.drtsms.database.stops.Stop;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -99,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
     stopIdInput = findViewById(R.id.stopIdInput);
     stopIdInput.setOnQueryTextListener(onQueryTextListener);
     stopIdInput.setIconifiedByDefault(false);
+
+    // Remove underline from search view
+    int searchPlateId = stopIdInput.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+    findViewById(searchPlateId).setBackground(null);
 
     // If we came from the map activity, set the stop number automatically and fetch
     Intent intent = getIntent();
