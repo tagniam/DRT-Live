@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
     Stop stop = (Stop) intent.getSerializableExtra(Stop.EXTRA_STOP);
     if (stop != null) {
       stopIdInput.setQuery(stop.stopCode, true);
-      fetchSchedule(stop.stopCode);
     }
 
     setupScheduleView();

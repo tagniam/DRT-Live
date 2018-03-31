@@ -31,7 +31,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   private Context context;
   private List<BusTime> busTimes;
   private Date now;
-  private GtfsRoomDatabase db;
 
   /**
    * Setup the adapter with a list of bus times.
@@ -44,7 +43,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     this.context = context;
     this.busTimes = busTimes;
     this.now = now;
-    this.db = GtfsRoomDatabase.getDatabase(context);
   }
 
   /**
