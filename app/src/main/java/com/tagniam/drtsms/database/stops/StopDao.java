@@ -1,8 +1,11 @@
 package com.tagniam.drtsms.database.stops;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.database.Cursor;
+import io.reactivex.Single;
 import java.util.List;
 
 /**
@@ -20,4 +23,7 @@ public interface StopDao {
 
   @Query("SELECT * FROM stops WHERE stop_name LIKE :query OR stop_code LIKE :query")
   List<Stop> findStopsByNameOrCode(String query);
+
+  @Query("SELECT stop_id AS _id, * FROM stops WHERE stop_name LIKE :query OR stop_code LIKE :query")
+  Cursor findStopsByNameOrCodeCursor(String query);
 }

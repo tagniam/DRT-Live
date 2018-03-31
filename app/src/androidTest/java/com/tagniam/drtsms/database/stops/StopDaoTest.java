@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import android.arch.persistence.room.Room;
+import android.database.Cursor;
 import android.support.test.InstrumentationRegistry;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import java.util.ArrayList;
@@ -30,8 +31,7 @@ public class StopDaoTest {
     // Setup mock data
     stops = new ArrayList<>();
     stops.add(new Stop("Pick GO1:1", 43.831147, 1, "2549",
-        -79.084237, null, null, null, null,
-        "Pickering Station", "0", null));
+        -79.084237, null, null, null, null, "Pickering Station", "0", null));
     stops.add(new Stop("Pick GO2:2", 33.831147, 1, "2548",
         -69.084237, null, null, null, null,
         "Pickering Station 2", "0", null));
@@ -73,4 +73,11 @@ public class StopDaoTest {
     assertThat(dbStops.get(0).stopName, is("Pickering Station 2"));
   }
 
+  @Test
+  public void test_findStopsByNameOrCodeCursor() throws Exception {
+    Cursor cursor = mDao.findStopsByNameOrCodeCursor("2548");
+    assertThat(cursor.moveToFirst(), is(true));
+    String stopName = cursor.getString(cursor.getColumnIndexOrThrow("stop_name"));
+    assertThat(stopName, is("Pickering Station 2"));
+  }
 }
