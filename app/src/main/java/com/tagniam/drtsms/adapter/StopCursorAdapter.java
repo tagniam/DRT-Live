@@ -37,13 +37,14 @@ public class StopCursorAdapter extends CursorAdapter {
     searchStopName.setText(stopName);
 
     TextView searchStopId = view.findViewById(R.id.search_stop_id);
-    searchStopId.setText(stopId);
+    searchStopId.setText("Stop #" + stopId);
 
     view.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        TextView stopId = view.findViewById(R.id.search_stop_id);
-        searchView.setQuery(stopId.getText(), true);
+        TextView searchStopId = view.findViewById(R.id.search_stop_id);
+        String stopId = searchStopId.getText().toString();
+        searchView.setQuery(stopId.substring(6), true);
       }
     });
 
