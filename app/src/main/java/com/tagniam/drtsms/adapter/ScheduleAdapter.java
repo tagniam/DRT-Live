@@ -1,7 +1,6 @@
 package com.tagniam.drtsms.adapter;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.tagniam.drtsms.R;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.schedule.data.BusTime;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import java.util.Date;
 import java.util.List;
 
@@ -64,7 +69,32 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   private void setupRouteDirectionLayout(final BusTimeHolder holder, BusTime busTime) {
     holder.direction.setText(busTime.getDirection());
     holder.route.setText(busTime.getRoute());
-    new AsyncDisplayRouteNames(db, holder).execute();
+
+    // Find route's name with database query
+    Single.just(busTime.getRoute())
+        .map(new Function<String, String>() {
+          @Override
+          public String apply(String shortName) {
+            return GtfsRoomDatabase.getDatabase(context)
+                .routeDao().findLongNameByShortName(shortName);
+          }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new DisposableSingleObserver<String>() {
+
+          @Override
+          public void onSuccess(String name) {
+            holder.name.setText(name);
+          }
+
+          @Override
+          public void onError(Throwable e) {
+            Toast.makeText(context,
+                context.getResources().getString(R.string.error_generic),
+                Toast.LENGTH_SHORT).show();
+          }
+        });
   }
 
   /**
@@ -174,30 +204,4 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     }
   }
 
-  /**
-   * AsyncTask to display the route's long name.
-   */
-  private static class AsyncDisplayRouteNames extends AsyncTask<Void, Void, String> {
-
-    private GtfsRoomDatabase db;
-    private BusTimeHolder holder;
-
-    AsyncDisplayRouteNames(GtfsRoomDatabase db, BusTimeHolder holder) {
-      this.db = db;
-      this.holder = holder;
-    }
-
-    /**
-     * Find bus's long name.
-     */
-    @Override
-    protected String doInBackground(Void... params) {
-      return db.routeDao().findLongNameByShortName(holder.route.getText().toString());
-    }
-
-    @Override
-    protected void onPostExecute(String longName) {
-      holder.name.setText(longName);
-    }
-  }
 }
