@@ -112,18 +112,15 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     final int numTimes = busTime.getTimes().size();
     final ImageView[] dots = new ImageView[numTimes];
 
+    // Layout parameters
+    LinearLayout.LayoutParams params = BusTimeHolder
+        .getTimeDotsLayoutParams(
+            (int) context.getResources().getDimension(R.dimen.card_dot_marginHorizontal));
+
     for (int i = 0; i < numTimes; i++) {
       // Create new dot, by default inactive
       dots[i] = new ImageView(context);
       dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.nonactive_dot));
-
-      // Layout parameters
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-          LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-      params.weight = 1.0f;
-      params.gravity = Gravity.CENTER_HORIZONTAL;
-      int dotMargin = (int) context.getResources().getDimension(R.dimen.card_dot_marginHorizontal);
-      params.setMargins(dotMargin, 0, dotMargin, 0);
 
       // Add current dot
       holder.timeDots.addView(dots[i], params);
@@ -202,6 +199,23 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
       timePager = itemView.findViewById(R.id.timePager);
       timeDots = itemView.findViewById(R.id.timeDots);
     }
+
+    /**
+     * Get the time dots pager layout.
+     *
+     * @param dotMargin pixels between each dot
+     * @return layout of the time dots
+     */
+    static LinearLayout.LayoutParams getTimeDotsLayoutParams(int dotMargin) {
+      // Layout parameters
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+          LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      params.weight = 1.0f;
+      params.gravity = Gravity.CENTER_HORIZONTAL;
+      params.setMargins(dotMargin, 0, dotMargin, 0);
+      return params;
+    }
+
   }
 
 }
