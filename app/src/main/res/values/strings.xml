@@ -7,4 +7,7 @@
   <string name="progress_schedule_fetch_last_updated">Last updated: %1$s</string>
   <string name="search_stop_id">Stop #%1$s</string>
   <string name="error_generic">Sorry, something went wrong.</string>
+
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

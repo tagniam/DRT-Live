@@ -7,15 +7,10 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
-import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -36,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
   private TextView statusLine;
   private SearchView stopIdInput;
   private ScheduleReceiver scheduleReceiver;
-  private RecyclerView scheduleView;
-  private ImageView displayMap;
+  //private RecyclerView scheduleView;
 
   // Query listener for searchview
   private SearchView.OnQueryTextListener onQueryTextListener =
@@ -95,17 +89,6 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
-    // Display route map
-    displayMap = findViewById(R.id.displayMap);
-    displayMap.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Intent intent = new Intent(view.getContext(), MapActivity.class);
-        startActivity(intent);
-      }
-    });
-
     statusLine = findViewById(R.id.statusLine);
 
     stopIdInput = findViewById(R.id.stopIdInput);
@@ -132,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
    */
   private void setupScheduleView() {
     // Schedule view setup
-    scheduleView = findViewById(R.id.scheduleDisplay);
-    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-    scheduleView.setLayoutManager(layoutManager);
+    //scheduleView = findViewById(R.id.scheduleDisplay);
+    //LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+    //scheduleView.setLayoutManager(layoutManager);
   }
 
   /**
@@ -167,9 +150,9 @@ public class MainActivity extends AppCompatActivity {
    */
   private void populateScheduleView(Schedule schedule) {
     // Get bus time objects
-    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
-        schedule.getBusTimes(), new Date());
-    scheduleView.setAdapter(scheduleAdapter);
+    //ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
+    //    schedule.getBusTimes(), new Date());
+    //scheduleView.setAdapter(scheduleAdapter);
   }
 
   /**

@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.widget.RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-      android:id="@+id/scheduleDisplay"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_above="@+id/statusLine"
-      android:layout_alignParentStart="true"
-      android:layout_below="@+id/stopIdInput">
+  <!--
+  <android.support.v7.widget.RecyclerView
+    android:id="@+id/scheduleDisplay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/statusLine"
+    android:layout_alignParentStart="true"
+    android:layout_below="@+id/stopIdInput">
 
-    </android.support.v7.widget.RecyclerView>
+  </android.support.v7.widget.RecyclerView>
+  -->
+
+  <fragment
+    android:id="@+id/map_fragment"
+    style="@style/MapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:name="com.tagniam.drtsms.MapFragment"/>
 
     <TextView
       android:id="@+id/statusLine"
       style="@style/StatusLine"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"/>
-    <SearchView
+
+  <SearchView
       android:id="@+id/stopIdInput"
       style="@style/StopIdInput"
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
     </SearchView>
-
-    <ImageView
-      android:id="@+id/displayMap"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:layout_marginBottom="15dp"
-      android:layout_marginEnd="60dp"
-      android:layout_above="@+id/scheduleDisplay"
-      android:layout_alignParentEnd="true"
-      android:contentDescription="@string/app_name"
-      app:srcCompat="@drawable/location"/>
 </android.widget.RelativeLayout>

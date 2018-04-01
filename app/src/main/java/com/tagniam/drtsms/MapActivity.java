@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -31,7 +31,7 @@ import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions;
 import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends FragmentActivity {
 
   private static final GeoPoint CENTER = new GeoPoint(43.90546, -78.9563);
   private static final double ZOOM = 10.f;
@@ -146,7 +146,7 @@ public class MapActivity extends AppCompatActivity {
   private class LoadStops implements SingleOnSubscribe<List<IGeoPoint>> {
 
     @Override
-    public void subscribe(SingleEmitter<List<IGeoPoint>> emitter) throws Exception {
+    public void subscribe(SingleEmitter<List<IGeoPoint>> emitter) {
       try {
         GtfsRoomDatabase db = GtfsRoomDatabase.getDatabase(getApplicationContext());
         List<IGeoPoint> points = new ArrayList<>();
