@@ -29,6 +29,7 @@ import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
 public class MapFragment extends Fragment {
 
   private MapView map;
+  private List<Stop> stops = new ArrayList<>();
   private SimpleFastPointOverlayOptions pointOptions;
 
   @Override
@@ -49,7 +50,7 @@ public class MapFragment extends Fragment {
     // Setup map
     map = view.findViewById(R.id.map);
     map.setTileSource(TileSourceFactory.MAPNIK);
-    map.setBuiltInZoomControls(true);
+    map.setBuiltInZoomControls(false);
     map.setMultiTouchControls(true);
 
     // Setup point style
@@ -66,20 +67,24 @@ public class MapFragment extends Fragment {
     setupMapPoints();
   }
 
+  /**
+   * Gets all the stops from the database and displays them on the map.
+   */
   private void setupMapPoints() {
     Single.fromCallable(new Callable<List<Stop>>() {
       @Override
       public List<Stop> call() {
         // Query database for stops
-        return GtfsRoomDatabase.getDatabase(getView().getContext())
+        return GtfsRoomDatabase.getDatabase(getActivity().getApplicationContext())
             .stopDao().loadAllStops();
       }
     }).map(new Function<List<Stop>, List<IGeoPoint>>() {
       @Override
-      public List<IGeoPoint> apply(List<Stop> stops) {
+      public List<IGeoPoint> apply(List<Stop> busStops) {
         // Convert stops to points using co-ordinates and stop name
+        stops.addAll(busStops);
         List<IGeoPoint> points = new ArrayList<>();
-        for (Stop stop : stops) {
+        for (Stop stop : busStops) {
           points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
         }
         return points;
@@ -97,7 +102,7 @@ public class MapFragment extends Fragment {
               @Override
               public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
                 Toast.makeText(map.getContext()
-                    , ((LabelledGeoPoint) points.get(point)).getLabel()
+                    , stops.get(point).stopName
                     , Toast.LENGTH_SHORT).show();
               }
             });
