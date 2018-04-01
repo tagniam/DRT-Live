@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
+import com.tagniam.drtsms.MapFragment.OnStopClickListener;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -26,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnStopClickListener {
 
   private TextView statusLine;
   private SearchView stopIdInput;
@@ -182,6 +183,16 @@ public class MainActivity extends AppCompatActivity {
       default:
         break;
     }
+  }
+
+  /**
+   * Sets the query once a stop has been
+   *
+   * @param stopCode stop's identifier, which will be set as the query
+   */
+  @Override
+  public void onStopClick(String stopCode) {
+    stopIdInput.setQuery(stopCode, false);
   }
 
   private class ScheduleReceiver extends BroadcastReceiver {

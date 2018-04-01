@@ -1,5 +1,6 @@
 package com.tagniam.drtsms;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class MapFragment extends Fragment {
   private MapView map;
   private List<Stop> stops = new ArrayList<>();
   private SimpleFastPointOverlayOptions pointOptions;
+  OnStopClickListener callback;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -101,9 +103,8 @@ public class MapFragment extends Fragment {
             pointsOverlay.setOnClickListener(new SimpleFastPointOverlay.OnClickListener() {
               @Override
               public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
-                Toast.makeText(map.getContext()
-                    , stops.get(point).stopName
-                    , Toast.LENGTH_SHORT).show();
+                // Notify activity which stop we selected
+                callback.onStopClick(stops.get(point).stopCode);
               }
             });
 
@@ -121,6 +122,17 @@ public class MapFragment extends Fragment {
   }
 
   @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+
+    try {
+      callback = (OnStopClickListener) context;
+    } catch (ClassCastException e) {
+      throw new ClassCastException(context.toString() + " must implement OnStopClickListener");
+    }
+  }
+
+  @Override
   public void onPause() {
     super.onPause();
     map.onPause();
@@ -130,6 +142,11 @@ public class MapFragment extends Fragment {
   public void onResume() {
     super.onResume();
     map.onResume();
+  }
+
+  public interface OnStopClickListener {
+
+    void onStopClick(String stopCode);
   }
 
 }
