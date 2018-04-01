@@ -7,7 +7,6 @@ import io.reactivex.ObservableOnSubscribe;
 public abstract class RxScheduleFetcher implements ObservableOnSubscribe<Intent> {
 
   public static class Intents {
-
     /**
      * Gets a schedule object from an intent if it has been passed in.
      * @param intent intent with an action string in this class
@@ -20,5 +19,4 @@ public abstract class RxScheduleFetcher implements ObservableOnSubscribe<Intent>
       return (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
     }
   }
-
 }

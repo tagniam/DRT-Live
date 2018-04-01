@@ -1,9 +1,6 @@
 package com.tagniam.drtsms;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
@@ -38,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
   private TextView statusLine;
   private SearchView stopIdInput;
-  //private ScheduleReceiver scheduleReceiver;
   private RecyclerView scheduleView;
   private BottomSheetBehavior bottomSheetBehavior;
   private MapFragment map;
@@ -101,11 +97,12 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
     statusLine = findViewById(R.id.statusLine);
 
+    // Setup search view
     stopIdInput = findViewById(R.id.stopIdInput);
     stopIdInput.setOnQueryTextListener(onQueryTextListener);
-
     // Remove underline from search view
     int searchPlateId = stopIdInput.getContext().getResources()
         .getIdentifier("android:id/search_plate", null, null);
@@ -155,17 +152,14 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED);
 
     registerReceiver(scheduleReceiver, intentFilter);
-  }
-  */
+  }*/
+
 
   /**
    * Fetches the schedule.
    */
   public void fetchSchedule(String stopId) {
-    //ScheduleFetcher scheduleFetcher = ScheduleFetcher.getInstance(getApplicationContext());
-    //scheduleFetcher.fetch(stopId);
-
-    Observable.create(new RxMockScheduleFetcher())
+    Observable.create(new RxMockScheduleFetcher(stopId))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new DisposableObserver<Intent>() {
@@ -178,7 +172,9 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
             updateStatusLine(intent.getAction());
             Schedule schedule = RxScheduleFetcher.Intents.getScheduleFromIntent(intent);
             if (schedule != null) {
-              populateScheduleView(schedule);
+              ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
+                  schedule.getBusTimes(), new Date());
+              scheduleView.setAdapter(scheduleAdapter);
             }
           }
 
@@ -192,19 +188,6 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
             Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
           }
         });
-  }
-
-  /**
-   * Updates the schedule view with the fetched schedule.
-   *
-   * @param schedule fetched schedule
-   */
-  private void populateScheduleView(Schedule schedule) {
-    // Get bus time objects
-    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
-        schedule.getBusTimes(), new Date());
-    scheduleView.setAdapter(scheduleAdapter);
-    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
   }
 
   /**
