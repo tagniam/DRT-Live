@@ -1,18 +1,24 @@
 package com.tagniam.drtsms;
 
+import android.Manifest.permission;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -23,6 +29,8 @@ import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions;
@@ -34,13 +42,15 @@ public class MapFragment extends Fragment {
   private static final GeoPoint MAP_CENTER = new GeoPoint(43.90546, -78.9563);
   private static final double MAP_MIN_ZOOM = 10.0;
   private static final double MAP_MAX_ZOOM = 20.0;
+  private static final double MAP_LOCAL_ZOOM = 18.0;
 
   private List<Stop> stops = new ArrayList<>();
   private List<IGeoPoint> points = new ArrayList<>();
   private SimpleFastPointOverlay pointsOverlay;
   private SimpleFastPointOverlayOptions pointOptions;
   private OnStopClickListener callback;
-
+  private static final int FINE_LOCATION_PERMISSION_REQUEST = 0;
+  private FloatingActionButton locationButton;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -78,8 +88,50 @@ public class MapFragment extends Fragment {
         .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
         .setRadius(7).setIsClickable(true).setCellSize(15).setPointStyle(pointStyle);
 
+    // Setup location button
+    locationButton = view.findViewById(R.id.location);
+    locationButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(),
+            permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+          // Request permissions first
+          ActivityCompat
+              .requestPermissions(getActivity(), new String[]{permission.ACCESS_FINE_LOCATION},
+                  FINE_LOCATION_PERMISSION_REQUEST);
+        } else {
+          // Setup overlay for my location
+          MyLocationNewOverlay locationOverlay = new MyLocationNewOverlay(
+              new GpsMyLocationProvider(getActivity().getApplicationContext()), map);
+          locationOverlay.enableFollowLocation();
+          locationOverlay.enableMyLocation();
+
+          if (locationOverlay.isMyLocationEnabled()) {
+            map.getOverlays().add(locationOverlay);
+            map.getController().setCenter(locationOverlay.getMyLocation());
+            map.getController().setZoom(MAP_LOCAL_ZOOM);
+          } else {
+            Toast.makeText(getActivity().getApplicationContext(),
+                getActivity().getApplicationContext().getResources()
+                    .getString(R.string.notification_location),
+                Toast.LENGTH_SHORT).show();
+          }
+        }
+      }
+    });
+
     // Setup map points
     setupMapPoints();
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
+    if (requestCode == FINE_LOCATION_PERMISSION_REQUEST &&
+        grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      locationButton.performClick();
+    }
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 
   /**
@@ -173,7 +225,7 @@ public class MapFragment extends Fragment {
 
         // Select, center & zoom to point
         map.getController().setCenter(point);
-        map.getController().setZoom(18.f);
+        map.getController().setZoom(MAP_LOCAL_ZOOM);
         pointsOverlay.setSelectedPoint(i);
         map.getController().animateTo(point);
       }
