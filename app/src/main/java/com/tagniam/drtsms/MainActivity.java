@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
           if (android.text.TextUtils.isDigitsOnly(query)) {
             fetchSchedule(query);
             stopIdInput.clearFocus();
+            // Update map
+            MapFragment map = (MapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_fragment);
+            if (map != null) {
+              map.clickStop(query);
+            }
           }
           return true;
         }

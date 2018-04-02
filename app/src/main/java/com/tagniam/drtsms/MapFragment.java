@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -37,6 +36,8 @@ public class MapFragment extends Fragment {
   private static final double MAP_MAX_ZOOM = 20.0;
 
   private List<Stop> stops = new ArrayList<>();
+  private List<IGeoPoint> points = new ArrayList<>();
+  private SimpleFastPointOverlay pointsOverlay;
   private SimpleFastPointOverlayOptions pointOptions;
   OnStopClickListener callback;
 
@@ -64,9 +65,8 @@ public class MapFragment extends Fragment {
 
     map.setMaxZoomLevel(MAP_MAX_ZOOM);
     map.setMinZoomLevel(MAP_MIN_ZOOM);
-    IMapController controller = map.getController();
-    controller.setCenter(MAP_CENTER);
-    controller.setZoom(MAP_MIN_ZOOM);
+    map.getController().setCenter(MAP_CENTER);
+    map.getController().setZoom(MAP_MIN_ZOOM);
 
     // Setup point style
     Paint pointStyle = new Paint();
@@ -97,8 +97,9 @@ public class MapFragment extends Fragment {
       @Override
       public List<IGeoPoint> apply(List<Stop> busStops) {
         // Convert stops to points using co-ordinates and stop name
+        stops = new ArrayList<>();
         stops.addAll(busStops);
-        List<IGeoPoint> points = new ArrayList<>();
+        points = new ArrayList<>();
         for (Stop stop : busStops) {
           points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
         }
@@ -111,7 +112,7 @@ public class MapFragment extends Fragment {
           public void onSuccess(List<IGeoPoint> points) {
             // Add points to map, using configured point style & options
             SimplePointTheme pt = new SimplePointTheme(points, false);
-            SimpleFastPointOverlay pointsOverlay = new SimpleFastPointOverlay(pt, pointOptions);
+            pointsOverlay = new SimpleFastPointOverlay(pt, pointOptions);
 
             pointsOverlay.setOnClickListener(new SimpleFastPointOverlay.OnClickListener() {
               @Override
@@ -157,6 +158,31 @@ public class MapFragment extends Fragment {
     map.onResume();
   }
 
+  /**
+   * Selects the given stop on the map and zooms in/centers on it.
+   *
+   * @param stopCode id of the stop to select
+   */
+  public void clickStop(String stopCode) {
+    // Find stop with the given stopCode
+    for (int i = 0; i < stops.size(); i++) {
+      Stop stop = stops.get(i);
+      if (stop.stopCode.equals(stopCode)) {
+        // Corresponding point will be at the same index
+        final IGeoPoint point = points.get(i);
+
+        // Select, center & zoom to point
+        map.getController().setCenter(point);
+        map.getController().setZoom(18.f);
+        pointsOverlay.setSelectedPoint(i);
+        map.getController().animateTo(point);
+      }
+    }
+  }
+
+  /**
+   * Detect when a stop is clicked on the map.
+   */
   public interface OnStopClickListener {
 
     void onStopClick(String stopCode);
