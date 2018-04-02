@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,6 @@ import com.tagniam.drtsms.MapFragment.OnStopClickListener;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
-import com.tagniam.drtsms.database.stops.Stop;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   private SearchView stopIdInput;
   private ScheduleReceiver scheduleReceiver;
   private RecyclerView scheduleView;
+  private BottomSheetBehavior bottomSheetBehavior;
 
   // Query listener for searchview
   private SearchView.OnQueryTextListener onQueryTextListener =
@@ -107,12 +108,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
         .getIdentifier("android:id/search_plate", null, null);
     findViewById(searchPlateId).setBackground(null);
 
-    // If we came from the map activity, set the stop number automatically and fetch
-    Intent intent = getIntent();
-    Stop stop = (Stop) intent.getSerializableExtra(Stop.EXTRA_STOP);
-    if (stop != null) {
-      stopIdInput.setQuery(stop.stopCode, true);
-    }
+    bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
 
     setupScheduleView();
     listenForScheduleFetches();
@@ -161,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
         schedule.getBusTimes(), new Date());
     scheduleView.setAdapter(scheduleAdapter);
+    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
   }
 
   /**

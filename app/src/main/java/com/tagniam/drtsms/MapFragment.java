@@ -39,7 +39,7 @@ public class MapFragment extends Fragment {
   private List<IGeoPoint> points = new ArrayList<>();
   private SimpleFastPointOverlay pointsOverlay;
   private SimpleFastPointOverlayOptions pointOptions;
-  OnStopClickListener callback;
+  private OnStopClickListener callback;
 
 
   @Override
