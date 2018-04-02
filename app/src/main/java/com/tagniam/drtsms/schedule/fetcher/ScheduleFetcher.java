@@ -16,7 +16,7 @@ public abstract class ScheduleFetcher {
   public static final String SCHEDULE_FETCH_RESULT = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_RESULT";
   // Input string for stop id input
   static final String SCHEDULE_FETCH_STOP_ID = "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_STOP_ID";
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
   private Context context;
 
   ScheduleFetcher(Context context) {

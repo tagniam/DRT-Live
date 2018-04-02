@@ -193,7 +193,9 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
       super(itemView);
       route = itemView.findViewById(R.id.route);
       direction = itemView.findViewById(R.id.direction);
+      // Select name so that marquee works
       name = itemView.findViewById(R.id.name);
+      name.setSelected(true);
       timePager = itemView.findViewById(R.id.timePager);
       timeDots = itemView.findViewById(R.id.timeDots);
     }
