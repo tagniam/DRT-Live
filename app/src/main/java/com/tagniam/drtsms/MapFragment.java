@@ -44,7 +44,7 @@ public class MapFragment extends Fragment {
 
   private MapView map;
   private static final GeoPoint MAP_CENTER = new GeoPoint(43.90546, -78.9563);
-  private static final double MAP_MIN_ZOOM = 10.0;
+  private static final double MAP_MIN_ZOOM = 14.0;
   private static final double MAP_MAX_ZOOM = 20.0;
   private static final double MAP_LOCAL_ZOOM = 18.0;
   private static final double MAP_OVERLAY_MIN_ZOOM = 17.0;
