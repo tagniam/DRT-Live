@@ -29,6 +29,7 @@ import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
@@ -93,6 +94,7 @@ public class MapFragment extends Fragment {
     locationButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
+        // Make sure we have permissions to use location
         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(),
             permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
           // Request permissions first
@@ -100,16 +102,59 @@ public class MapFragment extends Fragment {
               .requestPermissions(getActivity(), new String[]{permission.ACCESS_FINE_LOCATION},
                   FINE_LOCATION_PERMISSION_REQUEST);
         } else {
-          // Setup overlay for my location
-          MyLocationNewOverlay locationOverlay = new MyLocationNewOverlay(
-              new GpsMyLocationProvider(getActivity().getApplicationContext()), map);
-          locationOverlay.enableFollowLocation();
+          // Setup overlay for my location, make sure we don't duplicate an existing one
+          MyLocationNewOverlay locationOverlay = null;
+          for (Overlay overlay : map.getOverlays()) {
+            if (overlay instanceof MyLocationNewOverlay) {
+              locationOverlay = (MyLocationNewOverlay) overlay;
+            }
+          }
+
+          if (locationOverlay == null) {
+            locationOverlay = new MyLocationNewOverlay(
+                new GpsMyLocationProvider(getActivity().getApplicationContext()), map);
+            map.getOverlays().add(locationOverlay);
+          }
+
           locationOverlay.enableMyLocation();
 
           if (locationOverlay.isMyLocationEnabled()) {
-            map.getOverlays().add(locationOverlay);
-            map.getController().setCenter(locationOverlay.getMyLocation());
-            map.getController().setZoom(MAP_LOCAL_ZOOM);
+            // When location is available, set center/zoom and enter nearest stop automagically
+            final MyLocationNewOverlay myLocationNewOverlay = locationOverlay;
+            locationOverlay.runOnFirstFix(new Runnable() {
+              @Override
+              public void run() {
+                Single.just(myLocationNewOverlay.getMyLocation())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableSingleObserver<GeoPoint>() {
+                      @Override
+                      public void onSuccess(GeoPoint location) {
+                        String stopCode = clickNearestStop(location);
+                        if (stopCode == null) {
+                          // Notify user and set center/zoom to current location
+                          Toast.makeText(getActivity().getApplicationContext(),
+                              getActivity().getApplicationContext().getResources()
+                                  .getString(R.string.error_generic),
+                              Toast.LENGTH_SHORT).show();
+                          map.getController().setCenter(location);
+                          myLocationNewOverlay.enableFollowLocation();
+                          map.getController().setZoom(MAP_LOCAL_ZOOM);
+                        } else {
+                          // Do some magic!
+                          callback.onStopClick(stopCode);
+                        }
+                      }
+
+                      @Override
+                      public void onError(Throwable e) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                            e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                      }
+                    });
+              }
+            });
           } else {
             Toast.makeText(getActivity().getApplicationContext(),
                 getActivity().getApplicationContext().getResources()
@@ -185,6 +230,34 @@ public class MapFragment extends Fragment {
                 Toast.LENGTH_SHORT).show();
           }
         });
+  }
+
+  /**
+   * Clicks the stop nearest to the given location.
+   *
+   * @param location location, preferably current location
+   * @return stop code of nearest stop, or null if no stops found
+   */
+  private String clickNearestStop(GeoPoint location) {
+    int index = -1;
+    double minDistance = Double.MAX_VALUE;
+    for (int i = 0; i < points.size(); i++) {
+      double distance = location.distanceToAsDouble(points.get(i));
+      if (distance < minDistance) {
+        index = i;
+        minDistance = distance;
+      }
+    }
+
+    if (index == -1) {
+      return null;
+    } else {
+      // Zoom/center/select nearest stop
+      pointsOverlay.setSelectedPoint(index);
+      map.getController().setZoom(MAP_LOCAL_ZOOM);
+      map.getController().setCenter(points.get(index));
+      return stops.get(index).stopCode;
+    }
   }
 
   @Override

@@ -8,4 +8,5 @@
   <string name="search_stop_id">Stop #%1$s</string>
   <string name="error_generic">Sorry, something went wrong.</string>
   <string name="notification_location">Please turn on location.</string>
+  <string name="stop_not_found">Could not find the closest stop.</string>
 </resources>
