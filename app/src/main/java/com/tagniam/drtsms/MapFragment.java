@@ -199,6 +199,12 @@ public class MapFragment extends Fragment {
   }
 
   @Override
+  public void onDetach() {
+    super.onDetach();
+    callback = null;
+  }
+
+  @Override
   public void onPause() {
     super.onPause();
     map.onPause();
