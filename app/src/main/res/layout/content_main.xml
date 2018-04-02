@@ -34,7 +34,7 @@
   <android.support.v4.widget.NestedScrollView
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
-    android:layout_height="350dp"
+    android:layout_height="wrap_content"
     android:background="@color/cardview_light_background"
     app:behavior_hideable="true"
     app:behavior_peekHeight="30dp"
