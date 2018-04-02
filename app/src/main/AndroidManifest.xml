@@ -32,8 +32,6 @@
       android:exported="false"
       android:name=".schedule.fetcher.SmsScheduleService"/>
 
-    <activity android:name=".MapActivity">
-    </activity>
   </application>
 
 </manifest>
