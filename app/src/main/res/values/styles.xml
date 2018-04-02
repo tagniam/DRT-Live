@@ -49,10 +49,10 @@
 
   <!-- Card style. -->
   <style name="ScheduleCard" parent="CardView">
+    <!--
     <item name="android:layout_gravity">center</item>
     <item name="cardElevation">@dimen/card_elevation</item>
 
-    <!--
     <item name="android:layout_marginTop">@dimen/card_marginVertical</item>
     <item name="android:layout_marginBottom">@dimen/card_marginVertical</item>
     <item name="android:layout_marginLeft">@dimen/card_marginHorizontal</item>
