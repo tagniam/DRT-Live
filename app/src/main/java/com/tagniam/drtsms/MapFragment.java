@@ -181,6 +181,13 @@ public class MapFragment extends Fragment {
   }
 
   /**
+   * Clears any selection made.
+   */
+  public void clearClick() {
+    pointsOverlay.setSelectedPoint(null);
+  }
+
+  /**
    * Detect when a stop is clicked on the map.
    */
   public interface OnStopClickListener {

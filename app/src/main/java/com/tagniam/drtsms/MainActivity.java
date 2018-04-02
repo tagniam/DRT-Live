@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   private ScheduleReceiver scheduleReceiver;
   private RecyclerView scheduleView;
   private BottomSheetBehavior bottomSheetBehavior;
+  private MapFragment map;
 
   // Query listener for searchview
   private SearchView.OnQueryTextListener onQueryTextListener =
@@ -46,11 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
             fetchSchedule(query);
             stopIdInput.clearFocus();
             // Update map
-            MapFragment map = (MapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map_fragment);
-            if (map != null) {
-              map.clickStop(query);
-            }
+            map.clickStop(query);
           }
           return true;
         }
@@ -107,8 +105,22 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     int searchPlateId = stopIdInput.getContext().getResources()
         .getIdentifier("android:id/search_plate", null, null);
     findViewById(searchPlateId).setBackground(null);
+    int searchButtonId = stopIdInput.getContext().getResources()
+        .getIdentifier("android:id/search_close_btn", null, null);
+    findViewById(searchButtonId).setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        map.clearClick();
+        stopIdInput.setQuery("", false);
+        stopIdInput.requestFocus();
+      }
+    });
 
     bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+    map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
 
     setupScheduleView();
     listenForScheduleFetches();
