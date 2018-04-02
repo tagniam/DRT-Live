@@ -32,10 +32,9 @@ import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
 public class MapFragment extends Fragment {
 
   private MapView map;
-  // Center of all stops
-  private static final GeoPoint CENTER = new GeoPoint(43.90546, -78.9563);
-  private static final double MIN_ZOOM = 10.0;
-  private static final double MAX_ZOOM = 20.0;
+  private static final GeoPoint MAP_CENTER = new GeoPoint(43.90546, -78.9563);
+  private static final double MAP_MIN_ZOOM = 10.0;
+  private static final double MAP_MAX_ZOOM = 20.0;
 
   private List<Stop> stops = new ArrayList<>();
   private SimpleFastPointOverlayOptions pointOptions;
@@ -63,11 +62,11 @@ public class MapFragment extends Fragment {
     map.setBuiltInZoomControls(false);
     map.setMultiTouchControls(true);
 
-    map.setMaxZoomLevel(MAX_ZOOM);
-    map.setMinZoomLevel(MIN_ZOOM);
+    map.setMaxZoomLevel(MAP_MAX_ZOOM);
+    map.setMinZoomLevel(MAP_MIN_ZOOM);
     IMapController controller = map.getController();
-    controller.setCenter(CENTER);
-    controller.setZoom(MIN_ZOOM);
+    controller.setCenter(MAP_CENTER);
+    controller.setZoom(MAP_MIN_ZOOM);
 
     // Setup point style
     Paint pointStyle = new Paint();

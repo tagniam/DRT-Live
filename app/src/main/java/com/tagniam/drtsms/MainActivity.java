@@ -7,11 +7,14 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import com.tagniam.drtsms.MapFragment.OnStopClickListener;
+import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -32,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   private TextView statusLine;
   private SearchView stopIdInput;
   private ScheduleReceiver scheduleReceiver;
-  //private RecyclerView scheduleView;
+  private RecyclerView scheduleView;
 
   // Query listener for searchview
   private SearchView.OnQueryTextListener onQueryTextListener =
@@ -116,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    */
   private void setupScheduleView() {
     // Schedule view setup
-    //scheduleView = findViewById(R.id.scheduleDisplay);
-    //LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-    //scheduleView.setLayoutManager(layoutManager);
+    scheduleView = findViewById(R.id.scheduleDisplay);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+    scheduleView.setLayoutManager(layoutManager);
   }
 
   /**
@@ -151,9 +154,9 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    */
   private void populateScheduleView(Schedule schedule) {
     // Get bus time objects
-    //ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
-    //    schedule.getBusTimes(), new Date());
-    //scheduleView.setAdapter(scheduleAdapter);
+    ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
+        schedule.getBusTimes(), new Date());
+    scheduleView.setAdapter(scheduleAdapter);
   }
 
   /**
