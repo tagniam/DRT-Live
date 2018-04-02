@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -44,6 +47,7 @@ public class MapFragment extends Fragment {
   private static final double MAP_MIN_ZOOM = 10.0;
   private static final double MAP_MAX_ZOOM = 20.0;
   private static final double MAP_LOCAL_ZOOM = 18.0;
+  private static final double MAP_OVERLAY_MIN_ZOOM = 17.0;
 
   private List<Stop> stops = new ArrayList<>();
   private List<IGeoPoint> points = new ArrayList<>();
@@ -165,6 +169,23 @@ public class MapFragment extends Fragment {
       }
     });
 
+    // Setup zoom listener
+    map.addMapListener(new MapListener() {
+      @Override
+      public boolean onScroll(ScrollEvent event) {
+        return false;
+      }
+
+      @Override
+      public boolean onZoom(ZoomEvent event) {
+        if (event.getZoomLevel() < MAP_OVERLAY_MIN_ZOOM) {
+          map.getOverlays().remove(pointsOverlay);
+        } else if (!map.getOverlays().contains(pointsOverlay)) {
+          map.getOverlays().add(pointsOverlay);
+        }
+        return false;
+      }
+    });
     // Setup map points
     setupMapPoints();
   }
@@ -219,7 +240,6 @@ public class MapFragment extends Fragment {
               }
             });
 
-            map.getOverlays().add(pointsOverlay);
           }
 
           @Override
