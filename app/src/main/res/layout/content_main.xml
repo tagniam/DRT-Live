@@ -35,10 +35,11 @@
   <android.support.v4.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="350dp"
-    android:background="@android:color/holo_blue_light"
+    android:background="@color/cardview_light_background"
     app:behavior_hideable="true"
     app:behavior_peekHeight="30dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
+
     <android.support.v7.widget.RecyclerView
       android:id="@+id/scheduleDisplay"
       android:layout_width="match_parent"

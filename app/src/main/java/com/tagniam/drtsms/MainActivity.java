@@ -26,9 +26,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements OnStopClickListener {
 
@@ -178,10 +176,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
         statusLine.setText(getString(R.string.progress_schedule_fetch_sms_delivered));
         break;
       case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
-        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.CANADA);
-        statusLine.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        statusLine.setText(getString(R.string.progress_schedule_fetch_last_updated,
-            dateFormat.format(new Date())));
+        statusLine.setVisibility(View.GONE);
         break;
       default:
         break;

@@ -43,8 +43,8 @@
   <!-- Time dots style. -->
   <style name="TimeDots" parent="AppTheme">
     <item name="android:layout_gravity">center</item>
-    <item name="android:layout_marginLeft">20dp</item>
-    <item name="android:layout_marginRight">20dp</item>
+    <item name="android:layout_marginLeft">5dp</item>
+    <item name="android:layout_marginRight">5dp</item>
   </style>
 
   <!-- Card style. -->
@@ -54,8 +54,10 @@
 
     <item name="android:layout_marginTop">@dimen/card_marginVertical</item>
     <item name="android:layout_marginBottom">@dimen/card_marginVertical</item>
+    <!--
     <item name="android:layout_marginLeft">@dimen/card_marginHorizontal</item>
     <item name="android:layout_marginRight">@dimen/card_marginHorizontal</item>
+    -->
 
     <item name="android:layout_height">@dimen/card_height</item>
   </style>
