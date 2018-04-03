@@ -32,7 +32,6 @@ import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
@@ -54,6 +53,7 @@ public class MapFragment extends Fragment {
   private SimpleFastPointOverlay pointsOverlay;
   private SimpleFastPointOverlayOptions pointOptions;
   private OnStopClickListener callback;
+  private MyLocationNewOverlay locationOverlay;
   private static final int FINE_LOCATION_PERMISSION_REQUEST = 0;
   private FloatingActionButton locationButton;
 
@@ -107,13 +107,6 @@ public class MapFragment extends Fragment {
                   FINE_LOCATION_PERMISSION_REQUEST);
         } else {
           // Setup overlay for my location, make sure we don't duplicate an existing one
-          MyLocationNewOverlay locationOverlay = null;
-          for (Overlay overlay : map.getOverlays()) {
-            if (overlay instanceof MyLocationNewOverlay) {
-              locationOverlay = (MyLocationNewOverlay) overlay;
-            }
-          }
-
           if (locationOverlay == null) {
             locationOverlay = new MyLocationNewOverlay(
                 new GpsMyLocationProvider(getActivity().getApplicationContext()), map);
@@ -301,12 +294,16 @@ public class MapFragment extends Fragment {
   public void onPause() {
     super.onPause();
     map.onPause();
+    locationOverlay.disableMyLocation();
   }
 
   @Override
   public void onResume() {
     super.onResume();
     map.onResume();
+    if (locationOverlay != null) {
+      locationOverlay.enableMyLocation();
+    }
   }
 
   /**
