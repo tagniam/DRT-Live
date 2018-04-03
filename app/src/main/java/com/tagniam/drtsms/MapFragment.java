@@ -135,7 +135,6 @@ public class MapFragment extends Fragment {
                                   .getString(R.string.error_generic),
                               Toast.LENGTH_SHORT).show();
                           map.getController().setCenter(location);
-                          myLocationNewOverlay.enableFollowLocation();
                           map.getController().setZoom(MAP_LOCAL_ZOOM);
                         } else {
                           // Do some magic!
