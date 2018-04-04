@@ -121,8 +121,8 @@ public class MapFragment extends Fragment {
             locationOverlay.runOnFirstFix(new Runnable() {
               @Override
               public void run() {
+                // Have to run this on main thread through RxJava to update UI
                 Single.just(myLocationNewOverlay.getMyLocation())
-                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new DisposableSingleObserver<GeoPoint>() {
                       @Override
@@ -293,7 +293,9 @@ public class MapFragment extends Fragment {
   public void onPause() {
     super.onPause();
     map.onPause();
-    locationOverlay.disableMyLocation();
+    if (locationOverlay != null) {
+      locationOverlay.disableMyLocation();
+    }
   }
 
   @Override
