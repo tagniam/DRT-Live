@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class SmsSchedule implements Schedule, Serializable {
 
-  private static final String STOP_NOT_FOUND_REGEX = "Stop Number .* not found\\.";
-  private static final String STOP_TIMES_NOT_AVAILABLE = "There were no passing times by stop .*\\.";
+  private static final String NOT_FOUND_REGEX = "Stop Number .* not found\\.";
+  private static final String TIMES_NOT_AVAILABLE_REGEX = "There were no passing times by stop .*";
   private List<BusTime> busTimes = new ArrayList<>();
   private String stopNumber;
 
@@ -24,12 +24,12 @@ public class SmsSchedule implements Schedule, Serializable {
    */
   public SmsSchedule(String msg) throws StopNotFoundException, StopTimesNotAvailableException {
     // DRT can't find that stop number
-    if (msg.matches(STOP_NOT_FOUND_REGEX)) {
+    if (msg.matches(NOT_FOUND_REGEX)) {
       throw new StopNotFoundException();
     }
 
     // No times available for this stop
-    else if (msg.matches(STOP_TIMES_NOT_AVAILABLE)) {
+    else if (msg.matches(TIMES_NOT_AVAILABLE_REGEX)) {
       throw new StopTimesNotAvailableException();
     }
 

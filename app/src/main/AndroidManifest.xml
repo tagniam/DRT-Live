@@ -32,13 +32,13 @@
       android:exported="false"
       android:name=".schedule.fetcher.SmsScheduleService"/>
 
-    <receiver android:name=".schedule.fetcher.SmsListener">
+    <receiver android:name=".schedule.fetcher.RxSmsScheduleFetcher$SmsReceiver">
       <intent-filter>
         <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
       </intent-filter>
     </receiver>
 
-    <receiver android:name=".schedule.fetcher.SmsSender">
+    <receiver android:name=".schedule.fetcher.RxSmsScheduleFetcher$SmsSender">
       <intent-filter>
         <action android:name="com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_DELIVERED"/>
         <action android:name="com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_SENT"/>

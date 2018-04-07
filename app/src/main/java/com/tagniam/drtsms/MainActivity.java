@@ -190,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
           @Override
           public void onComplete() {
-            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
             EventBus.getDefault().unregister(scheduleFetcher);
             scheduleFetcher = null;
           }
