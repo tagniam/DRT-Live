@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.tagniam.drtsms.MapFragment.OnStopClickListener;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
           @Override
           public void onError(Throwable e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
           }
 
           @Override

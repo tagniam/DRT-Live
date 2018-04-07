@@ -7,6 +7,8 @@
   <string name="progress_schedule_fetch_last_updated">Last updated: %1$s</string>
   <string name="search_stop_id">Stop #%1$s</string>
   <string name="error_generic">Sorry, something went wrong.</string>
+  <string name="error_radio_off">Please turn off airplane mode.</string>
+  <string name="error_no_service">Cellular service currently unavailable.</string>
   <string name="notification_location">Please turn on location.</string>
   <string name="stop_not_found">Could not find the closest stop.</string>
 </resources>

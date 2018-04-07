@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
+import com.tagniam.drtsms.R;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.data.SmsSchedule;
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
@@ -71,12 +72,8 @@ public class SmsScheduleFetcher extends ScheduleFetcher {
 
   public static class Intents {
 
-    // More progress action strings
-    public static final String SMS_SENT =
-        "com.tagniam.drtsms.schedule.SMS_SENT";
-    // Action string for cancellation of schedule fetching
-    public static final String SMS_DELIVERED =
-        "com.tagniam.drtsms.schedule.SMS_DELIVERED";
+    public static final String SMS_SENT = "com.tagniam.drtsms.schedule.SMS_SENT";
+    public static final String SMS_DELIVERED = "com.tagniam.drtsms.schedule.SMS_DELIVERED";
   }
 
   @Override
@@ -126,16 +123,32 @@ public class SmsScheduleFetcher extends ScheduleFetcher {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-      switch (getResultCode()) {
-        case Activity.RESULT_OK:
-          // SMS received!
-          EventBus.getDefault().postSticky(intent);
-          break;
-        default:
-          // SMS failed, post fail
-          EventBus.getDefault().postSticky(new Intent(ScheduleFetcher.Intents.FAIL_ACTION));
-          break;
+      int resultCode = getResultCode();
+
+      // Something went wrong with sending, post error intent
+      if (resultCode != Activity.RESULT_OK) {
+        Intent error = new Intent(ScheduleFetcher.Intents.FAIL_ACTION);
+        switch (resultCode) {
+          case SmsManager.RESULT_ERROR_RADIO_OFF:
+            error.putExtra(
+                ScheduleFetcher.Intents.EXCEPTION_EXTRA,
+                new Exception(context.getString(R.string.error_radio_off)));
+            break;
+          case SmsManager.RESULT_ERROR_NO_SERVICE:
+            error.putExtra(ScheduleFetcher.Intents.EXCEPTION_EXTRA,
+                new Exception(context.getString(R.string.error_no_service)));
+            break;
+          default:
+            error.putExtra(ScheduleFetcher.Intents.EXCEPTION_EXTRA,
+                new Exception(context.getString(R.string.error_generic)));
+            break;
+        }
+        EventBus.getDefault().postSticky(error);
+        return;
       }
+
+      // SMS sent/delivered!
+      EventBus.getDefault().postSticky(intent);
     }
   }
 }
