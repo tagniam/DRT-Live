@@ -52,7 +52,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
   private PendingIntent sentPendingIntent;
   private PendingIntent deliveredPendingIntent;
 
-  public RxSmsScheduleFetcher(SmsManager smsSender, PendingIntent sentPendingIntent,
+  RxSmsScheduleFetcher(SmsManager smsSender, PendingIntent sentPendingIntent,
       PendingIntent deliveredPendingIntent, String stopId) {
     this.smsSender = smsSender;
     this.sentPendingIntent = sentPendingIntent;
@@ -92,7 +92,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
   /**
    * Listens for response from DRT.
    */
-  public static class SmsReceiver extends BroadcastReceiver {
+  static class SmsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -122,7 +122,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
   /**
    * Tracks the sending status of the outgoing SMS message.
    */
-  public static class SmsSender extends BroadcastReceiver {
+  static class SmsSender extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

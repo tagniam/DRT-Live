@@ -16,7 +16,7 @@ public class RxMockScheduleFetcher extends RxScheduleFetcher {
           + "std msg rates may apply";
   private String stopId;
 
-  public RxMockScheduleFetcher(String stopId) {
+  RxMockScheduleFetcher(String stopId) {
     this.stopId = stopId;
   }
 
