@@ -12,14 +12,14 @@ import android.view.View.OnClickListener;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
-import com.tagniam.drtsms.MapFragment.OnStopClickListener;
 import android.widget.Toast;
+import com.tagniam.drtsms.MapFragment.OnStopClickListener;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.schedule.data.Schedule;
-import com.tagniam.drtsms.schedule.fetcher.RxMockScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher;
+import com.tagniam.drtsms.schedule.fetcher.RxSmsScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
 import io.reactivex.Observable;
@@ -30,6 +30,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.Date;
+import org.greenrobot.eventbus.EventBus;
 
 public class MainActivity extends AppCompatActivity implements OnStopClickListener {
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   private RecyclerView scheduleView;
   private BottomSheetBehavior bottomSheetBehavior;
   private MapFragment map;
+  private RxScheduleFetcher scheduleFetcher;
 
   // Query listener for searchview
   private SearchView.OnQueryTextListener onQueryTextListener =
@@ -125,7 +127,22 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
 
     setupScheduleView();
-    //listenForScheduleFetches();
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    if (scheduleFetcher != null) {
+      EventBus.getDefault().unregister(scheduleFetcher);
+    }
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    if (scheduleFetcher != null) {
+      EventBus.getDefault().register(scheduleFetcher);
+    }
   }
 
   /**
@@ -139,27 +156,12 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   }
 
   /**
-   * Start listening to incoming schedule fetches.
-   */
-  /*
-  private void listenForScheduleFetches() {
-    // Start listening for incoming schedule fetches
-    scheduleReceiver = new ScheduleReceiver();
-    IntentFilter intentFilter = new IntentFilter();
-    intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
-    intentFilter.addAction(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
-    intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT);
-    intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED);
-
-    registerReceiver(scheduleReceiver, intentFilter);
-  }*/
-
-
-  /**
    * Fetches the schedule.
    */
   public void fetchSchedule(String stopId) {
-    Observable.create(new RxMockScheduleFetcher(stopId))
+    scheduleFetcher = new RxSmsScheduleFetcher(stopId);
+    EventBus.getDefault().register(scheduleFetcher);
+    Observable.create(scheduleFetcher)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new DisposableObserver<Intent>() {
@@ -175,17 +177,22 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
               ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
                   schedule.getBusTimes(), new Date());
               scheduleView.setAdapter(scheduleAdapter);
+              bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
           }
 
           @Override
           public void onError(Throwable e) {
-            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            EventBus.getDefault().unregister(scheduleFetcher);
+            scheduleFetcher = null;
           }
 
           @Override
           public void onComplete() {
             Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+            EventBus.getDefault().unregister(scheduleFetcher);
+            scheduleFetcher = null;
           }
         });
   }
@@ -226,24 +233,4 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     stopIdInput.setQuery(stopCode, false);
   }
 
-  /*
-  private class ScheduleReceiver extends BroadcastReceiver {
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-      String action = intent.getAction();
-      if (action == null) {
-        return;
-      }
-
-      updateStatusLine(action);
-      // We got the message from DRT! Yay!
-      if (action.equals(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION)) {
-        Schedule schedule =
-            (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
-        populateScheduleView(schedule);
-      }
-    }
-  }
-  */
 }
