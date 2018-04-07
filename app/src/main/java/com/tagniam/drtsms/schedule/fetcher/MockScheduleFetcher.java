@@ -24,10 +24,10 @@ public class MockScheduleFetcher extends ScheduleFetcher {
   public void subscribe(final ObservableEmitter<Intent> emitter) {
     try {
       Thread.sleep(1000);
-      emitter.onNext(new Intent(SmsScheduleFetcher.Intents.SMS_SENT));
+      emitter.onNext(new Intent(SmsScheduleFetcher.Intents.SMS_SENT_ACTION));
 
       Thread.sleep(1000);
-      emitter.onNext(new Intent(SmsScheduleFetcher.Intents.SMS_DELIVERED));
+      emitter.onNext(new Intent(SmsScheduleFetcher.Intents.SMS_DELIVERED_ACTION));
 
       Thread.sleep(2000);
       if (android.text.TextUtils.isDigitsOnly(stopId)) {

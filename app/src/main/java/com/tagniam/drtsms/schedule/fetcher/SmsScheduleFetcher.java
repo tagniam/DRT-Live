@@ -72,8 +72,8 @@ public class SmsScheduleFetcher extends ScheduleFetcher {
 
   public static class Intents {
 
-    public static final String SMS_SENT = "com.tagniam.drtsms.schedule.SMS_SENT";
-    public static final String SMS_DELIVERED = "com.tagniam.drtsms.schedule.SMS_DELIVERED";
+    public static final String SMS_SENT_ACTION = "com.tagniam.drtsms.schedule.SMS_SENT_ACTION";
+    public static final String SMS_DELIVERED_ACTION = "com.tagniam.drtsms.schedule.SMS_DELIVERED_ACTION";
   }
 
   @Override

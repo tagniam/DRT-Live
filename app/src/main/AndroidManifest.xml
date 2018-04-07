@@ -36,8 +36,8 @@
 
     <receiver android:name=".schedule.fetcher.SmsScheduleFetcher$SmsSender">
       <intent-filter>
-        <action android:name="com.tagniam.drtsms.schedule.SMS_DELIVERED"/>
-        <action android:name="com.tagniam.drtsms.schedule.SMS_SENT"/>
+        <action android:name="com.tagniam.drtsms.schedule.SMS_DELIVERED_ACTION"/>
+        <action android:name="com.tagniam.drtsms.schedule.SMS_SENT_ACTION"/>
       </intent-filter>
     </receiver>
 
