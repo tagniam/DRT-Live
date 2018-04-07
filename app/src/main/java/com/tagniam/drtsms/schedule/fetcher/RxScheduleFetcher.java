@@ -15,10 +15,10 @@ public abstract class RxScheduleFetcher implements ObservableOnSubscribe<Intent>
     } else {
       PendingIntent sentPendingIntent = PendingIntent
           .getBroadcast(context, 0,
-              new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_SENT), 0);
+              new Intent(RxSmsScheduleFetcher.Intents.SMS_SENT), 0);
       PendingIntent deliveredPendingIntent = PendingIntent
           .getBroadcast(context, 0,
-              new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_DELIVERED), 0);
+              new Intent(RxSmsScheduleFetcher.Intents.SMS_DELIVERED), 0);
       return new RxSmsScheduleFetcher(SmsManager.getDefault(), sentPendingIntent,
           deliveredPendingIntent, stopId);
     }

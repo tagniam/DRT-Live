@@ -194,12 +194,12 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
         statusLine.setText(getString(R.string.progress_schedule_fetch_fail));
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorError));
         break;
-      case RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_SENT:
+      case RxSmsScheduleFetcher.Intents.SMS_SENT:
         statusLine.setVisibility(View.VISIBLE);
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         statusLine.setText(getString(R.string.progress_schedule_fetch_sms_sent));
         break;
-      case RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_DELIVERED:
+      case RxSmsScheduleFetcher.Intents.SMS_DELIVERED:
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         statusLine.setText(getString(R.string.progress_schedule_fetch_sms_delivered));
         break;

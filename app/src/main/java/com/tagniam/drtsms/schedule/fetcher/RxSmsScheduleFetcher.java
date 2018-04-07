@@ -32,8 +32,8 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
       return;
     }
     switch (intent.getAction()) {
-      case Intents.SCHEDULE_FETCH_SMS_SENT:
-      case Intents.SCHEDULE_FETCH_SMS_DELIVERED:
+      case Intents.SMS_SENT:
+      case Intents.SMS_DELIVERED:
         emitter.onNext(intent);
         break;
       case RxScheduleFetcher.Intents.SUCCESS_ACTION:
@@ -76,11 +76,11 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
   public static class Intents {
 
     // More progress action strings
-    public static final String SCHEDULE_FETCH_SMS_SENT =
-        "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_SENT";
+    public static final String SMS_SENT =
+        "com.tagniam.drtsms.schedule.SMS_SENT";
     // Action string for cancellation of schedule fetching
-    public static final String SCHEDULE_FETCH_SMS_DELIVERED =
-        "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_DELIVERED";
+    public static final String SMS_DELIVERED =
+        "com.tagniam.drtsms.schedule.SMS_DELIVERED";
   }
 
   @Override
