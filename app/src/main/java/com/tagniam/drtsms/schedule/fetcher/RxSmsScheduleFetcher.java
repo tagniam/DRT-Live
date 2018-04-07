@@ -19,13 +19,15 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class RxSmsScheduleFetcher extends RxScheduleFetcher {
 
-  private final String DRT_PHONE_NO = "8447460497";
+  private final static String DRT_PHONE_NO = "8447460497";
   private Context context;
   private String stopId;
   private ObservableEmitter<Intent> emitter;
+  private SmsManager smsSender;
 
-  public RxSmsScheduleFetcher(Context context, String stopId) {
+  public RxSmsScheduleFetcher(Context context, SmsManager smsSender, String stopId) {
     this.context = context;
+    this.smsSender = smsSender;
     this.stopId = stopId;
   }
 
@@ -39,11 +41,18 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
     PendingIntent deliveredPendingIntent = PendingIntent
         .getBroadcast(context, 0, new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED), 0);
 
-    SmsManager smsSender = SmsManager.getDefault();
+    // Send the SMS!
     smsSender
         .sendTextMessage(DRT_PHONE_NO, null, stopId, sentPendingIntent, deliveredPendingIntent);
   }
 
+  /**
+   * Parses an intent, depending on the action it will communicate with the emitter and complete/
+   * error out by emitting an intent.
+   * and emit
+   *
+   * @param intent intent from internal static broadcast receiver classes
+   */
   @Subscribe(sticky = true)
   public void onIntent(Intent intent) {
     if (intent.getAction() == null) {
@@ -68,8 +77,6 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
    * Listens for response from DRT.
    */
   public static class SmsReceiver extends BroadcastReceiver {
-
-    private final String DRT_PHONE_NO = "8447460497";
 
     @Override
     public void onReceive(Context context, Intent intent) {
