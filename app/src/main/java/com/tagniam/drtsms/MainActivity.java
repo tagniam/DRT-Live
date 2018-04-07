@@ -12,7 +12,6 @@ import android.view.View.OnClickListener;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.tagniam.drtsms.MapFragment.OnStopClickListener;
 import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
@@ -175,12 +174,10 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
           @Override
           public void onError(Throwable e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
           }
 
           @Override
           public void onComplete() {
-            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
           }
         });
   }
@@ -189,13 +186,13 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    * Updates the status line based on the action we get from the schedule fetcher.
    */
   private void updateStatusLine(String action) {
+    statusLine.setVisibility(View.VISIBLE);
     switch (action) {
       case Intents.FAIL_ACTION:
         statusLine.setText(getString(R.string.progress_schedule_fetch_fail));
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorError));
         break;
       case RxSmsScheduleFetcher.Intents.SMS_SENT:
-        statusLine.setVisibility(View.VISIBLE);
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         statusLine.setText(getString(R.string.progress_schedule_fetch_sms_sent));
         break;

@@ -28,16 +28,12 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
    */
   @Subscribe(sticky = true)
   public void onIntent(Intent intent) {
-    if (intent.getAction() == null) {
+    if (intent == null || intent.getAction() == null) {
       return;
     }
+    emitter.onNext(intent);
     switch (intent.getAction()) {
-      case Intents.SMS_SENT:
-      case Intents.SMS_DELIVERED:
-        emitter.onNext(intent);
-        break;
       case RxScheduleFetcher.Intents.SUCCESS_ACTION:
-        emitter.onNext(intent);
         emitter.onComplete();
         EventBus.getDefault().unregister(this);
         break;
