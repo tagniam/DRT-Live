@@ -7,19 +7,19 @@ import android.telephony.SmsManager;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import io.reactivex.ObservableOnSubscribe;
 
-public abstract class RxScheduleFetcher implements ObservableOnSubscribe<Intent> {
+public abstract class ScheduleFetcher implements ObservableOnSubscribe<Intent> {
 
-  public static RxScheduleFetcher getFetcher(Context context, String stopId) {
+  public static ScheduleFetcher getFetcher(Context context, String stopId) {
     if (DEBUG) {
-      return new RxMockScheduleFetcher(stopId);
+      return new MockScheduleFetcher(stopId);
     } else {
       PendingIntent sentPendingIntent = PendingIntent
           .getBroadcast(context, 0,
-              new Intent(RxSmsScheduleFetcher.Intents.SMS_SENT), 0);
+              new Intent(SmsScheduleFetcher.Intents.SMS_SENT), 0);
       PendingIntent deliveredPendingIntent = PendingIntent
           .getBroadcast(context, 0,
-              new Intent(RxSmsScheduleFetcher.Intents.SMS_DELIVERED), 0);
-      return new RxSmsScheduleFetcher(SmsManager.getDefault(), sentPendingIntent,
+              new Intent(SmsScheduleFetcher.Intents.SMS_DELIVERED), 0);
+      return new SmsScheduleFetcher(SmsManager.getDefault(), sentPendingIntent,
           deliveredPendingIntent, stopId);
     }
   }

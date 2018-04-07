@@ -17,9 +17,9 @@ import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.schedule.data.Schedule;
-import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher;
-import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher.Intents;
-import com.tagniam.drtsms.schedule.fetcher.RxSmsScheduleFetcher;
+import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
+import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher.Intents;
+import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   private RecyclerView scheduleView;
   private BottomSheetBehavior bottomSheetBehavior;
   private MapFragment map;
-  private RxScheduleFetcher scheduleFetcher;
+  private ScheduleFetcher scheduleFetcher;
 
   // Query listener for searchview
   private SearchView.OnQueryTextListener onQueryTextListener =
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    * Fetches the schedule.
    */
   public void fetchSchedule(String stopId) {
-    scheduleFetcher = RxScheduleFetcher.getFetcher(getApplicationContext(), stopId);
+    scheduleFetcher = ScheduleFetcher.getFetcher(getApplicationContext(), stopId);
     Observable.create(scheduleFetcher)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
               return;
             }
             updateStatusLine(intent.getAction());
-            Schedule schedule = RxScheduleFetcher.Intents.getScheduleFromIntent(intent);
+            Schedule schedule = ScheduleFetcher.Intents.getScheduleFromIntent(intent);
             if (schedule != null) {
               ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
                   schedule.getBusTimes(), new Date());
@@ -192,11 +192,11 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
         statusLine.setText(getString(R.string.progress_schedule_fetch_fail));
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorError));
         break;
-      case RxSmsScheduleFetcher.Intents.SMS_SENT:
+      case SmsScheduleFetcher.Intents.SMS_SENT:
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         statusLine.setText(getString(R.string.progress_schedule_fetch_sms_sent));
         break;
-      case RxSmsScheduleFetcher.Intents.SMS_DELIVERED:
+      case SmsScheduleFetcher.Intents.SMS_DELIVERED:
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         statusLine.setText(getString(R.string.progress_schedule_fetch_sms_delivered));
         break;

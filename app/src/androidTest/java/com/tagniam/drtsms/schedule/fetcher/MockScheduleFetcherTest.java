@@ -2,7 +2,7 @@ package com.tagniam.drtsms.schedule.fetcher;
 
 import org.junit.Test;
 
-public class RxMockScheduleFetcherTest {
+public class MockScheduleFetcherTest {
 
   @Test
   public void test_fetch_success() {

@@ -28,13 +28,13 @@
       </intent-filter>
     </activity>
 
-    <receiver android:name=".schedule.fetcher.RxSmsScheduleFetcher$SmsReceiver">
+    <receiver android:name=".schedule.fetcher.SmsScheduleFetcher$SmsReceiver">
       <intent-filter>
         <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
       </intent-filter>
     </receiver>
 
-    <receiver android:name=".schedule.fetcher.RxSmsScheduleFetcher$SmsSender">
+    <receiver android:name=".schedule.fetcher.SmsScheduleFetcher$SmsSender">
       <intent-filter>
         <action android:name="com.tagniam.drtsms.schedule.SMS_DELIVERED"/>
         <action android:name="com.tagniam.drtsms.schedule.SMS_SENT"/>

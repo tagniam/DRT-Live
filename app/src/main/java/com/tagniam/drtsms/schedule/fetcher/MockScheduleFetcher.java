@@ -7,7 +7,7 @@ import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 import io.reactivex.ObservableEmitter;
 import java.io.Serializable;
 
-public class RxMockScheduleFetcher extends RxScheduleFetcher {
+public class MockScheduleFetcher extends ScheduleFetcher {
 
   private static final String MOCK_MSG =
       "Stop MOCK1604:\r\n"
@@ -16,7 +16,7 @@ public class RxMockScheduleFetcher extends RxScheduleFetcher {
           + "std msg rates may apply";
   private String stopId;
 
-  RxMockScheduleFetcher(String stopId) {
+  MockScheduleFetcher(String stopId) {
     this.stopId = stopId;
   }
 
@@ -24,10 +24,10 @@ public class RxMockScheduleFetcher extends RxScheduleFetcher {
   public void subscribe(final ObservableEmitter<Intent> emitter) {
     try {
       Thread.sleep(1000);
-      emitter.onNext(new Intent(RxSmsScheduleFetcher.Intents.SMS_SENT));
+      emitter.onNext(new Intent(SmsScheduleFetcher.Intents.SMS_SENT));
 
       Thread.sleep(1000);
-      emitter.onNext(new Intent(RxSmsScheduleFetcher.Intents.SMS_DELIVERED));
+      emitter.onNext(new Intent(SmsScheduleFetcher.Intents.SMS_DELIVERED));
 
       Thread.sleep(2000);
       if (android.text.TextUtils.isDigitsOnly(stopId)) {

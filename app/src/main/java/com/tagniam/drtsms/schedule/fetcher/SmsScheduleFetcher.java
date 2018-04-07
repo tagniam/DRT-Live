@@ -17,7 +17,23 @@ import java.io.Serializable;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-public class RxSmsScheduleFetcher extends RxScheduleFetcher {
+public class SmsScheduleFetcher extends ScheduleFetcher {
+
+  SmsScheduleFetcher(SmsManager smsSender, PendingIntent sentPendingIntent,
+      PendingIntent deliveredPendingIntent, String stopId) {
+    this.smsSender = smsSender;
+    this.sentPendingIntent = sentPendingIntent;
+    this.deliveredPendingIntent = deliveredPendingIntent;
+    this.stopId = stopId;
+    EventBus.getDefault().register(this);
+  }
+
+  private final static String DRT_PHONE_NO = "8447460497";
+  private String stopId;
+  private ObservableEmitter<Intent> emitter;
+  private SmsManager smsSender;
+  private PendingIntent sentPendingIntent;
+  private PendingIntent deliveredPendingIntent;
 
   /**
    * Parses an intent, depending on the action it will communicate with the emitter and complete/
@@ -33,32 +49,16 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
     }
     emitter.onNext(intent);
     switch (intent.getAction()) {
-      case RxScheduleFetcher.Intents.SUCCESS_ACTION:
+      case ScheduleFetcher.Intents.SUCCESS_ACTION:
         emitter.onComplete();
         EventBus.getDefault().unregister(this);
         break;
-      case RxScheduleFetcher.Intents.FAIL_ACTION:
+      case ScheduleFetcher.Intents.FAIL_ACTION:
         emitter.onError(
-            (Exception) intent.getSerializableExtra(RxScheduleFetcher.Intents.EXCEPTION_EXTRA));
+            (Exception) intent.getSerializableExtra(ScheduleFetcher.Intents.EXCEPTION_EXTRA));
         EventBus.getDefault().unregister(this);
         break;
     }
-  }
-
-  private final static String DRT_PHONE_NO = "8447460497";
-  private String stopId;
-  private ObservableEmitter<Intent> emitter;
-  private SmsManager smsSender;
-  private PendingIntent sentPendingIntent;
-  private PendingIntent deliveredPendingIntent;
-
-  RxSmsScheduleFetcher(SmsManager smsSender, PendingIntent sentPendingIntent,
-      PendingIntent deliveredPendingIntent, String stopId) {
-    this.smsSender = smsSender;
-    this.sentPendingIntent = sentPendingIntent;
-    this.deliveredPendingIntent = deliveredPendingIntent;
-    this.stopId = stopId;
-    EventBus.getDefault().register(this);
   }
 
   @Override
@@ -92,7 +92,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
   /**
    * Listens for response from DRT.
    */
-  static class SmsReceiver extends BroadcastReceiver {
+  public static class SmsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -104,13 +104,13 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
           if (smsMessage.getOriginatingAddress().equals(DRT_PHONE_NO)) {
             try {
               Schedule schedule = new SmsSchedule(smsMessage.getMessageBody());
-              Intent result = new Intent(RxScheduleFetcher.Intents.SUCCESS_ACTION);
-              result.putExtra(RxScheduleFetcher.Intents.RESULT_EXTRA, (Serializable) schedule);
+              Intent result = new Intent(ScheduleFetcher.Intents.SUCCESS_ACTION);
+              result.putExtra(ScheduleFetcher.Intents.RESULT_EXTRA, (Serializable) schedule);
               EventBus.getDefault().postSticky(result);
             } catch (StopNotFoundException | StopTimesNotAvailableException e) {
               EventBus.getDefault()
-                  .postSticky(new Intent(RxScheduleFetcher.Intents.FAIL_ACTION)
-                      .putExtra(RxScheduleFetcher.Intents.EXCEPTION_EXTRA, e));
+                  .postSticky(new Intent(ScheduleFetcher.Intents.FAIL_ACTION)
+                      .putExtra(ScheduleFetcher.Intents.EXCEPTION_EXTRA, e));
             }
             break;
           }
@@ -122,7 +122,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
   /**
    * Tracks the sending status of the outgoing SMS message.
    */
-  static class SmsSender extends BroadcastReceiver {
+  public static class SmsSender extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -133,7 +133,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
           break;
         default:
           // SMS failed, post fail
-          EventBus.getDefault().postSticky(new Intent(RxScheduleFetcher.Intents.FAIL_ACTION));
+          EventBus.getDefault().postSticky(new Intent(ScheduleFetcher.Intents.FAIL_ACTION));
           break;
       }
     }
