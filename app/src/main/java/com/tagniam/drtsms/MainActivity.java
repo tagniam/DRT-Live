@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+    // Setup status line
     statusLine = findViewById(R.id.statusLine);
 
     // Setup search view
@@ -122,12 +123,16 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
       }
     });
 
+    // Setup bottom sheet
     bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
+    // Setup map
     map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
 
-    setupScheduleView();
+    // Setup schedule view
+    scheduleView = findViewById(R.id.scheduleDisplay);
+    scheduleView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
   }
 
   @Override
@@ -144,16 +149,6 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     if (scheduleFetcher != null) {
       EventBus.getDefault().register(scheduleFetcher);
     }
-  }
-
-  /**
-   * Sets up the recycler view where the schedule will be displayed.
-   */
-  private void setupScheduleView() {
-    // Schedule view setup
-    scheduleView = findViewById(R.id.scheduleDisplay);
-    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-    scheduleView.setLayoutManager(layoutManager);
   }
 
   /**
