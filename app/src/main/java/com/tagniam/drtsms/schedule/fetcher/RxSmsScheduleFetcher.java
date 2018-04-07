@@ -59,8 +59,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
         emitter.onComplete();
         break;
       case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
-        // TODO parse error from intent
-        emitter.onError(new Exception());
+        emitter.onError((Exception) intent.getSerializableExtra(Intents.EXCEPTION_EXTRA));
         break;
     }
   }
@@ -87,7 +86,8 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
               EventBus.getDefault().postSticky(result);
             } catch (StopNotFoundException | StopTimesNotAvailableException e) {
               EventBus.getDefault()
-                  .postSticky(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION));
+                  .postSticky(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION)
+                      .putExtra(Intents.EXCEPTION_EXTRA, e));
             }
             break;
           }

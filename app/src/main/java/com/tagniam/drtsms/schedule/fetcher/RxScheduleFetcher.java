@@ -18,5 +18,7 @@ public abstract class RxScheduleFetcher implements ObservableOnSubscribe<Intent>
       }
       return (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
     }
+
+    public static final String EXCEPTION_EXTRA = "tagniam.exception";
   }
 }
