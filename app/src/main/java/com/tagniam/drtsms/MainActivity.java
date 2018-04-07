@@ -7,7 +7,6 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.SmsManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.SearchView;
@@ -20,7 +19,6 @@ import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher;
-import com.tagniam.drtsms.schedule.fetcher.RxSmsScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
 import io.reactivex.Observable;
@@ -154,8 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    * Fetches the schedule.
    */
   public void fetchSchedule(String stopId) {
-    scheduleFetcher = new RxSmsScheduleFetcher(getApplicationContext(), SmsManager.getDefault(),
-        stopId);
+    scheduleFetcher = RxScheduleFetcher.getFetcher(getApplicationContext(), stopId);
     Observable.create(scheduleFetcher)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())

@@ -20,14 +20,17 @@ import org.greenrobot.eventbus.Subscribe;
 public class RxSmsScheduleFetcher extends RxScheduleFetcher {
 
   private final static String DRT_PHONE_NO = "8447460497";
-  private Context context;
   private String stopId;
   private ObservableEmitter<Intent> emitter;
   private SmsManager smsSender;
+  private PendingIntent sentPendingIntent;
+  private PendingIntent deliveredPendingIntent;
 
-  public RxSmsScheduleFetcher(Context context, SmsManager smsSender, String stopId) {
-    this.context = context;
+  public RxSmsScheduleFetcher(SmsManager smsSender, PendingIntent sentPendingIntent,
+      PendingIntent deliveredPendingIntent, String stopId) {
     this.smsSender = smsSender;
+    this.sentPendingIntent = sentPendingIntent;
+    this.deliveredPendingIntent = deliveredPendingIntent;
     this.stopId = stopId;
     EventBus.getDefault().register(this);
   }
@@ -35,13 +38,6 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
   @Override
   public void subscribe(ObservableEmitter<Intent> emitter) {
     this.emitter = emitter;
-
-    // Create pending intents that trigger given actions when SMS is sent/received
-    PendingIntent sentPendingIntent = PendingIntent
-        .getBroadcast(context, 0, new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT), 0);
-    PendingIntent deliveredPendingIntent = PendingIntent
-        .getBroadcast(context, 0, new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED), 0);
-
     // Send the SMS!
     smsSender
         .sendTextMessage(DRT_PHONE_NO, null, stopId, sentPendingIntent, deliveredPendingIntent);
