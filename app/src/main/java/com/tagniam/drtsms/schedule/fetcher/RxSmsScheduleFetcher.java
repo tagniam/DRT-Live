@@ -29,6 +29,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
     this.context = context;
     this.smsSender = smsSender;
     this.stopId = stopId;
+    EventBus.getDefault().register(this);
   }
 
   @Override
@@ -66,11 +67,23 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
       case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
         emitter.onNext(intent);
         emitter.onComplete();
+        EventBus.getDefault().unregister(this);
         break;
       case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
         emitter.onError((Exception) intent.getSerializableExtra(Intents.EXCEPTION_EXTRA));
+        EventBus.getDefault().unregister(this);
         break;
     }
+  }
+
+  @Override
+  public void onPause() {
+    EventBus.getDefault().unregister(this);
+  }
+
+  @Override
+  public void onResume() {
+    EventBus.getDefault().register(this);
   }
 
   /**

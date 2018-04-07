@@ -31,7 +31,6 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.Date;
-import org.greenrobot.eventbus.EventBus;
 
 public class MainActivity extends AppCompatActivity implements OnStopClickListener {
 
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   protected void onPause() {
     super.onPause();
     if (scheduleFetcher != null) {
-      EventBus.getDefault().unregister(scheduleFetcher);
+      scheduleFetcher.onPause();
     }
   }
 
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   protected void onResume() {
     super.onResume();
     if (scheduleFetcher != null) {
-      EventBus.getDefault().register(scheduleFetcher);
+      scheduleFetcher.onResume();
     }
   }
 
@@ -157,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   public void fetchSchedule(String stopId) {
     scheduleFetcher = new RxSmsScheduleFetcher(getApplicationContext(), SmsManager.getDefault(),
         stopId);
-    EventBus.getDefault().register(scheduleFetcher);
     Observable.create(scheduleFetcher)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -181,14 +179,11 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
           @Override
           public void onError(Throwable e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            EventBus.getDefault().unregister(scheduleFetcher);
-            scheduleFetcher = null;
           }
 
           @Override
           public void onComplete() {
-            EventBus.getDefault().unregister(scheduleFetcher);
-            scheduleFetcher = null;
+            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
           }
         });
   }

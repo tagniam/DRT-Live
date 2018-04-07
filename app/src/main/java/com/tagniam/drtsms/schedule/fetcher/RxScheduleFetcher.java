@@ -21,4 +21,11 @@ public abstract class RxScheduleFetcher implements ObservableOnSubscribe<Intent>
 
     public static final String EXCEPTION_EXTRA = "tagniam.exception";
   }
+
+  /**
+   * Lifecycle hooks to manage the fetcher once the app is paused/resumed.
+   */
+  public abstract void onPause();
+
+  public abstract void onResume();
 }

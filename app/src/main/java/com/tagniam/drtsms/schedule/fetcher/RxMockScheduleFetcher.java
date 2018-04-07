@@ -47,4 +47,13 @@ public class RxMockScheduleFetcher extends RxScheduleFetcher {
     }
   }
 
+  @Override
+  public void onPause() {
+
+  }
+
+  @Override
+  public void onResume() {
+
+  }
 }
