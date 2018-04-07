@@ -9,20 +9,19 @@ import io.reactivex.ObservableOnSubscribe;
 
 public abstract class RxScheduleFetcher implements ObservableOnSubscribe<Intent> {
 
-  public static class Intents {
-    /**
-     * Gets a schedule object from an intent if it has been passed in.
-     * @param intent intent with an action string in this class
-     * @return null if no schedule is sent yet, or a Schedule object if it has been sent
-     */
-    public static Schedule getScheduleFromIntent(Intent intent) {
-      if (intent.getAction() == null || !intent.getAction().equals(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION)) {
-        return null;
-      }
-      return (Schedule) intent.getSerializableExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT);
+  public static RxScheduleFetcher getFetcher(Context context, String stopId) {
+    if (DEBUG) {
+      return new RxMockScheduleFetcher(stopId);
+    } else {
+      PendingIntent sentPendingIntent = PendingIntent
+          .getBroadcast(context, 0,
+              new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_SENT), 0);
+      PendingIntent deliveredPendingIntent = PendingIntent
+          .getBroadcast(context, 0,
+              new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_DELIVERED), 0);
+      return new RxSmsScheduleFetcher(SmsManager.getDefault(), sentPendingIntent,
+          deliveredPendingIntent, stopId);
     }
-
-    public static final String EXCEPTION_EXTRA = "tagniam.exception";
   }
 
   /**
@@ -34,16 +33,32 @@ public abstract class RxScheduleFetcher implements ObservableOnSubscribe<Intent>
 
   private static final boolean DEBUG = false;
 
-  public static RxScheduleFetcher getFetcher(Context context, String stopId) {
-    if (DEBUG) {
-      return new RxMockScheduleFetcher(stopId);
-    } else {
-      PendingIntent sentPendingIntent = PendingIntent
-          .getBroadcast(context, 0, new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT), 0);
-      PendingIntent deliveredPendingIntent = PendingIntent
-          .getBroadcast(context, 0, new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED), 0);
-      return new RxSmsScheduleFetcher(SmsManager.getDefault(), sentPendingIntent,
-          deliveredPendingIntent, stopId);
+  public static class Intents {
+
+    // Action string for completion of schedule fetching
+    public static final String SUCCESS_ACTION =
+        "com.tagniam.drtsms.schedule.SUCCESS_ACTION";
+    // Action string for cancellation of schedule fetching
+    public static final String FAIL_ACTION = "com.tagniam.drtsms.schedule.FAIL_ACTION";
+    // Extra string for schedule data output
+    public static final String RESULT_EXTRA = "com.tagniam.drtsms.schedule.RESULT_EXTRA";
+    // Extra string for stop id input
+    public static final String STOP_ID_EXTRA = "com.tagniam.drtsms.schedule.STOP_ID_EXTRA";
+    // Extra string for exceptions
+    public static final String EXCEPTION_EXTRA = "com.tagniam.drtsms.schedule.EXCEPTION_EXTRA";
+
+    /**
+     * Gets a schedule object from an intent if it has been passed in.
+     *
+     * @param intent intent with an action string in this class
+     * @return null if no schedule is sent yet, or a Schedule object if it has been sent
+     */
+    public static Schedule getScheduleFromIntent(Intent intent) {
+      if (intent.getAction() == null || !intent.getAction().equals(SUCCESS_ACTION)) {
+        return null;
+      }
+      return (Schedule) intent.getSerializableExtra(RESULT_EXTRA);
     }
+
   }
 }

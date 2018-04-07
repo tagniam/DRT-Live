@@ -19,6 +19,36 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class RxSmsScheduleFetcher extends RxScheduleFetcher {
 
+  /**
+   * Parses an intent, depending on the action it will communicate with the emitter and complete/
+   * error out by emitting an intent.
+   * and emit
+   *
+   * @param intent intent from internal static broadcast receiver classes
+   */
+  @Subscribe(sticky = true)
+  public void onIntent(Intent intent) {
+    if (intent.getAction() == null) {
+      return;
+    }
+    switch (intent.getAction()) {
+      case Intents.SCHEDULE_FETCH_SMS_SENT:
+      case Intents.SCHEDULE_FETCH_SMS_DELIVERED:
+        emitter.onNext(intent);
+        break;
+      case RxScheduleFetcher.Intents.SUCCESS_ACTION:
+        emitter.onNext(intent);
+        emitter.onComplete();
+        EventBus.getDefault().unregister(this);
+        break;
+      case RxScheduleFetcher.Intents.FAIL_ACTION:
+        emitter.onError(
+            (Exception) intent.getSerializableExtra(RxScheduleFetcher.Intents.EXCEPTION_EXTRA));
+        EventBus.getDefault().unregister(this);
+        break;
+    }
+  }
+
   private final static String DRT_PHONE_NO = "8447460497";
   private String stopId;
   private ObservableEmitter<Intent> emitter;
@@ -43,33 +73,14 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
         .sendTextMessage(DRT_PHONE_NO, null, stopId, sentPendingIntent, deliveredPendingIntent);
   }
 
-  /**
-   * Parses an intent, depending on the action it will communicate with the emitter and complete/
-   * error out by emitting an intent.
-   * and emit
-   *
-   * @param intent intent from internal static broadcast receiver classes
-   */
-  @Subscribe(sticky = true)
-  public void onIntent(Intent intent) {
-    if (intent.getAction() == null) {
-      return;
-    }
-    switch (intent.getAction()) {
-      case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
-      case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED:
-        emitter.onNext(intent);
-        break;
-      case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
-        emitter.onNext(intent);
-        emitter.onComplete();
-        EventBus.getDefault().unregister(this);
-        break;
-      case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
-        emitter.onError((Exception) intent.getSerializableExtra(Intents.EXCEPTION_EXTRA));
-        EventBus.getDefault().unregister(this);
-        break;
-    }
+  public static class Intents {
+
+    // More progress action strings
+    public static final String SCHEDULE_FETCH_SMS_SENT =
+        "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_SENT";
+    // Action string for cancellation of schedule fetching
+    public static final String SCHEDULE_FETCH_SMS_DELIVERED =
+        "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_DELIVERED";
   }
 
   @Override
@@ -97,13 +108,13 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
           if (smsMessage.getOriginatingAddress().equals(DRT_PHONE_NO)) {
             try {
               Schedule schedule = new SmsSchedule(smsMessage.getMessageBody());
-              Intent result = new Intent(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
-              result.putExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
+              Intent result = new Intent(RxScheduleFetcher.Intents.SUCCESS_ACTION);
+              result.putExtra(RxScheduleFetcher.Intents.RESULT_EXTRA, (Serializable) schedule);
               EventBus.getDefault().postSticky(result);
             } catch (StopNotFoundException | StopTimesNotAvailableException e) {
               EventBus.getDefault()
-                  .postSticky(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION)
-                      .putExtra(Intents.EXCEPTION_EXTRA, e));
+                  .postSticky(new Intent(RxScheduleFetcher.Intents.FAIL_ACTION)
+                      .putExtra(RxScheduleFetcher.Intents.EXCEPTION_EXTRA, e));
             }
             break;
           }
@@ -126,7 +137,7 @@ public class RxSmsScheduleFetcher extends RxScheduleFetcher {
           break;
         default:
           // SMS failed, post fail
-          EventBus.getDefault().postSticky(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION));
+          EventBus.getDefault().postSticky(new Intent(RxScheduleFetcher.Intents.FAIL_ACTION));
           break;
       }
     }

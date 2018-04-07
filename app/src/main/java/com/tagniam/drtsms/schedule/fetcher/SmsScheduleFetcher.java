@@ -2,18 +2,12 @@ package com.tagniam.drtsms.schedule.fetcher;
 
 import android.content.Context;
 import android.content.Intent;
+import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher.Intents;
 
 /**
  * Created by jr on 01/12/17.
  */
 public class SmsScheduleFetcher extends ScheduleFetcher {
-
-  // More progress action strings
-  public static final String SCHEDULE_FETCH_SMS_SENT =
-      "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_SENT";
-  // Action string for cancellation of schedule fetching
-  public static final String SCHEDULE_FETCH_SMS_DELIVERED =
-      "com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_DELIVERED";
 
   SmsScheduleFetcher(Context context) {
     super(context);
@@ -24,7 +18,7 @@ public class SmsScheduleFetcher extends ScheduleFetcher {
     // Create intent
     Intent intent = new Intent();
     intent.setClass(getApplicationContext(), SmsScheduleService.class);
-    intent.putExtra(ScheduleFetcher.SCHEDULE_FETCH_STOP_ID, stopId);
+    intent.putExtra(Intents.STOP_ID_EXTRA, stopId);
     getApplicationContext().startService(intent);
   }
 }

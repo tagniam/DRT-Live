@@ -6,6 +6,7 @@ import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.data.SmsSchedule;
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
+import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher.Intents;
 import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,13 +43,14 @@ public class MockScheduleFetcher extends ScheduleFetcher {
             // Emulate sending sms
             if (step == 0) {
               getApplicationContext()
-                  .sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT));
+                  .sendBroadcast(new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_SENT));
             }
 
             // Emulate delivered sms
             else if (step == 1) {
               getApplicationContext()
-                  .sendBroadcast(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED));
+                  .sendBroadcast(
+                      new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_DELIVERED));
             }
 
             // Emulate success sms, send result back and end timer
@@ -57,9 +59,9 @@ public class MockScheduleFetcher extends ScheduleFetcher {
               try {
                 Schedule schedule = new SmsSchedule(MOCK_MSG);
                 Intent resultIntent = new Intent();
-                resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
+                resultIntent.setAction(Intents.SUCCESS_ACTION);
                 resultIntent.putExtra(
-                    ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
+                    Intents.RESULT_EXTRA, (Serializable) schedule);
                 getApplicationContext().sendBroadcast(resultIntent);
                 timer.cancel();
               } catch (StopTimesNotAvailableException | StopNotFoundException e) {

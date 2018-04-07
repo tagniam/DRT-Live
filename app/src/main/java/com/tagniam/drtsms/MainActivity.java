@@ -19,8 +19,8 @@ import com.tagniam.drtsms.adapter.StopCursorAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher;
-import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
-import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
+import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher.Intents;
+import com.tagniam.drtsms.schedule.fetcher.RxSmsScheduleFetcher;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
                 @Override
                 public void onError(Throwable e) {
-                  updateStatusLine(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION);
+                  updateStatusLine(Intents.FAIL_ACTION);
                 }
               });
         }
@@ -190,20 +190,20 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    */
   private void updateStatusLine(String action) {
     switch (action) {
-      case ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION:
+      case Intents.FAIL_ACTION:
         statusLine.setText(getString(R.string.progress_schedule_fetch_fail));
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorError));
         break;
-      case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT:
+      case RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_SENT:
         statusLine.setVisibility(View.VISIBLE);
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         statusLine.setText(getString(R.string.progress_schedule_fetch_sms_sent));
         break;
-      case SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED:
+      case RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_DELIVERED:
         statusLine.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         statusLine.setText(getString(R.string.progress_schedule_fetch_sms_delivered));
         break;
-      case ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION:
+      case Intents.SUCCESS_ACTION:
         statusLine.setVisibility(View.GONE);
         break;
       default:

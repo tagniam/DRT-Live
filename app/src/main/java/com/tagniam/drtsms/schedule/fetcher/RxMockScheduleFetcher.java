@@ -24,17 +24,17 @@ public class RxMockScheduleFetcher extends RxScheduleFetcher {
   public void subscribe(final ObservableEmitter<Intent> emitter) {
     try {
       Thread.sleep(1000);
-      emitter.onNext(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT));
+      emitter.onNext(new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_SENT));
 
       Thread.sleep(1000);
-      emitter.onNext(new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED));
+      emitter.onNext(new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_DELIVERED));
 
       Thread.sleep(2000);
       if (android.text.TextUtils.isDigitsOnly(stopId)) {
         Schedule schedule = new SmsSchedule(MOCK_MSG);
-        Intent resultIntent = new Intent(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
+        Intent resultIntent = new Intent(Intents.SUCCESS_ACTION);
         resultIntent.putExtra(
-            ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
+            Intents.RESULT_EXTRA, (Serializable) schedule);
 
         emitter.onNext(resultIntent);
         emitter.onComplete();

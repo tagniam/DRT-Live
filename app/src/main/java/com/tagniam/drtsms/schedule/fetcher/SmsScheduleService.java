@@ -14,6 +14,7 @@ import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.data.SmsSchedule;
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
+import com.tagniam.drtsms.schedule.fetcher.RxScheduleFetcher.Intents;
 import java.io.Serializable;
 
 public class SmsScheduleService extends IntentService {
@@ -29,7 +30,7 @@ public class SmsScheduleService extends IntentService {
   @Override
   protected void onHandleIntent(Intent intent) {
     // Get stop id and send sms
-    String stopId = intent.getStringExtra(ScheduleFetcher.SCHEDULE_FETCH_STOP_ID);
+    String stopId = intent.getStringExtra(Intents.STOP_ID_EXTRA);
     sendSmsToDrt(stopId);
 
     // Wait for sms to be received
@@ -38,7 +39,7 @@ public class SmsScheduleService extends IntentService {
 
   /**
    * Attempt to send the SMS containing the bus stop id to DRT. If the attempt fails, then intent
-   * with action SCHEDULE_FETCH_FAIL_ACTION will be broadcast.
+   * with action FAIL_ACTION will be broadcast.
    *
    * @param stopId bus stop id for DRT bus
    */
@@ -48,16 +49,17 @@ public class SmsScheduleService extends IntentService {
     // Set up pending intents to track success/fail sent status
     PendingIntent sentPI =
         PendingIntent.getBroadcast(
-            getApplicationContext(), 0, new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT), 0);
+            getApplicationContext(), 0,
+            new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_SENT), 0);
     PendingIntent deliveredPI =
         PendingIntent.getBroadcast(
             getApplicationContext(),
             0,
-            new Intent(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED),
+            new Intent(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_DELIVERED),
             0);
     IntentFilter intentFilter = new IntentFilter();
-    intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_SENT);
-    intentFilter.addAction(SmsScheduleFetcher.SCHEDULE_FETCH_SMS_DELIVERED);
+    intentFilter.addAction(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_SENT);
+    intentFilter.addAction(RxSmsScheduleFetcher.Intents.SCHEDULE_FETCH_SMS_DELIVERED);
 
     // Set up broadcast receiver to track sms sent status
     drtSmsSender =
@@ -71,7 +73,7 @@ public class SmsScheduleService extends IntentService {
                 break;
               default:
                 // Sms failed, broadcast the fail and stop service
-                sendBroadcast(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION));
+                sendBroadcast(new Intent(Intents.FAIL_ACTION));
                 getApplicationContext().unregisterReceiver(drtSmsSender);
                 stopSelf();
                 break;
@@ -125,13 +127,13 @@ public class SmsScheduleService extends IntentService {
         Schedule schedule = new SmsSchedule(msg);
 
         Intent resultIntent = new Intent();
-        resultIntent.setAction(ScheduleFetcher.SCHEDULE_FETCH_SUCCESS_ACTION);
-        resultIntent.putExtra(ScheduleFetcher.SCHEDULE_FETCH_RESULT, (Serializable) schedule);
+        resultIntent.setAction(Intents.SUCCESS_ACTION);
+        resultIntent.putExtra(Intents.RESULT_EXTRA, (Serializable) schedule);
         sendBroadcast(resultIntent);
 
       } catch (StopNotFoundException | StopTimesNotAvailableException e) {
         // Stop number not found or not available
-        sendBroadcast(new Intent(ScheduleFetcher.SCHEDULE_FETCH_FAIL_ACTION));
+        sendBroadcast(new Intent(Intents.FAIL_ACTION));
       }
 
       getApplicationContext().unregisterReceiver(drtSmsReceiver);
