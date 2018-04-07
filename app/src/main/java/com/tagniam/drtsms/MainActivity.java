@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    * Fetches the schedule.
    */
   public void fetchSchedule(String stopId) {
-    scheduleFetcher = new RxSmsScheduleFetcher(stopId);
+    scheduleFetcher = new RxSmsScheduleFetcher(getApplicationContext(), stopId);
     EventBus.getDefault().register(scheduleFetcher);
     Observable.create(scheduleFetcher)
         .subscribeOn(Schedulers.io())

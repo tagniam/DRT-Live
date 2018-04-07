@@ -38,6 +38,13 @@
       </intent-filter>
     </receiver>
 
+    <receiver android:name=".schedule.fetcher.SmsSender">
+      <intent-filter>
+        <action android:name="com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_DELIVERED"/>
+        <action android:name="com.tagniam.drtsms.schedule.SCHEDULE_FETCH_SMS_SENT"/>
+      </intent-filter>
+    </receiver>
+
   </application>
 
 </manifest>
