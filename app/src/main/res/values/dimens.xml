@@ -5,6 +5,7 @@
   <dimen name="card_fontSize_extra_small">10sp</dimen>
 
   <dimen name="card_elevation">5dp</dimen>
+  <dimen name="card_corner_radius">0dp</dimen>
   <dimen name="card_marginHorizontal">10dp</dimen>
   <dimen name="card_marginVertical">10dp</dimen>
   <dimen name="card_height">112dp</dimen>
