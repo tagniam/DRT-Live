@@ -36,6 +36,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/cardview_light_background"
+    android:elevation="16dp"
     app:behavior_hideable="true"
     app:behavior_peekHeight="60dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
