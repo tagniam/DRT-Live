@@ -24,6 +24,7 @@ import com.tagniam.drtsms.schedule.fetcher.SmsScheduleFetcher;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   private BottomSheetBehavior bottomSheetBehavior;
   private MapFragment map;
   private ScheduleFetcher scheduleFetcher;
+  private Disposable scheduleFetcherDisposable;
 
   // Query listener for searchview
   private SearchView.OnQueryTextListener onQueryTextListener =
@@ -133,6 +135,19 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   }
 
   @Override
+  protected void onStart() {
+    super.onStart();
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (scheduleFetcherDisposable != null && !scheduleFetcherDisposable.isDisposed()) {
+      scheduleFetcherDisposable.dispose();
+    }
+  }
+
+  @Override
   protected void onPause() {
     super.onPause();
     if (scheduleFetcher != null) {
@@ -153,10 +168,10 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    */
   public void fetchSchedule(String stopId) {
     scheduleFetcher = ScheduleFetcher.getFetcher(getApplicationContext(), stopId);
-    Observable.create(scheduleFetcher)
+    scheduleFetcherDisposable = Observable.create(scheduleFetcher)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new DisposableObserver<Intent>() {
+        .subscribeWith(new DisposableObserver<Intent>() {
           @Override
           public void onNext(Intent intent) {
             // Unpack intent
@@ -182,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
           public void onComplete() {
           }
         });
+
   }
 
   /**

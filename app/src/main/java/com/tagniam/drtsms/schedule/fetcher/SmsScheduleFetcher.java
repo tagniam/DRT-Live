@@ -78,12 +78,16 @@ public class SmsScheduleFetcher extends ScheduleFetcher {
 
   @Override
   public void onPause() {
-    EventBus.getDefault().unregister(this);
+    if (EventBus.getDefault().isRegistered(this)) {
+      EventBus.getDefault().unregister(this);
+    }
   }
 
   @Override
   public void onResume() {
-    EventBus.getDefault().register(this);
+    if (!EventBus.getDefault().isRegistered(this)) {
+      EventBus.getDefault().register(this);
+    }
   }
 
   /**
