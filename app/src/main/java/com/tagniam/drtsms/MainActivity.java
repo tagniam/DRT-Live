@@ -257,19 +257,18 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
           public void onSuccess(String name) {
             if (name == null) {
               // Display stop code in case it's not found in the db
-              TextView stopName = findViewById(R.id.bottom_sheet_stop_name);
-              stopName.setText(schedule.getStopNumber());
+              stopIdInput
+                  .setQuery(getString(R.string.search_stop_id, schedule.getStopNumber()), false);
             }
             // Display stop name
-            TextView stopName = findViewById(R.id.bottom_sheet_stop_name);
-            stopName.setText(name);
+            stopIdInput.setQuery(name, false);
           }
 
           @Override
           public void onError(Throwable e) {
             // Display stop code in case it's not found in the db
-            TextView stopName = findViewById(R.id.bottom_sheet_stop_name);
-            stopName.setText(schedule.getStopNumber());
+            stopIdInput
+                .setQuery(getString(R.string.search_stop_id, schedule.getStopNumber()), false);
           }
         });
 

@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class MockScheduleFetcher extends ScheduleFetcher {
 
   private static final String MOCK_MSG =
-      "Stop MOCK1604:\r\n"
+      "Stop 1604:\r\n"
           + "Rt 900 WB: 7:09p| 7:25p| 7:40p| 7:54p| 8:09p| 8:29p| 8:49p\r\n"
           + "Rt 916 WB: 7:16p| 7:44p| 8:12p| 8:42p\r\n"
           + "std msg rates may apply";

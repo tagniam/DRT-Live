@@ -51,6 +51,7 @@
   <style name="ScheduleCard" parent="CardView">
     <item name="cardCornerRadius">@dimen/card_corner_radius</item>
     <item name="android:layout_height">@dimen/card_height</item>
+    <item name="android:layout_margin">4dp</item>
   </style>
 
   <!-- Route/direction layout style. -->
