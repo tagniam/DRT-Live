@@ -3,7 +3,9 @@ package com.tagniam.drtsms;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetBehavior.BottomSheetCallback;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
             .getResources()
             .getIdentifier("android:id/search_plate", null, null);
     findViewById(searchPlateId).setBackground(null);
-    int searchButtonId =
+    final int searchButtonId =
         stopIdInput
             .getContext()
             .getResources()
@@ -137,6 +139,21 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     // Setup bottom sheet
     bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+    bottomSheetBehavior.setBottomSheetCallback(new BottomSheetCallback() {
+      @Override
+      public void onStateChanged(@NonNull View bottomSheet, int newState) {
+        if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+          // Clear click on map and search when bottom sheet gets hidden
+          map.clearClick();
+          stopIdInput.setQuery("", false);
+        }
+      }
+
+      @Override
+      public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+      }
+    });
 
     // Setup map
     map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);

@@ -37,7 +37,7 @@
     android:layout_height="wrap_content"
     android:background="@color/cardview_light_background"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="30dp"
+    app:behavior_peekHeight="60dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <LinearLayout
@@ -48,7 +48,9 @@
       <TextView
         android:id="@+id/bottom_sheet_stop_name"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="60dp"
+        android:layout_margin="8dp"
+        android:textSize="20sp"
         android:text="William Jackson"/>
 
 
