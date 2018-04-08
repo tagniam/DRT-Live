@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
         /**
          * Query the database for stop IDs/names containing the given query.
+         *
          * @param query query from the search view
          */
         private void findMatchingStops(String query) {
@@ -71,28 +72,31 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
 
           // Query the database in a new thread
           Single.just(query)
-              .map(new Function<String, Cursor>() {
-                @Override
-                public Cursor apply(String s) {
-                  return GtfsRoomDatabase.getDatabase(getApplicationContext())
-                      .stopDao().findStopsByNameOrId(s);
-                }
-              })
+              .map(
+                  new Function<String, Cursor>() {
+                    @Override
+                    public Cursor apply(String s) {
+                      return GtfsRoomDatabase.getDatabase(getApplicationContext())
+                          .stopDao()
+                          .findStopsByNameOrId(s);
+                    }
+                  })
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new DisposableSingleObserver<Cursor>() {
+              .subscribe(
+                  new DisposableSingleObserver<Cursor>() {
 
-                @Override
-                public void onSuccess(Cursor cursor) {
-                  stopIdInput.setSuggestionsAdapter(new StopCursorAdapter(MainActivity.this,
-                      cursor, stopIdInput));
-                }
+                    @Override
+                    public void onSuccess(Cursor cursor) {
+                      stopIdInput.setSuggestionsAdapter(
+                          new StopCursorAdapter(MainActivity.this, cursor, stopIdInput));
+                    }
 
-                @Override
-                public void onError(Throwable e) {
-                  updateStatusLine(Intents.FAIL_ACTION);
-                }
-              });
+                    @Override
+                    public void onError(Throwable e) {
+                      updateStatusLine(Intents.FAIL_ACTION);
+                    }
+                  });
         }
       };
 
@@ -107,20 +111,28 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     stopIdInput = findViewById(R.id.stopIdInput);
     stopIdInput.setOnQueryTextListener(onQueryTextListener);
     // Remove underline from search view
-    int searchPlateId = stopIdInput.getContext().getResources()
-        .getIdentifier("android:id/search_plate", null, null);
+    int searchPlateId =
+        stopIdInput
+            .getContext()
+            .getResources()
+            .getIdentifier("android:id/search_plate", null, null);
     findViewById(searchPlateId).setBackground(null);
-    int searchButtonId = stopIdInput.getContext().getResources()
-        .getIdentifier("android:id/search_close_btn", null, null);
-    findViewById(searchButtonId).setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        map.clearClick();
-        stopIdInput.setQuery("", false);
-        stopIdInput.requestFocus();
-      }
-    });
+    int searchButtonId =
+        stopIdInput
+            .getContext()
+            .getResources()
+            .getIdentifier("android:id/search_close_btn", null, null);
+    findViewById(searchButtonId)
+        .setOnClickListener(
+            new OnClickListener() {
+              @Override
+              public void onClick(View view) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                map.clearClick();
+                stopIdInput.setQuery("", false);
+                stopIdInput.requestFocus();
+              }
+            });
 
     // Setup bottom sheet
     bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
@@ -168,41 +180,42 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    */
   public void fetchSchedule(String stopId) {
     scheduleFetcher = ScheduleFetcher.getFetcher(getApplicationContext(), stopId);
-    scheduleFetcherDisposable = Observable.create(scheduleFetcher)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(new DisposableObserver<Intent>() {
-          @Override
-          public void onNext(Intent intent) {
-            // Unpack intent
-            if (intent.getAction() == null) {
-              return;
-            }
-            updateStatusLine(intent.getAction());
-            Schedule schedule = ScheduleFetcher.Intents.getScheduleFromIntent(intent);
-            if (schedule != null) {
-              ScheduleAdapter scheduleAdapter = new ScheduleAdapter(getApplicationContext(),
-                  schedule.getBusTimes(), new Date());
-              scheduleView.setAdapter(scheduleAdapter);
-              bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-          }
+    scheduleFetcherDisposable =
+        Observable.create(scheduleFetcher)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(
+                new DisposableObserver<Intent>() {
+                  @Override
+                  public void onNext(Intent intent) {
+                    // Unpack intent
+                    if (intent.getAction() == null) {
+                      return;
+                    }
+                    updateStatusLine(intent.getAction());
+                    Schedule schedule = ScheduleFetcher.Intents.getScheduleFromIntent(intent);
+                    if (schedule != null) {
+                      ScheduleAdapter scheduleAdapter =
+                          new ScheduleAdapter(
+                              getApplicationContext(), schedule.getBusTimes(), new Date());
+                      scheduleView.setAdapter(scheduleAdapter);
+                      bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    }
+                  }
 
-          @Override
-          public void onError(Throwable e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-          }
+                  @Override
+                  public void onError(Throwable e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG)
+                        .show();
+                  }
 
-          @Override
-          public void onComplete() {
-          }
-        });
-
+                  @Override
+                  public void onComplete() {
+                  }
+                });
   }
 
-  /**
-   * Updates the status line based on the action we get from the schedule fetcher.
-   */
+  /** Updates the status line based on the action we get from the schedule fetcher. */
   private void updateStatusLine(String action) {
     statusLine.setVisibility(View.VISIBLE);
     switch (action) {
@@ -235,5 +248,4 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   public void onStopClick(String stopCode) {
     stopIdInput.setQuery(stopCode, false);
   }
-
 }

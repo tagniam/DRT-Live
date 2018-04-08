@@ -11,7 +11,6 @@ import org.junit.Test;
  */
 public class BusTimeHelperTest {
 
-
   @Test
   public void test_getRelativeTime_hrOnly() {
     Calendar cal = Calendar.getInstance();
@@ -45,5 +44,4 @@ public class BusTimeHelperTest {
 
     assertEquals("2 hr 34 min", BusTime.Helper.getRelativeTime(now, next));
   }
-
 }

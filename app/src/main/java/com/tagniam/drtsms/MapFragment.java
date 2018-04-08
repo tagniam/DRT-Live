@@ -41,20 +41,19 @@ import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
 
 public class MapFragment extends Fragment {
 
-  private MapView map;
   private static final GeoPoint MAP_CENTER = new GeoPoint(43.90546, -78.9563);
   private static final double MAP_MIN_ZOOM = 14.0;
   private static final double MAP_MAX_ZOOM = 20.0;
   private static final double MAP_LOCAL_ZOOM = 18.0;
   private static final double MAP_OVERLAY_MIN_ZOOM = 17.0;
-
+  private static final int FINE_LOCATION_PERMISSION_REQUEST = 0;
+  private MapView map;
   private List<Stop> stops = new ArrayList<>();
   private List<IGeoPoint> points = new ArrayList<>();
   private SimpleFastPointOverlay pointsOverlay;
   private SimpleFastPointOverlayOptions pointOptions;
   private OnStopClickListener callback;
   private MyLocationNewOverlay locationOverlay;
-  private static final int FINE_LOCATION_PERMISSION_REQUEST = 0;
   private FloatingActionButton locationButton;
 
   @Override
@@ -63,8 +62,8 @@ public class MapFragment extends Fragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  public View onCreateView(
+      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_map, container, false);
   }
 
@@ -89,104 +88,126 @@ public class MapFragment extends Fragment {
     pointStyle.setColor(Color.parseColor("#48C873"));
 
     // Setup point options
-    pointOptions = SimpleFastPointOverlayOptions.getDefaultStyle()
-        .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
-        .setRadius(7).setIsClickable(true).setCellSize(15).setPointStyle(pointStyle);
+    pointOptions =
+        SimpleFastPointOverlayOptions.getDefaultStyle()
+            .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
+            .setRadius(7)
+            .setIsClickable(true)
+            .setCellSize(15)
+            .setPointStyle(pointStyle);
 
     // Setup location button
     locationButton = view.findViewById(R.id.location);
-    locationButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        // Make sure we have permissions to use location
-        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(),
-            permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-          // Request permissions first
-          ActivityCompat
-              .requestPermissions(getActivity(), new String[]{permission.ACCESS_FINE_LOCATION},
+    locationButton.setOnClickListener(
+        new OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            // Make sure we have permissions to use location
+            if (ActivityCompat.checkSelfPermission(
+                getActivity().getApplicationContext(), permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+              // Request permissions first
+              ActivityCompat.requestPermissions(
+                  getActivity(),
+                  new String[]{permission.ACCESS_FINE_LOCATION},
                   FINE_LOCATION_PERMISSION_REQUEST);
-        } else {
-          // Setup overlay for my location, make sure we don't duplicate an existing one
-          if (locationOverlay == null) {
-            locationOverlay = new MyLocationNewOverlay(
-                new GpsMyLocationProvider(getActivity().getApplicationContext()), map);
-            map.getOverlays().add(locationOverlay);
-          }
+            } else {
+              // Setup overlay for my location, make sure we don't duplicate an existing one
+              if (locationOverlay == null) {
+                locationOverlay =
+                    new MyLocationNewOverlay(
+                        new GpsMyLocationProvider(getActivity().getApplicationContext()), map);
+                map.getOverlays().add(locationOverlay);
+              }
 
-          locationOverlay.enableMyLocation();
+              locationOverlay.enableMyLocation();
 
-          if (locationOverlay.isMyLocationEnabled()) {
-            // When location is available, set center/zoom and enter nearest stop automagically
-            final MyLocationNewOverlay myLocationNewOverlay = locationOverlay;
-            locationOverlay.runOnFirstFix(new Runnable() {
-              @Override
-              public void run() {
-                // Have to run this on main thread through RxJava to update UI
-                Single.just(myLocationNewOverlay.getMyLocation())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableSingleObserver<GeoPoint>() {
+              if (locationOverlay.isMyLocationEnabled()) {
+                // When location is available, set center/zoom and enter nearest stop automagically
+                final MyLocationNewOverlay myLocationNewOverlay = locationOverlay;
+                locationOverlay.runOnFirstFix(
+                    new Runnable() {
                       @Override
-                      public void onSuccess(GeoPoint location) {
-                        String stopCode = clickNearestStop(location);
-                        if (stopCode == null) {
-                          // Notify user and set center/zoom to current location
-                          Toast.makeText(getActivity().getApplicationContext(),
-                              getActivity().getApplicationContext().getResources()
-                                  .getString(R.string.error_generic),
-                              Toast.LENGTH_SHORT).show();
-                          map.getController().setCenter(location);
-                          map.getController().setZoom(MAP_LOCAL_ZOOM);
-                        } else {
-                          // Do some magic!
-                          callback.onStopClick(stopCode);
-                        }
-                      }
+                      public void run() {
+                        // Have to run this on main thread through RxJava to update UI
+                        Single.just(myLocationNewOverlay.getMyLocation())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                new DisposableSingleObserver<GeoPoint>() {
+                                  @Override
+                                  public void onSuccess(GeoPoint location) {
+                                    String stopCode = clickNearestStop(location);
+                                    if (stopCode == null) {
+                                      // Notify user and set center/zoom to current location
+                                      Toast.makeText(
+                                          getActivity().getApplicationContext(),
+                                          getActivity()
+                                              .getApplicationContext()
+                                              .getResources()
+                                              .getString(R.string.error_generic),
+                                          Toast.LENGTH_SHORT)
+                                          .show();
+                                      map.getController().setCenter(location);
+                                      map.getController().setZoom(MAP_LOCAL_ZOOM);
+                                    } else {
+                                      // Do some magic!
+                                      callback.onStopClick(stopCode);
+                                    }
+                                  }
 
-                      @Override
-                      public void onError(Throwable e) {
-                        Toast.makeText(getActivity().getApplicationContext(),
-                            e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                                  @Override
+                                  public void onError(Throwable e) {
+                                    Toast.makeText(
+                                        getActivity().getApplicationContext(),
+                                        e.getMessage(),
+                                        Toast.LENGTH_SHORT)
+                                        .show();
+                                  }
+                                });
                       }
                     });
+              } else {
+                Toast.makeText(
+                    getActivity().getApplicationContext(),
+                    getActivity()
+                        .getApplicationContext()
+                        .getResources()
+                        .getString(R.string.notification_location),
+                    Toast.LENGTH_SHORT)
+                    .show();
               }
-            });
-          } else {
-            Toast.makeText(getActivity().getApplicationContext(),
-                getActivity().getApplicationContext().getResources()
-                    .getString(R.string.notification_location),
-                Toast.LENGTH_SHORT).show();
+            }
           }
-        }
-      }
-    });
+        });
 
     // Setup zoom listener
-    map.addMapListener(new MapListener() {
-      @Override
-      public boolean onScroll(ScrollEvent event) {
-        return false;
-      }
+    map.addMapListener(
+        new MapListener() {
+          @Override
+          public boolean onScroll(ScrollEvent event) {
+            return false;
+          }
 
-      @Override
-      public boolean onZoom(ZoomEvent event) {
-        if (event.getZoomLevel() < MAP_OVERLAY_MIN_ZOOM) {
-          map.getOverlays().remove(pointsOverlay);
-        } else if (!map.getOverlays().contains(pointsOverlay)) {
-          map.getOverlays().add(pointsOverlay);
-        }
-        return false;
-      }
-    });
+          @Override
+          public boolean onZoom(ZoomEvent event) {
+            if (event.getZoomLevel() < MAP_OVERLAY_MIN_ZOOM) {
+              map.getOverlays().remove(pointsOverlay);
+            } else if (!map.getOverlays().contains(pointsOverlay)) {
+              map.getOverlays().add(pointsOverlay);
+            }
+            return false;
+          }
+        });
     // Setup map points
     setupMapPoints();
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-      @NonNull int[] grantResults) {
-    if (requestCode == FINE_LOCATION_PERMISSION_REQUEST &&
-        grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+  public void onRequestPermissionsResult(
+      int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    if (requestCode == FINE_LOCATION_PERMISSION_REQUEST
+        && grantResults.length == 1
+        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
       locationButton.performClick();
     }
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -196,52 +217,63 @@ public class MapFragment extends Fragment {
    * Gets all the stops from the database and displays them on the map.
    */
   private void setupMapPoints() {
-    Single.fromCallable(new Callable<List<Stop>>() {
-      @Override
-      public List<Stop> call() {
-        // Query database for stops
-        return GtfsRoomDatabase.getDatabase(getActivity().getApplicationContext())
-            .stopDao().loadAllStops();
-      }
-    }).map(new Function<List<Stop>, List<IGeoPoint>>() {
-      @Override
-      public List<IGeoPoint> apply(List<Stop> busStops) {
-        // Convert stops to points using co-ordinates and stop name
-        stops = new ArrayList<>();
-        stops.addAll(busStops);
-        points = new ArrayList<>();
-        for (Stop stop : busStops) {
-          points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
-        }
-        return points;
-      }
-    }).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new DisposableSingleObserver<List<IGeoPoint>>() {
+    Single.fromCallable(
+        new Callable<List<Stop>>() {
           @Override
-          public void onSuccess(List<IGeoPoint> points) {
-            // Add points to map, using configured point style & options
-            SimplePointTheme pt = new SimplePointTheme(points, false);
-            pointsOverlay = new SimpleFastPointOverlay(pt, pointOptions);
-
-            pointsOverlay.setOnClickListener(new SimpleFastPointOverlay.OnClickListener() {
+          public List<Stop> call() {
+            // Query database for stops
+            return GtfsRoomDatabase.getDatabase(getActivity().getApplicationContext())
+                .stopDao()
+                .loadAllStops();
+          }
+        })
+        .map(
+            new Function<List<Stop>, List<IGeoPoint>>() {
               @Override
-              public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
-                // Notify activity which stop we selected
-                callback.onStopClick(stops.get(point).stopCode);
+              public List<IGeoPoint> apply(List<Stop> busStops) {
+                // Convert stops to points using co-ordinates and stop name
+                stops = new ArrayList<>();
+                stops.addAll(busStops);
+                points = new ArrayList<>();
+                for (Stop stop : busStops) {
+                  points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
+                }
+                return points;
+              }
+            })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            new DisposableSingleObserver<List<IGeoPoint>>() {
+              @Override
+              public void onSuccess(List<IGeoPoint> points) {
+                // Add points to map, using configured point style & options
+                SimplePointTheme pt = new SimplePointTheme(points, false);
+                pointsOverlay = new SimpleFastPointOverlay(pt, pointOptions);
+
+                pointsOverlay.setOnClickListener(
+                    new SimpleFastPointOverlay.OnClickListener() {
+                      @Override
+                      public void onClick(
+                          SimpleFastPointOverlay.PointAdapter points, Integer point) {
+                        // Notify activity which stop we selected
+                        callback.onStopClick(stops.get(point).stopCode);
+                      }
+                    });
+              }
+
+              @Override
+              public void onError(Throwable e) {
+                Toast.makeText(
+                    getActivity().getApplicationContext(),
+                    getActivity()
+                        .getApplicationContext()
+                        .getResources()
+                        .getString(R.string.error_generic),
+                    Toast.LENGTH_SHORT)
+                    .show();
               }
             });
-
-          }
-
-          @Override
-          public void onError(Throwable e) {
-            Toast.makeText(getActivity().getApplicationContext(),
-                getActivity().getApplicationContext().getResources()
-                    .getString(R.string.error_generic),
-                Toast.LENGTH_SHORT).show();
-          }
-        });
   }
 
   /**
@@ -329,19 +361,14 @@ public class MapFragment extends Fragment {
     }
   }
 
-  /**
-   * Clears any selection made.
-   */
+  /** Clears any selection made. */
   public void clearClick() {
     pointsOverlay.setSelectedPoint(null);
   }
 
-  /**
-   * Detect when a stop is clicked on the map.
-   */
+  /** Detect when a stop is clicked on the map. */
   public interface OnStopClickListener {
 
     void onStopClick(String stopCode);
   }
-
 }
