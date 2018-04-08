@@ -31,7 +31,7 @@ public abstract class ScheduleFetcher implements ObservableOnSubscribe<Intent> {
 
   public abstract void onResume();
 
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
 
   public static class Intents {
 

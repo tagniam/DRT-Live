@@ -72,13 +72,21 @@
       android:orientation="vertical"
       app:layout_constraintGuide_begin="@dimen/card_height"/>
 
-    <android.support.v4.view.ViewPager
-      android:id="@+id/timePager"
-      android:layout_width="wrap_content"
+    <LinearLayout
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:orientation="vertical"
       app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0"
       app:layout_constraintStart_toStartOf="@+id/guideline"
-      app:layout_constraintTop_toTopOf="parent"/>
+      app:layout_constraintTop_toTopOf="parent">
+
+      <android.support.v4.view.ViewPager
+        android:id="@+id/timePager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    </LinearLayout>
 
     <LinearLayout
       android:id="@+id/timeDots"
