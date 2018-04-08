@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   /**
    * Fetches the schedule.
    */
-  public void fetchSchedule(String stopId) {
+  public void fetchSchedule(final String stopId) {
     scheduleFetcher = ScheduleFetcher.getFetcher(getApplicationContext(), stopId);
     scheduleFetcherDisposable =
         Observable.create(scheduleFetcher)
@@ -195,11 +195,7 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
                     updateStatusLine(intent.getAction());
                     Schedule schedule = ScheduleFetcher.Intents.getScheduleFromIntent(intent);
                     if (schedule != null) {
-                      ScheduleAdapter scheduleAdapter =
-                          new ScheduleAdapter(
-                              getApplicationContext(), schedule.getBusTimes(), new Date());
-                      scheduleView.setAdapter(scheduleAdapter);
-                      bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                      displaySchedule(schedule);
                     }
                   }
 
@@ -213,6 +209,53 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
                   public void onComplete() {
                   }
                 });
+  }
+
+  /**
+   * Display the schedule's information.
+   *
+   * @param schedule schedule object with bus times + routes
+   */
+  private void displaySchedule(final Schedule schedule) {
+    // Display bottom sheet schedule
+    ScheduleAdapter scheduleAdapter =
+        new ScheduleAdapter(
+            getApplicationContext(), schedule.getBusTimes(), new Date());
+    scheduleView.setAdapter(scheduleAdapter);
+    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    // Set bottom sheet title
+    Single.just(schedule.getStopNumber())
+        .map(new Function<String, String>() {
+          @Override
+          public String apply(String stopCode) {
+            // Get stop name
+            return GtfsRoomDatabase.getDatabase(getApplicationContext())
+                .stopDao().getStopName(stopCode);
+          }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new DisposableSingleObserver<String>() {
+          @Override
+          public void onSuccess(String name) {
+            if (name == null) {
+              // Display stop code in case it's not found in the db
+              TextView stopName = findViewById(R.id.bottom_sheet_stop_name);
+              stopName.setText(schedule.getStopNumber());
+            }
+            // Display stop name
+            TextView stopName = findViewById(R.id.bottom_sheet_stop_name);
+            stopName.setText(name);
+          }
+
+          @Override
+          public void onError(Throwable e) {
+            // Display stop code in case it's not found in the db
+            TextView stopName = findViewById(R.id.bottom_sheet_stop_name);
+            stopName.setText(schedule.getStopNumber());
+          }
+        });
+
   }
 
   /** Updates the status line based on the action we get from the schedule fetcher. */

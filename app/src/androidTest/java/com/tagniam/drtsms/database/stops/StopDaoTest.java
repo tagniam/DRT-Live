@@ -1,6 +1,7 @@
 package com.tagniam.drtsms.database.stops;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 import android.arch.persistence.room.Room;
@@ -84,4 +85,15 @@ public class StopDaoTest {
     assertThat(stopName, is("Pickering Station 2"));
   }
 
+  @Test
+  public void test_getStopName_found() {
+    String name = mDao.getStopName("2548");
+    assertThat(name, is("Pickering Station 2"));
+  }
+
+  @Test
+  public void test_getStopName_notFound() {
+    String name = mDao.getStopName("Nah");
+    assertNull(name);
+  }
 }
