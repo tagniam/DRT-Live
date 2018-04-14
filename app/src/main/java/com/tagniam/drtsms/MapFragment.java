@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
@@ -54,6 +55,7 @@ public class MapFragment extends Fragment {
   private SimpleFastPointOverlayOptions pointOptions;
   private OnStopClickListener callback;
   private MyLocationNewOverlay locationOverlay;
+  private FrameLayout mapFrame;
   private FloatingActionButton locationButton;
 
   @Override
@@ -81,6 +83,11 @@ public class MapFragment extends Fragment {
     map.setMinZoomLevel(MAP_MIN_ZOOM);
     map.getController().setCenter(MAP_CENTER);
     map.getController().setZoom(MAP_MIN_ZOOM);
+
+    // Setup dimmable
+    mapFrame = view.findViewById(R.id.map_frame);
+    mapFrame.getForeground().setAlpha(0);
+    mapFrame.invalidate();
 
     // Setup point style
     Paint pointStyle = new Paint();
@@ -372,6 +379,16 @@ public class MapFragment extends Fragment {
 
   public void showLocationButton() {
     locationButton.setVisibility(View.VISIBLE);
+  }
+
+  public void enableDim() {
+    mapFrame.getForeground().setAlpha(100);
+    mapFrame.invalidate();
+  }
+
+  public void disableDim() {
+    mapFrame.getForeground().setAlpha(0);
+    mapFrame.invalidate();
   }
 
   /** Detect when a stop is clicked on the map. */

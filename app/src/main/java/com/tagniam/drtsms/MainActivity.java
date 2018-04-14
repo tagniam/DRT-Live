@@ -145,13 +145,17 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
         switch (newState) {
           case BottomSheetBehavior.STATE_HIDDEN:
             map.showLocationButton();
-
+            map.disableDim();
             // Clear click on map and search when bottom sheet gets hidden
             map.clearClick();
             stopIdInput.setQuery("", false);
             break;
           case BottomSheetBehavior.STATE_EXPANDED:
             map.hideLocationButton();
+            map.enableDim();
+            break;
+          case BottomSheetBehavior.STATE_COLLAPSED:
+            map.disableDim();
             break;
         }
       }
