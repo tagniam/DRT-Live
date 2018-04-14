@@ -366,6 +366,14 @@ public class MapFragment extends Fragment {
     pointsOverlay.setSelectedPoint(null);
   }
 
+  public void hideLocationButton() {
+    locationButton.setVisibility(View.INVISIBLE);
+  }
+
+  public void showLocationButton() {
+    locationButton.setVisibility(View.VISIBLE);
+  }
+
   /** Detect when a stop is clicked on the map. */
   public interface OnStopClickListener {
 
