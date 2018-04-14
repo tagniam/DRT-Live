@@ -31,7 +31,26 @@
     <item name="layout_behavior">@string/bottom_sheet_behavior</item>item>
   </style>
 
-  <!-- Time text style. -->
+  <style name="RouteInfoBackground" parent="AppTheme">
+    <item name="android:background">@color/colorRouteDirectionBg</item>
+  </style>
+
+  <style name="RouteText" parent="AppTheme">
+    <item name="android:textSize">@dimen/route_text_size</item>
+    <item name="android:textColor">@color/colorRouteText</item>
+    <item name="android:textStyle">bold</item>
+  </style>
+
+  <style name="NameText" parent="AppTheme">
+    <item name="android:textSize">@dimen/name_text_size</item>
+    <item name="android:textColor">@color/colorNameText</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:scrollHorizontally">true</item>
+    <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    <item name="android:focusable">false</item>
+    <item name="android:ellipsize">marquee</item>
+  </style>
+
   <style name="TimeText" parent="AppTheme">
     <item name="android:textStyle">bold</item>
     <item name="android:textColor">@color/colorTimeText</item>
@@ -39,50 +58,24 @@
     <item name="android:gravity">center</item>
   </style>
 
-  <!-- Route text style. -->
-  <style name="RouteText" parent="AppTheme">
-    <item name="android:textStyle">bold</item>
-    <item name="android:gravity">center_horizontal</item>
-    <item name="android:textColor">@color/colorRouteText</item>
-    <item name="android:textSize">@dimen/card_fontSize_large</item>
-  </style>
-
-  <!-- Direction text style. -->
   <style name="DirectionText" parent="AppTheme">
     <item name="android:textAllCaps">true</item>
-    <item name="android:gravity">center_horizontal</item>
     <item name="android:textColor">@color/colorDirectionText</item>
-    <item name="android:textSize">@dimen/card_fontSize_extra_small</item>
+    <item name="android:textSize">@dimen/direction_text_size</item>
   </style>
 
-  <!-- Name text style. -->
-  <style name="NameText" parent="AppTheme">
-    <item name="android:textStyle">bold</item>
-    <item name="android:gravity">center_horizontal</item>
-    <item name="android:textColor">@color/colorNameText</item>
-    <item name="android:textSize">@dimen/card_fontSize_small</item>
-  </style>
-
-  <!-- Time dots style. -->
   <style name="TimeDots" parent="AppTheme">
     <item name="android:layout_gravity">center</item>
-    <item name="android:layout_marginLeft">5dp</item>
-    <item name="android:layout_marginRight">5dp</item>
+    <item name="android:layout_marginLeft">@dimen/schedule_card_time_dots_margin</item>
+    <item name="android:layout_marginRight">@dimen/schedule_card_time_dots_margin</item>
   </style>
 
-  <!-- Card style. -->
   <style name="ScheduleCard" parent="CardView">
     <item name="cardCornerRadius">@dimen/card_corner_radius</item>
     <item name="android:layout_height">@dimen/card_height</item>
-    <item name="android:layout_margin">4dp</item>
+    <item name="android:layout_margin">@dimen/schedule_card_margin</item>
   </style>
 
-  <!-- Route/direction layout style. -->
-  <style name="RouteDirection" parent="AppTheme">
-    <item name="android:background">@color/colorRouteDirectionBg</item>
-  </style>
-
-  <!-- Stop id input style. -->
   <style name="StopIdInput" parent="AppTheme">
     <item name="android:ems">10</item>
     <item name="android:background">#fff</item>

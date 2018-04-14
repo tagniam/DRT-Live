@@ -12,59 +12,49 @@
 
     <View
       android:id="@+id/view"
+      style="@style/RouteInfoBackground"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:background="@color/colorRouteDirectionBg"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toStartOf="@+id/guideline"
       app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
       android:id="@+id/route"
-      android:textStyle="bold"
+      style="@style/RouteText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginEnd="8dp"
-      android:text="112"
-      android:textColor="#fff"
-      android:textSize="34sp"
       app:layout_constraintEnd_toStartOf="@+id/guideline"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"/>
+
     <TextView
       android:id="@+id/name"
+      style="@style/NameText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="8dp"
       android:layout_marginEnd="8dp"
-      android:ellipsize="marquee"
-      android:focusable="false"
-      android:marqueeRepeatLimit="marquee_forever"
-      android:scrollHorizontally="true"
-      android:singleLine="true"
-      android:text="Brock"
-      android:textColor="#fff"
-      android:textSize="20sp"
       app:layout_constraintBottom_toTopOf="@+id/direction"
       app:layout_constraintEnd_toStartOf="@+id/guideline"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/route"/>
+
     <TextView
       android:id="@+id/direction"
+      style="@style/DirectionText"
       android:layout_width="wrap_content"
       android:layout_height="19dp"
       android:layout_marginBottom="8dp"
       android:layout_marginStart="8dp"
       android:layout_marginEnd="8dp"
-      android:text="Westbound"
-      android:textAllCaps="true"
-      android:textColor="#fff"
-      android:textSize="12sp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toStartOf="@+id/guideline"
       app:layout_constraintStart_toStartOf="parent"/>
+
     <android.support.constraint.Guideline
       android:id="@+id/guideline"
       android:layout_width="wrap_content"

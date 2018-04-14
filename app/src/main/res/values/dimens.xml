@@ -22,4 +22,11 @@
 
   <dimen name="bottom_sheet_elevation">16dp</dimen>
   <dimen name="bottom_sheet_peek_height">56dp</dimen>
+
+  <dimen name="route_text_size">34sp</dimen>
+  <dimen name="name_text_size">20sp</dimen>
+  <dimen name="direction_text_size">12sp</dimen>
+
+  <dimen name="schedule_card_margin">4dp</dimen>
+  <dimen name="schedule_card_time_dots_margin">5dp</dimen>
 </resources>
