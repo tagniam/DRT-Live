@@ -42,8 +42,6 @@ public abstract class ScheduleFetcher implements ObservableOnSubscribe<Intent> {
     public static final String FAIL_ACTION = "com.tagniam.drtsms.schedule.FAIL_ACTION";
     // Extra string for schedule data output
     public static final String RESULT_EXTRA = "com.tagniam.drtsms.schedule.RESULT_EXTRA";
-    // Extra string for stop id input
-    public static final String STOP_ID_EXTRA = "com.tagniam.drtsms.schedule.STOP_ID_EXTRA";
     // Extra string for exceptions
     public static final String EXCEPTION_EXTRA = "com.tagniam.drtsms.schedule.EXCEPTION_EXTRA";
 
