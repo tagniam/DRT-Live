@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:id="@+id/map_frame"
-  android:foreground="@drawable/dim_overlay"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
+  style="@style/MapFrame"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
@@ -16,14 +15,7 @@
 
   <android.support.design.widget.FloatingActionButton
     android:id="@+id/location"
-    android:layout_width="56dp"
-    android:layout_height="56dp"
-    android:layout_margin="16dp"
-    android:layout_gravity="bottom|right"
-    android:src="@drawable/location"
-    app:backgroundTint="@color/cardview_light_background"
-    app:elevation="4dp"
-    app:layout_anchorGravity="bottom|right|end"
+    style="@style/LocationButton"
     />
 
 </FrameLayout>

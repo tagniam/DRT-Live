@@ -15,4 +15,11 @@
   <dimen name="stop_id_input_textSize">20sp</dimen>
   <dimen name="stop_id_input_drawablePadding">10dp</dimen>
   <dimen name="stop_id_input_padding">5dp</dimen>
+
+  <dimen name="action_button_radius">56dp</dimen>
+  <dimen name="action_button_margin">16dp</dimen>
+  <dimen name="action_button_elevation">4dp</dimen>
+
+  <dimen name="bottom_sheet_elevation">16dp</dimen>
+  <dimen name="bottom_sheet_peek_height">56dp</dimen>
 </resources>
