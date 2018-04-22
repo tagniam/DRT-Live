@@ -1,6 +1,9 @@
 package com.tagniam.drtsms;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -246,10 +249,23 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    */
   private void displaySchedule(final Schedule schedule) {
     // Display bottom sheet schedule
-    ScheduleAdapter scheduleAdapter =
+    final ScheduleAdapter scheduleAdapter =
         new ScheduleAdapter(
             getApplicationContext(), schedule.getBusTimes(), new Date());
     scheduleView.setAdapter(scheduleAdapter);
+
+    // Update time every time a minute passes
+    registerReceiver(new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
+          // Get current time
+          scheduleAdapter.updateTimes(new Date());
+          scheduleAdapter.notifyDataSetChanged();
+        }
+      }
+    }, new IntentFilter(Intent.ACTION_TIME_TICK));
+
     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     // Set bottom sheet title
     Single.just(schedule.getStopNumber())

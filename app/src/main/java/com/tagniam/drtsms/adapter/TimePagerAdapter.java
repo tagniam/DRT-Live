@@ -9,9 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.tagniam.drtsms.R;
 import com.tagniam.drtsms.schedule.data.BusTime;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by jr on 08/12/17.
@@ -20,20 +18,18 @@ import java.util.List;
 public class TimePagerAdapter extends PagerAdapter {
 
   private Context context;
-  private LayoutInflater layoutInflater;
-  private List<String> times = new ArrayList<>();
+  private BusTime busTime;
+  private Date now;
 
   TimePagerAdapter(Context context, BusTime busTime, Date now) {
     this.context = context;
-
-    for (Date time : busTime.getTimes()) {
-      times.add(BusTime.Helper.getRelativeTime(now, time));
-    }
+    this.busTime = busTime;
+    this.now = now;
   }
 
   @Override
   public int getCount() {
-    return times.size();
+    return busTime.getTimes().size();
   }
 
   @Override
@@ -43,10 +39,11 @@ public class TimePagerAdapter extends PagerAdapter {
 
   @Override
   public Object instantiateItem(ViewGroup container, final int position) {
-    layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    LayoutInflater layoutInflater = (LayoutInflater) context
+        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     View view = layoutInflater.inflate(R.layout.time_tab, null);
     TextView time = view.findViewById(R.id.time);
-    time.setText(times.get(position));
+    time.setText(BusTime.Helper.getRelativeTime(now, busTime.getTimes().get(position)));
 
     /* Might be useful later
     view.setOnClickListener(new View.OnClickListener() {

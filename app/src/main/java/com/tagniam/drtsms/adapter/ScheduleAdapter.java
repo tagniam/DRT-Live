@@ -21,6 +21,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,7 +31,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
   private Context context;
   private List<BusTime> busTimes;
-  private Date now;
 
   /**
    * Setup the adapter with a list of bus times.
@@ -42,7 +42,22 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   public ScheduleAdapter(Context context, List<BusTime> busTimes, Date now) {
     this.context = context;
     this.busTimes = busTimes;
-    this.now = now;
+  }
+
+  /**
+   * Updates the bustime list by removing any times before now.
+   *
+   * @param now the current time
+   */
+  public void updateTimes(Date now) {
+    for (BusTime busTime : busTimes) {
+      Iterator<Date> iter = busTime.getTimes().iterator();
+      while (iter.hasNext()) {
+        if (now.after(iter.next())) {
+          iter.remove();
+        }
+      }
+    }
   }
 
   /**
@@ -97,15 +112,16 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
   /**
    * Sets up the layout of the time display and tab indicators.
-   *
-   * @param holder current BusTimeHolder
+   *  @param holder current BusTimeHolder
    * @param busTime current BusTime data to display
+   * @param now current time
    */
-  private void setupTimeLayout(BusTimeHolder holder, BusTime busTime) {
-    // Creates the tab layout for the times
+  private void setupTimeLayout(BusTimeHolder holder, BusTime busTime, Date now) {
+    // Just update time pager if it already exists
     TimePagerAdapter timePagerAdapter = new TimePagerAdapter(context, busTime, now);
     holder.timePager.setAdapter(timePagerAdapter);
 
+    holder.timeDots.removeAllViews();
     // Initialize dots for tab indicators
     final int numTimes = busTime.getTimes().size();
     final ImageView[] dots = new ImageView[numTimes];
@@ -165,7 +181,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     BusTime curr = busTimes.get(position);
 
     setupRouteDirectionLayout(holder, curr);
-    setupTimeLayout(holder, curr);
+    setupTimeLayout(holder, curr, new Date());
   }
 
   /**
