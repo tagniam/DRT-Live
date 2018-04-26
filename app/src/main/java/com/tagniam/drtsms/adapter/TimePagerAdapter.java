@@ -5,11 +5,11 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.tagniam.drtsms.R;
-import com.tagniam.drtsms.schedule.data.BusTime;
-import java.util.Date;
+import java.util.List;
 
 /**
  * Created by jr on 08/12/17.
@@ -18,18 +18,18 @@ import java.util.Date;
 public class TimePagerAdapter extends PagerAdapter {
 
   private Context context;
-  private BusTime busTime;
-  private Date now;
+  private List<String> times;
+  private ScheduleAdapter scheduleAdapter;
 
-  TimePagerAdapter(Context context, BusTime busTime, Date now) {
+  TimePagerAdapter(Context context, List<String> times, ScheduleAdapter scheduleAdapter) {
     this.context = context;
-    this.busTime = busTime;
-    this.now = now;
+    this.times = times;
+    this.scheduleAdapter = scheduleAdapter;
   }
 
   @Override
   public int getCount() {
-    return busTime.getTimes().size();
+    return times.size();
   }
 
   @Override
@@ -38,28 +38,18 @@ public class TimePagerAdapter extends PagerAdapter {
   }
 
   @Override
-  public Object instantiateItem(ViewGroup container, final int position) {
+  public Object instantiateItem(final ViewGroup container, final int position) {
     LayoutInflater layoutInflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     View view = layoutInflater.inflate(R.layout.time_tab, null);
     TextView time = view.findViewById(R.id.time);
-    time.setText(BusTime.Helper.getRelativeTime(now, busTime.getTimes().get(position)));
-
-    /* Might be useful later
-    view.setOnClickListener(new View.OnClickListener() {
+    time.setText(times.get(position));
+    time.setOnClickListener(new OnClickListener() {
       @Override
-      public void onClick(View v) {
-
-        if(position == 0){
-          Toast.makeText(context, "Slide 1 Clicked", Toast.LENGTH_SHORT).show();
-        } else if(position == 1){
-          Toast.makeText(context, "Slide 2 Clicked", Toast.LENGTH_SHORT).show();
-        } else {
-          Toast.makeText(context, "Slide 3 Clicked", Toast.LENGTH_SHORT).show();
-        }
-
+      public void onClick(View view) {
+        scheduleAdapter.onTimeClick(container, position);
       }
-    });*/
+    });
 
     ViewPager vp = (ViewPager) container;
     vp.addView(view, 0);
@@ -74,5 +64,10 @@ public class TimePagerAdapter extends PagerAdapter {
     View view = (View) object;
     vp.removeView(view);
 
+  }
+
+  interface OnTimeClickListener {
+
+    void onTimeClick(ViewGroup container, int position);
   }
 }

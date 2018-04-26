@@ -27,10 +27,12 @@ import java.util.List;
 /**
  * Created by jr on 07/12/17.
  */
-public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTimeHolder> {
+public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTimeHolder>
+    implements TimePagerAdapter.OnTimeClickListener {
 
   private Context context;
   private List<BusTime> busTimes;
+  private boolean isRelative = true;
 
   /**
    * Setup the adapter with a list of bus times.
@@ -58,6 +60,15 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
         }
       }
     }
+  }
+
+  /**
+   * Toggles the time on the displayed schedule from relative to absolute and vice-versa.
+   */
+  @Override
+  public void onTimeClick(ViewGroup container, int position) {
+    this.isRelative = !this.isRelative;
+    notifyDataSetChanged();
   }
 
   /**
@@ -117,12 +128,14 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
    * @param now current time
    */
   private void setupTimeLayout(BusTimeHolder holder, BusTime busTime, Date now) {
-    // Just update time pager if it already exists
-    TimePagerAdapter timePagerAdapter = new TimePagerAdapter(context, busTime, now);
+    // Set up time pager
+    List<String> times = isRelative ? BusTime.Helper.getRelativeTimes(now, busTime.getTimes()) :
+        BusTime.Helper.getAbsoluteTimes(busTime.getTimes());
+    TimePagerAdapter timePagerAdapter = new TimePagerAdapter(context, times, this);
     holder.timePager.setAdapter(timePagerAdapter);
 
-    holder.timeDots.removeAllViews();
     // Initialize dots for tab indicators
+    holder.timeDots.removeAllViews();
     final int numTimes = busTime.getTimes().size();
     final ImageView[] dots = new ImageView[numTimes];
 
@@ -167,7 +180,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
       }
     });
-
   }
 
   /**
@@ -193,6 +205,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   public int getItemCount() {
     return busTimes.size();
   }
+
 
   /**
    * Contents of each bus time card.
@@ -231,7 +244,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
       params.setMargins(dotMargin, 0, dotMargin, 0);
       return params;
     }
-
   }
 
 }

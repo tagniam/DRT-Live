@@ -2,6 +2,8 @@ package com.tagniam.drtsms.schedule.data;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import org.junit.Test;
@@ -44,4 +46,21 @@ public class BusTimeHelperTest {
 
     assertEquals("2 hr 34 min", BusTime.Helper.getRelativeTime(now, next));
   }
+
+  @Test
+  public void test_getAbsoluteTime_am() throws ParseException {
+    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+    Date time = df.parse("09:38");
+
+    assertEquals("09:38a", BusTime.Helper.getAbsoluteTime(time));
+  }
+
+  @Test
+  public void test_getAbsoluteTime_pm() throws ParseException {
+    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+    Date time = df.parse("23:38");
+
+    assertEquals("11:38p", BusTime.Helper.getAbsoluteTime(time));
+  }
+
 }

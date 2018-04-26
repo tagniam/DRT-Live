@@ -1,11 +1,14 @@
 package com.tagniam.drtsms.schedule.data;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -31,22 +34,33 @@ public interface BusTime {
 
     /**
      * Returns a string listing the next bus times relative to the current time.
-     * Example:
-     *
-     * "5 min, 1 hr 5 min, 2 hr 56 min"
      *
      * @param now current Date
      * @param times list of times
-     * @return String that lists the times relative to now
+     * @return List<String> that lists the times relative to now
      */
-    public static String getRelativeTimes(Date now, List<Date> times) {
-      StringBuilder str = new StringBuilder();
+    public static List<String> getRelativeTimes(Date now, List<Date> times) {
+      List<String> ret = new ArrayList<>();
       for (Date time : times) {
-        str.append(getRelativeTime(now, time)).append(", ");
+        ret.add(getRelativeTime(now, time));
       }
 
-      // Remove last ', '
-      return str.substring(0, str.length() - 2);
+      return ret;
+    }
+
+    /**
+     * Returns a list listing the next bus times.
+     *
+     * @param times list of times
+     * @return List<String> that lists the times
+     */
+    public static List<String> getAbsoluteTimes(List<Date> times) {
+      List<String> ret = new ArrayList<>();
+      for (Date time : times) {
+        ret.add(getAbsoluteTime(time));
+      }
+
+      return ret;
     }
 
     /**
@@ -75,6 +89,29 @@ public interface BusTime {
       }
 
       return str.toString();
+    }
+
+    /**
+     * Returns a string that gets the absolute time of a Date, in the form HH:mm (a/p).
+     * Example:
+     * 9:23a
+     * 2:04p
+     *
+     * @return absolute time in above format
+     */
+    public static String getAbsoluteTime(Date time) {
+      SimpleDateFormat df = new SimpleDateFormat("hh:mm", Locale.CANADA);
+      Calendar cal = Calendar.getInstance();
+
+      StringBuilder ret = new StringBuilder().append(df.format(time));
+      cal.setTime(time);
+      if (cal.get(Calendar.AM_PM) == Calendar.AM) {
+        ret.append("a");
+      } else {
+        ret.append("p");
+      }
+
+      return ret.toString();
     }
 
     /**
