@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
   private MapFragment map;
   private ScheduleFetcher scheduleFetcher;
   private Disposable scheduleFetcherDisposable;
+  private BroadcastReceiver timeTickReceiver;
+  private ScheduleAdapter scheduleAdapter;
 
   // Query listener for searchview
   private SearchView.OnQueryTextListener onQueryTextListener =
@@ -196,6 +198,9 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     if (scheduleFetcher != null) {
       scheduleFetcher.onPause();
     }
+    if (timeTickReceiver != null) {
+      unregisterReceiver(timeTickReceiver);
+    }
   }
 
   @Override
@@ -203,6 +208,12 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
     super.onResume();
     if (scheduleFetcher != null) {
       scheduleFetcher.onResume();
+    }
+    if (timeTickReceiver != null) {
+      registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+    }
+    if (scheduleAdapter != null) {
+      updateSchedule();
     }
   }
 
@@ -242,6 +253,11 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
                 });
   }
 
+  private void updateSchedule() {
+    scheduleAdapter.updateTimes(new Date());
+    scheduleAdapter.notifyDataSetChanged();
+  }
+
   /**
    * Display the schedule's information.
    *
@@ -249,22 +265,20 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
    */
   private void displaySchedule(final Schedule schedule) {
     // Display bottom sheet schedule
-    final ScheduleAdapter scheduleAdapter =
-        new ScheduleAdapter(
-            getApplicationContext(), schedule.getBusTimes(), new Date());
+    scheduleAdapter = new ScheduleAdapter(getApplicationContext(), schedule.getBusTimes(),
+        new Date());
     scheduleView.setAdapter(scheduleAdapter);
 
     // Update time every time a minute passes
-    registerReceiver(new BroadcastReceiver() {
+    timeTickReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
-        if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
-          // Get current time
-          scheduleAdapter.updateTimes(new Date());
-          scheduleAdapter.notifyDataSetChanged();
-        }
+        // Get current time
+        updateSchedule();
       }
-    }, new IntentFilter(Intent.ACTION_TIME_TICK));
+    };
+
+    registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
 
     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     // Set bottom sheet title
