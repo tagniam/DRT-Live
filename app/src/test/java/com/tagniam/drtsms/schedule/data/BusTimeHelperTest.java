@@ -8,9 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import org.junit.Test;
 
-/**
- * Created by jr on 08/12/17.
- */
+/** Created by jr on 08/12/17. */
 public class BusTimeHelperTest {
 
   @Test
@@ -62,5 +60,4 @@ public class BusTimeHelperTest {
 
     assertEquals("11:38p", BusTime.Helper.getAbsoluteTime(time));
   }
-
 }
