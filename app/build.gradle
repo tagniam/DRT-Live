@@ -52,6 +52,9 @@ dependencies {
     // Location settings
     implementation 'com.google.android.gms:play-services-location:11.8.0'
 
+    // HTTP client
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+
     implementation 'com.android.support:design:26.1.0'
 
 }
