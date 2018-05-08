@@ -1,13 +1,10 @@
 package com.tagniam.drtsms.schedule.data;
 
 import com.tagniam.drtsms.schedule.fetcher.ApiScheduleFetcher.Departure;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ApiBusTime implements BusTime {
 
@@ -27,11 +24,7 @@ public class ApiBusTime implements BusTime {
     this.direction = "";
 
     for (Departure departure : departures) {
-      try {
-        this.times.add(strTimeToDate(departure.strTime));
-      } catch (ParseException e) {
-        // Invalid time format, skip time
-      }
+      this.times.add(strTimeToDate(departure.strTime));
     }
   }
 
@@ -41,7 +34,7 @@ public class ApiBusTime implements BusTime {
    * @param strTime strTime response from api
    * @return strTime in date form
    */
-  private Date strTimeToDate(String strTime) throws ParseException {
+  private Date strTimeToDate(String strTime) {
     Calendar calNow = Calendar.getInstance();
     Calendar calStrTime = Calendar.getInstance();
     calStrTime
@@ -51,8 +44,9 @@ public class ApiBusTime implements BusTime {
     if (strTime.contains("min")) {
       calStrTime.add(Calendar.MINUTE, Integer.parseInt(strTime.split("\\s+")[0]));
     } else {
-      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CANADA);
-      calStrTime.setTime(simpleDateFormat.parse(strTime));
+      String[] time = strTime.split(":");
+      calStrTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+      calStrTime.set(Calendar.MINUTE, Integer.parseInt(time[1]));
     }
 
     // Same day
