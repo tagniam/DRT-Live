@@ -20,7 +20,7 @@ public class ApiBusTime implements BusTime {
    *
    * @param departures, guaranteed to be of the same route and non-empty
    */
-  public ApiBusTime(List<Departure> departures) {
+  ApiBusTime(List<Departure> departures) {
     this.times = new ArrayList<>();
     this.route = departures.get(0).route;
     // TODO put direction in here

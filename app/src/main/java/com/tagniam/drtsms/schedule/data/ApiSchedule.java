@@ -1,12 +1,14 @@
 package com.tagniam.drtsms.schedule.data;
 
+import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import com.tagniam.drtsms.schedule.fetcher.ApiScheduleFetcher.Departure;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class ApiSchedule implements Schedule {
+public class ApiSchedule implements Schedule, Serializable {
 
   private String stopNumber;
   private List<BusTime> busTimes;
@@ -17,7 +19,12 @@ public class ApiSchedule implements Schedule {
    * @param stopNumber stop #
    * @param departures departures at the stop
    */
-  public ApiSchedule(String stopNumber, List<Departure> departures) {
+  public ApiSchedule(String stopNumber, List<Departure> departures)
+      throws StopTimesNotAvailableException {
+    if (departures.isEmpty()) {
+      throw new StopTimesNotAvailableException();
+    }
+
     this.stopNumber = stopNumber;
 
     // Split departures by route
