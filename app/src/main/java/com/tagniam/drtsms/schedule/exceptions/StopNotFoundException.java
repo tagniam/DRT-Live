@@ -4,6 +4,6 @@ package com.tagniam.drtsms.schedule.exceptions;
 public class StopNotFoundException extends Exception {
 
   public StopNotFoundException() {
-    super();
+    super("Stop not found.");
   }
 }

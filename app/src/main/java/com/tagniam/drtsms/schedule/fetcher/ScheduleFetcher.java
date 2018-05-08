@@ -9,19 +9,25 @@ import io.reactivex.ObservableOnSubscribe;
 
 public abstract class ScheduleFetcher implements ObservableOnSubscribe<Intent> {
 
+  private static Mode mode = Mode.WEB;
+
   public static ScheduleFetcher getFetcher(Context context, String stopId) {
-    if (DEBUG) {
-      return new MockScheduleFetcher(stopId);
-    } else {
-      PendingIntent sentPendingIntent = PendingIntent
-          .getBroadcast(context, 0,
-              new Intent(SmsScheduleFetcher.Intents.SMS_SENT_ACTION), 0);
-      PendingIntent deliveredPendingIntent = PendingIntent
-          .getBroadcast(context, 0,
-              new Intent(SmsScheduleFetcher.Intents.SMS_DELIVERED_ACTION), 0);
-      return new SmsScheduleFetcher(SmsManager.getDefault(), sentPendingIntent,
-          deliveredPendingIntent, stopId);
+    switch (mode) {
+      case DEBUG:
+        return new MockScheduleFetcher(stopId);
+      case SMS:
+        PendingIntent sentPendingIntent = PendingIntent
+            .getBroadcast(context, 0,
+                new Intent(SmsScheduleFetcher.Intents.SMS_SENT_ACTION), 0);
+        PendingIntent deliveredPendingIntent = PendingIntent
+            .getBroadcast(context, 0,
+                new Intent(SmsScheduleFetcher.Intents.SMS_DELIVERED_ACTION), 0);
+        return new SmsScheduleFetcher(SmsManager.getDefault(), sentPendingIntent,
+            deliveredPendingIntent, stopId);
+      case WEB:
+        return new ApiScheduleFetcher(stopId);
     }
+    return null;
   }
 
   /**
@@ -31,7 +37,16 @@ public abstract class ScheduleFetcher implements ObservableOnSubscribe<Intent> {
 
   public abstract void onResume();
 
+<<<<<<< HEAD
   private static final boolean DEBUG = true;
+=======
+  // Modes for different types of schedules
+  public enum Mode {
+    DEBUG,
+    SMS,
+    WEB
+  }
+>>>>>>> 78bc3f3... Implement API request
 
   public static class Intents {
 

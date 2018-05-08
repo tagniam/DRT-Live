@@ -7,6 +7,6 @@ package com.tagniam.drtsms.schedule.exceptions;
 public class StopTimesNotAvailableException extends Exception {
 
   public StopTimesNotAvailableException() {
-    super();
+    super("No stop times are currently available.");
   }
 }
