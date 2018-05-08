@@ -3,6 +3,7 @@ package com.tagniam.drtsms.schedule.data;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import com.tagniam.drtsms.schedule.fetcher.ApiScheduleFetcher.Departure;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,13 +43,19 @@ public class ApiScheduleTest {
   }
 
   @Test
-  public void getStopNumber() {
+  public void test_getStopNumber() throws StopTimesNotAvailableException {
     ApiSchedule schedule = new ApiSchedule("MOCK1604", departures);
     assertThat(schedule.getStopNumber(), is("MOCK1604"));
   }
 
   @Test
-  public void getBusTimes() {
+  public void test_getBusTimes() throws StopTimesNotAvailableException {
+    ApiSchedule schedule = new ApiSchedule("MOCK1604", departures);
+    assertThat(schedule.getBusTimes().size(), is(3));
+  }
+
+  @Test
+  public void test_getBusTimes_() throws StopTimesNotAvailableException {
     ApiSchedule schedule = new ApiSchedule("MOCK1604", departures);
     assertThat(schedule.getBusTimes().size(), is(3));
   }

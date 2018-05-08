@@ -33,19 +33,19 @@ public class ApiBusTimeTest {
   }
 
   @Test
-  public void getRoute() {
+  public void test_getRoute() {
     ApiBusTime apiBusTime = new ApiBusTime(departures);
     assertThat(apiBusTime.getRoute(), is("900"));
   }
 
   @Test
-  public void getDirection() {
+  public void test_getDirection() {
     ApiBusTime apiBusTime = new ApiBusTime(departures);
     assertThat(apiBusTime.getDirection(), is(""));
   }
 
   @Test
-  public void getTimes() {
+  public void test_getTimes() {
     Calendar cal = Calendar.getInstance();
     ApiBusTime apiBusTime = new ApiBusTime(departures);
     List<Date> times = apiBusTime.getTimes();
@@ -58,6 +58,5 @@ public class ApiBusTimeTest {
     assertThat(cal.get(Calendar.HOUR), is(9));
     assertThat(cal.get(Calendar.MINUTE), is(23));
     assertThat(cal.get(Calendar.AM_PM), is(Calendar.AM));
-
   }
 }
