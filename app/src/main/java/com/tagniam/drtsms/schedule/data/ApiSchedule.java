@@ -4,6 +4,7 @@ import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import com.tagniam.drtsms.schedule.fetcher.ApiScheduleFetcher.Departure;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ public class ApiSchedule implements Schedule, Serializable {
    * @param stopNumber stop #
    * @param departures departures at the stop
    */
-  public ApiSchedule(String stopNumber, List<Departure> departures)
+  public ApiSchedule(Calendar now, String stopNumber, List<Departure> departures)
       throws StopTimesNotAvailableException {
     if (departures.isEmpty()) {
       throw new StopTimesNotAvailableException();
@@ -39,7 +40,7 @@ public class ApiSchedule implements Schedule, Serializable {
     // Initialize bustimes by departure
     this.busTimes = new ArrayList<>();
     for (List<Departure> routeDeparture : departuresByRoutes.values()) {
-      this.busTimes.add(new ApiBusTime(routeDeparture));
+      this.busTimes.add(new ApiBusTime(now, routeDeparture));
     }
   }
 

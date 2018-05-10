@@ -17,14 +17,14 @@ public class ApiBusTime implements BusTime {
    *
    * @param departures, guaranteed to be of the same route and non-empty
    */
-  ApiBusTime(List<Departure> departures) {
+  ApiBusTime(Calendar now, List<Departure> departures) {
     this.times = new ArrayList<>();
     this.route = departures.get(0).route;
     // TODO put direction in here
     this.direction = "";
 
     for (Departure departure : departures) {
-      this.times.add(strTimeToDate(departure.strTime));
+      this.times.add(strTimeToDate(now, departure.strTime));
     }
   }
 
@@ -34,11 +34,8 @@ public class ApiBusTime implements BusTime {
    * @param strTime strTime response from api
    * @return strTime in date form
    */
-  private Date strTimeToDate(String strTime) {
-    Calendar calNow = Calendar.getInstance();
-    Calendar calStrTime = Calendar.getInstance();
-    calStrTime
-        .set(calNow.get(Calendar.YEAR), calNow.get(Calendar.MONTH), calNow.get(Calendar.DATE));
+  private Date strTimeToDate(Calendar calNow, String strTime) {
+    Calendar calStrTime = (Calendar) calNow.clone();
 
     // Two forms: "x mins" or "xx:xx" (24hr clock)
     if (strTime.contains("min")) {
@@ -49,13 +46,11 @@ public class ApiBusTime implements BusTime {
       calStrTime.set(Calendar.MINUTE, Integer.parseInt(time[1]));
     }
 
-    // Same day
-    if (calStrTime.after(calNow)) {
-      return calStrTime.getTime();
+    // Add a day if strTime is before now
+    if (calStrTime.before(calNow)) {
+      calStrTime.add(Calendar.DATE, 1);
     }
 
-    // Next day
-    calStrTime.add(Calendar.DATE, 1);
     return calStrTime.getTime();
   }
 
