@@ -13,25 +13,30 @@ public class SmsBusTimeTest {
   private final String TEST_MSG_1 = "Rt 900 WB: 7:09p| 12:25a| 5:59a";
   private final String TEST_MSG_2 = "Rt 916 Counter Clockwise: 7:16p| 7:44p| 8:12p| 8:42p";
 
+  @Before
+  public void setUp() {
+    // Set up mock date
+  }
+
   @Test
   public void test_getRoute() {
-    BusTime busTime = new SmsBusTime(TEST_MSG_1);
-    BusTime busTime2 = new SmsBusTime(TEST_MSG_2);
+    BusTime busTime = new SmsBusTime(Calendar.getInstance(), TEST_MSG_1);
+    BusTime busTime2 = new SmsBusTime(Calendar.getInstance(), TEST_MSG_2);
     assertEquals("900", busTime.getRoute());
     assertEquals("916", busTime2.getRoute());
   }
 
   @Test
   public void test_getDirection() {
-    BusTime busTime = new SmsBusTime(TEST_MSG_1);
-    BusTime busTime2 = new SmsBusTime(TEST_MSG_2);
+    BusTime busTime = new SmsBusTime(Calendar.getInstance(), TEST_MSG_1);
+    BusTime busTime2 = new SmsBusTime(Calendar.getInstance(), TEST_MSG_2);
 
     assertEquals("Westbound", busTime.getDirection());
     assertEquals("Counter Clockwise", busTime2.getDirection());
   }
 
   @Test
-  public void test_getTimes() {
+  public void test_getTimes_sameDay() {
     Calendar cal = Calendar.getInstance();
     BusTime busTime = new SmsBusTime(TEST_MSG_1);
     List<Date> times = busTime.getTimes();
@@ -54,5 +59,15 @@ public class SmsBusTimeTest {
     assertEquals(5, cal.get(Calendar.HOUR));
     assertEquals(59, cal.get(Calendar.MINUTE));
     assertEquals(Calendar.AM, cal.get(Calendar.AM_PM));
+  }
+
+  @Test
+  public void test_getTimes_oneNextDay() {
+
+  }
+
+  @Test
+  public void test_getTimes_allNextDay() {
+
   }
 }

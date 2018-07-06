@@ -7,6 +7,7 @@ import com.tagniam.drtsms.schedule.data.ApiSchedule;
 import com.tagniam.drtsms.schedule.data.Schedule;
 import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import io.reactivex.ObservableEmitter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -39,7 +40,7 @@ public class ApiScheduleFetcher extends ScheduleFetcher {
   }
 
   @Override
-  public void subscribe(ObservableEmitter<Intent> emitter) {
+  public void subscribe(ObservableEmitter<Intent> emitter) throws IOException {
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())

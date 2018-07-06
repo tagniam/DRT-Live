@@ -21,17 +21,18 @@ public class SmsBusTime implements BusTime, Serializable {
   /**
    * Generates the bus time through the given line in a DRT sms.
    *
+   * @param now calendar instance of the current time
    * @param msg single line from DRT sms listing bus name, direction and times, in the following
    * form:
-   * <p>Rt {route} {direction}: {time}| {time}| ...
+   * <p>Rt {route} {direction}: {time}| {time}| ...</p>
    */
-  SmsBusTime(String msg) {
+  SmsBusTime(Calendar now, String msg) {
     String[] info = msg.split(": ");
 
     // Parse first part, contains route and direction
     parseRouteAndDirection(info[0]);
     // Parse second part, contains times
-    parseTimes(info[1]);
+    parseTimes(now, info[1]);
   }
 
   /**
@@ -88,7 +89,7 @@ public class SmsBusTime implements BusTime, Serializable {
    * @param info single line in the form: {time}| {time}| {time}| ... where each time is in the
    * form: hh:mm{a|p}
    */
-  private void parseTimes(String info) {
+  private void parseTimes(Calendar now, String info) {
     String[] timeParts = info.split("\\| ");
 
     // Generate date time objects for each time part
@@ -97,7 +98,7 @@ public class SmsBusTime implements BusTime, Serializable {
         // Make it easier to parse am/pm
         String time = convertToSimpleTime(part);
         // Get day given the time
-        Date date = getCurrentDateFromTime(time);
+        Date date = getCurrentDateFromTime(now, time);
 
         times.add(date);
       } catch (ParseException e) {
@@ -113,9 +114,8 @@ public class SmsBusTime implements BusTime, Serializable {
    * @param time time string in format hh:mm a
    * @return date object of the upcoming bus time
    */
-  private Date getCurrentDateFromTime(String time) throws ParseException {
-    Calendar calNow = Calendar.getInstance();
-    Calendar calTime = Calendar.getInstance();
+  private Date getCurrentDateFromTime(Calendar calNow, String time) throws ParseException {
+    Calendar calTime = (Calendar) calNow.clone();
 
     // Set calTime without changing date
     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.CANADA);
@@ -123,15 +123,11 @@ public class SmsBusTime implements BusTime, Serializable {
     calTime.set(calNow.get(Calendar.YEAR), calNow.get(Calendar.MONTH), calNow.get(Calendar.DATE));
 
     // Same day
-    if (calTime.after(calNow)) {
-      return calTime.getTime();
+    if (calTime.before(calNow)) {
+      calTime.add(Calendar.DATE, 1);
     }
 
-    // Next day
-    else {
-      calTime.add(Calendar.DATE, 1);
-      return calTime.getTime();
-    }
+    return calTime.getTime();
   }
 
   /**

@@ -15,6 +15,7 @@ import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import io.reactivex.ObservableEmitter;
 import java.io.Serializable;
+import java.util.Calendar;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -104,7 +105,7 @@ public class SmsScheduleFetcher extends ScheduleFetcher {
           // Note: apparently all SMS from DRT < 160 char, so don't need to concatenate msgs
           if (smsMessage.getOriginatingAddress().equals(DRT_PHONE_NO)) {
             try {
-              Schedule schedule = new SmsSchedule(smsMessage.getMessageBody());
+              Schedule schedule = new SmsSchedule(Calendar.getInstance(), smsMessage.getMessageBody());
               Intent result = new Intent(ScheduleFetcher.Intents.SUCCESS_ACTION);
               result.putExtra(ScheduleFetcher.Intents.RESULT_EXTRA, (Serializable) schedule);
               EventBus.getDefault().postSticky(result);

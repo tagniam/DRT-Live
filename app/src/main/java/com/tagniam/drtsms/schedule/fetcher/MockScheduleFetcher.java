@@ -6,6 +6,7 @@ import com.tagniam.drtsms.schedule.data.SmsSchedule;
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 import io.reactivex.ObservableEmitter;
 import java.io.Serializable;
+import java.util.Calendar;
 
 public class MockScheduleFetcher extends ScheduleFetcher {
 
@@ -31,7 +32,7 @@ public class MockScheduleFetcher extends ScheduleFetcher {
 
       Thread.sleep(2000);
       if (android.text.TextUtils.isDigitsOnly(stopId)) {
-        Schedule schedule = new SmsSchedule(MOCK_MSG);
+        Schedule schedule = new SmsSchedule(Calendar.getInstance(), MOCK_MSG);
         Intent resultIntent = new Intent(Intents.SUCCESS_ACTION);
         resultIntent.putExtra(
             Intents.RESULT_EXTRA, (Serializable) schedule);

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
+import java.util.Calendar;
 import org.junit.Test;
 
 /** Created by jr on 06/12/17. */
@@ -18,19 +19,19 @@ public class SmsScheduleTest {
 
   @Test
   public void test_getStopNumber() throws StopNotFoundException, StopTimesNotAvailableException {
-    Schedule schedule = new SmsSchedule(TEST_MSG);
+    Schedule schedule = new SmsSchedule(Calendar.getInstance(), TEST_MSG);
     assertEquals("MOCK1604", schedule.getStopNumber());
   }
 
   @Test
   public void test_getBusTimes() throws StopNotFoundException, StopTimesNotAvailableException {
-    Schedule schedule = new SmsSchedule(TEST_MSG);
+    Schedule schedule = new SmsSchedule(Calendar.getInstance(), TEST_MSG);
     assertEquals(2, schedule.getBusTimes().size());
   }
 
   @Test(expected = StopNotFoundException.class)
   public void test_invalidStopNumber()
       throws StopNotFoundException, StopTimesNotAvailableException {
-    Schedule schedule = new SmsSchedule(ERROR_MSG);
+    Schedule schedule = new SmsSchedule(Calendar.getInstance(), ERROR_MSG);
   }
 }

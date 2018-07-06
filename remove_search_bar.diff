@@ -1,0 +1,161 @@
+diff --git a/app/src/main/java/com/tagniam/drtsms/MainActivity.java b/app/src/main/java/com/tagniam/drtsms/MainActivity.java
+index 77c3dba..842f73b 100644
+--- a/app/src/main/java/com/tagniam/drtsms/MainActivity.java
++++ b/app/src/main/java/com/tagniam/drtsms/MainActivity.java
+@@ -113,33 +113,6 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
+     // Setup status line
+     statusLine = findViewById(R.id.statusLine);
+ 
+-    // Setup search view
+-    stopIdInput = findViewById(R.id.stopIdInput);
+-    stopIdInput.setOnQueryTextListener(onQueryTextListener);
+-    // Remove underline from search view
+-    int searchPlateId =
+-        stopIdInput
+-            .getContext()
+-            .getResources()
+-            .getIdentifier("android:id/search_plate", null, null);
+-    findViewById(searchPlateId).setBackground(null);
+-    final int searchButtonId =
+-        stopIdInput
+-            .getContext()
+-            .getResources()
+-            .getIdentifier("android:id/search_close_btn", null, null);
+-    findViewById(searchButtonId)
+-        .setOnClickListener(
+-            new OnClickListener() {
+-              @Override
+-              public void onClick(View view) {
+-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+-                map.clearClick();
+-                stopIdInput.setQuery("", false);
+-                stopIdInput.requestFocus();
+-              }
+-            });
+-
+     // Setup bottom sheet
+     bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+@@ -186,11 +159,37 @@ public class MainActivity extends AppCompatActivity implements OnStopClickListen
+     // Associate searchable configuration with the SearchView
+     SearchManager searchManager =
+         (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+-    SearchView searchView =
++    stopIdInput =
+         (SearchView) menu.findItem(R.id.search).getActionView();
+-    searchView.setSearchableInfo(
++    stopIdInput.setSearchableInfo(
+         searchManager.getSearchableInfo(getComponentName()));
+ 
++    // Setup search view
++    stopIdInput.setOnQueryTextListener(onQueryTextListener);
++    // Remove underline from search view
++    //int searchPlateId =
++    //    stopIdInput
++    //        .getContext()
++    //        .getResources()
++    //        .getIdentifier("android:id/search_plate", null, null);
++    ////findViewById(searchPlateId).setBackground(null);
++    //final int searchButtonId =
++    //    stopIdInput
++    //        .getContext()
++    //        .getResources()
++    //        .getIdentifier("android:id/search_close_btn", null, null);
++    //findViewById(searchButtonId)
++    //    .setOnClickListener(
++    //        new OnClickListener() {
++    //          @Override
++    //          public void onClick(View view) {
++    //            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
++    //            map.clearClick();
++    //            stopIdInput.setQuery("", false);
++    //            stopIdInput.requestFocus();
++    //          }
++    //        });
++
+     return true;
+   }
+ 
+diff --git a/app/src/main/res/layout/content_main.xml b/app/src/main/res/layout/content_main.xml
+index 74438b7..00e3156 100644
+--- a/app/src/main/res/layout/content_main.xml
++++ b/app/src/main/res/layout/content_main.xml
+@@ -9,12 +9,6 @@
+     android:layout_height="match_parent"
+     android:orientation="vertical">
+ 
+-    <SearchView
+-      android:id="@+id/stopIdInput"
+-      style="@style/StopIdInput"
+-      android:layout_width="match_parent"
+-      android:layout_height="wrap_content">
+-    </SearchView>
+ 
+     <TextView
+       android:id="@+id/statusLine"
+diff --git a/app/src/main/res/values/styles.xml b/app/src/main/res/values/styles.xml
+index e0ffbdb..70f09e1 100644
+--- a/app/src/main/res/values/styles.xml
++++ b/app/src/main/res/values/styles.xml
+@@ -6,6 +6,17 @@
+     <item name="colorPrimary">@color/colorPrimary</item>
+     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+     <item name="colorAccent">@color/colorAccent</item>
++    <item name="searchViewStyle">@style/StopIdInput</item>
++  </style>
++
++  <style name="StopIdInput" parent="Widget.AppCompat.SearchView">
++    <item name="android:ems">10</item>
++    <item name="android:background">#fff</item>
++    <item name="android:textSize">@dimen/stop_id_input_textSize</item>
++    <item name="android:padding">@dimen/stop_id_input_padding</item>
++    <item name="android:queryHint">@string/stop_id_hint</item>
++    <item name="android:imeOptions">actionSearch</item>
++    <item name="android:iconifiedByDefault">false</item>
+   </style>
+ 
+   <style name="LocationButton" parent="AppTheme">
+@@ -75,16 +86,7 @@
+     <item name="android:layout_height">@dimen/card_height</item>
+     <item name="android:layout_margin">@dimen/schedule_card_margin</item>
+   </style>
+-
+-  <style name="StopIdInput" parent="AppTheme">
+-    <item name="android:ems">10</item>
+-    <item name="android:background">#fff</item>
+-    <item name="android:textSize">@dimen/stop_id_input_textSize</item>
+-    <item name="android:padding">@dimen/stop_id_input_padding</item>
+-    <item name="android:queryHint">@string/stop_id_hint</item>
+-    <item name="android:imeOptions">flagNoExtractUi</item>
+-    <item name="android:iconifiedByDefault">false</item>
+-  </style>
++  
+ 
+   <style name="StatusLine" parent="AppTheme">
+     <item name="android:textColor">@color/colorRouteText</item>
+diff --git a/build.gradle b/build.gradle
+index 0d31093..f1342b0 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -7,7 +7,7 @@ buildscript {
+         jcenter()
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:3.1.1'
++        classpath 'com.android.tools.build:gradle:3.0.1'
+         
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+index 79629f4..3236412 100644
+--- a/gradle/wrapper/gradle-wrapper.properties
++++ b/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+-#Sun Apr 01 17:31:53 EDT 2018
++#Sun Apr 15 20:39:04 EDT 2018
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-4.4-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-4.1-all.zip

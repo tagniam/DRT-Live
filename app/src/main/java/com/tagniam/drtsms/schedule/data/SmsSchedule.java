@@ -4,6 +4,7 @@ import com.tagniam.drtsms.schedule.exceptions.StopNotFoundException;
 import com.tagniam.drtsms.schedule.exceptions.StopTimesNotAvailableException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class SmsSchedule implements Schedule, Serializable {
    *
    * @param msg msg from DRT
    */
-  public SmsSchedule(String msg) throws StopNotFoundException, StopTimesNotAvailableException {
+  public SmsSchedule(Calendar now, String msg) throws StopNotFoundException, StopTimesNotAvailableException {
     // DRT can't find that stop number
     if (msg.contains(NOT_FOUND_MSG)) {
       throw new StopNotFoundException();
@@ -39,7 +40,7 @@ public class SmsSchedule implements Schedule, Serializable {
 
     // Last line will be "std rates" message, just skip that
     for (int i = 1; i < info.length - 1; i++) {
-      busTimes.add(new SmsBusTime(info[i]));
+      busTimes.add(new SmsBusTime(now, info[i]));
     }
   }
 
