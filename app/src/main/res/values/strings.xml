@@ -11,4 +11,9 @@
   <string name="error_no_service">Cellular service currently unavailable.</string>
   <string name="notification_location">Please turn on location.</string>
   <string name="stop_not_found">Could not find the closest stop.</string>
+
+  <string name="presto_app_package_name">com.metrolinx.presto.android.consumerapp</string>
+
+  <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

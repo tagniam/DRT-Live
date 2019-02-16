@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/map_frame"
-  style="@style/MapFrame"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  tools:context=".MapFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/map_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapFragment">
+
 
   <org.osmdroid.views.MapView
     android:id="@+id/map"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+
   </org.osmdroid.views.MapView>
+
+  <com.arlib.floatingsearchview.FloatingSearchView
+      android:id="@+id/floating_search_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:floatingSearch_searchBarMarginLeft="10dp"
+      app:floatingSearch_searchBarMarginTop="10dp"
+      app:floatingSearch_searchBarMarginRight="10dp"
+      app:floatingSearch_searchHint="Search..."
+      app:floatingSearch_suggestionsListAnimDuration="250"
+      app:floatingSearch_showSearchKey="false"
+      app:floatingSearch_leftActionMode="showHamburger"
+      app:floatingSearch_close_search_on_keyboard_dismiss="true"/>
 
   <android.support.design.widget.FloatingActionButton
     android:id="@+id/location"

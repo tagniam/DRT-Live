@@ -11,16 +11,12 @@
   <style name="LocationButton" parent="AppTheme">
     <item name="android:layout_width">@dimen/action_button_radius</item>
     <item name="android:layout_height">@dimen/action_button_radius</item>
-    <item name="android:layout_margin">@dimen/action_button_margin</item>
+    <item name="android:layout_margin">32dp</item>
     <item name="android:layout_gravity">bottom|end</item>
-    <item name="android:src">@drawable/location</item>
+    <item name="android:src">@drawable/locate</item>
     <item name="backgroundTint">@color/cardview_light_background</item>
     <item name="elevation">@dimen/action_button_elevation</item>
     <item name="layout_anchorGravity">bottom|end|right</item>
-  </style>
-
-  <style name="MapFrame" parent="AppTheme">
-    <item name="android:foreground">@drawable/dim_overlay</item>
   </style>
 
   <style name="BottomSheet" parent="AppTheme">

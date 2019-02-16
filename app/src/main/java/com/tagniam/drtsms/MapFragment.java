@@ -3,6 +3,7 @@ package com.tagniam.drtsms;
 import android.Manifest.permission;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import com.arlib.floatingsearchview.FloatingSearchView;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
 import io.reactivex.Single;
@@ -33,6 +36,7 @@ import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
@@ -55,8 +59,9 @@ public class MapFragment extends Fragment {
   private SimpleFastPointOverlayOptions pointOptions;
   private OnStopClickListener callback;
   private MyLocationNewOverlay locationOverlay;
-  private FrameLayout mapFrame;
   private FloatingActionButton locationButton;
+
+  private Overlay stopOverlay;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -84,10 +89,16 @@ public class MapFragment extends Fragment {
     map.getController().setCenter(MAP_CENTER);
     map.getController().setZoom(MAP_MIN_ZOOM);
 
-    // Setup dimmable
-    mapFrame = view.findViewById(R.id.map_frame);
-    mapFrame.getForeground().setAlpha(0);
-    mapFrame.invalidate();
+    // Setup search view
+    FloatingSearchView searchView = view.findViewById(R.id.floating_search_view);
+    searchView.setLeftActionMode(FloatingSearchView.LEFT_ACTION_MODE_NO_LEFT_ACTION);
+    searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+      @Override
+      public void onSearchTextChanged(String oldQuery, String newQuery) {
+        // get suggestions
+        // pass to search view
+      }
+    });
 
     // Setup point style
     Paint pointStyle = new Paint();
@@ -381,15 +392,6 @@ public class MapFragment extends Fragment {
     locationButton.setVisibility(View.VISIBLE);
   }
 
-  public void enableDim() {
-    mapFrame.getForeground().setAlpha(100);
-    mapFrame.invalidate();
-  }
-
-  public void disableDim() {
-    mapFrame.getForeground().setAlpha(0);
-    mapFrame.invalidate();
-  }
 
   /** Detect when a stop is clicked on the map. */
   public interface OnStopClickListener {

@@ -54,4 +54,7 @@ dependencies {
 
     implementation 'com.android.support:design:26.1.0'
 
+    implementation 'com.github.arimorty:floatingsearchview:2.1.1'
+
+
 }
