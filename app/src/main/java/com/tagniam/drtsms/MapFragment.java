@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -54,7 +55,10 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
@@ -161,21 +165,54 @@ public class MapFragment extends Fragment {
               public void onSuccess(final List<LabelledGeoPoint> points) {
                 // Add points to map
                 overlay = new FolderOverlay();
-                for (final LabelledGeoPoint point : points) {
-                  Marker marker = new Marker(map);
-                  marker.setPosition(new GeoPoint(point.getLatitude(), point.getLongitude()));
-                  marker.setInfoWindow(null);
-                  marker.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.bus));
-                  marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker, MapView mapView) {
-                      Stop stop = stops.get(points.indexOf(point));
-                      fetchSchedule(stop.stopCode, stop.stopName);
-                      return false;
-                    }
-                  });
-                  overlay.add(marker);
+                List<OverlayItem> items = new ArrayList<>();
+
+                for (LabelledGeoPoint point : points) {
+                  OverlayItem item = new OverlayItem("", "", point);
+                  item.setMarker(ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus));
+                  items.add(new OverlayItem("", "", point));
                 }
+
+
+                Drawable icon = ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus);
+                ItemizedIconOverlay<OverlayItem> mOverlay =
+                        new ItemizedIconOverlay<>(items, icon, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                          @Override
+                          public boolean onItemSingleTapUp(int index, OverlayItem item) {
+                            Stop stop = stops.get(index);
+                            fetchSchedule(stop.stopCode, stop.stopName);
+                            return false;
+                          }
+
+                          @Override
+                          public boolean onItemLongPress(int index, OverlayItem item) {
+                            return false;
+                          }
+                        }, getActivity().getApplicationContext());
+
+                map.getOverlays().add(mOverlay);
+                System.out.println(items.size());
+
+
+                //for (final LabelledGeoPoint point : points) {
+                //  OverlayItem overlayItem = new OverlayItem("", "", point);
+                //  overlayItem.set
+
+
+
+                //  Marker marker = new Marker(map);
+                //  marker.setPosition(new GeoPoint(point.getLatitude(), point.getLongitude()));
+                //  marker.setInfoWindow(null);
+                //  marker.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus));
+                //  marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                //    @Override
+                //    public boolean onMarkerClick(Marker marker, MapView mapView) {
+                //      Stop stop = stops.get(points.indexOf(point));
+                //      fetchSchedule(stop.stopCode, stop.stopName);
+                //      return false;
+                //    }
+                //  });
+                //  overlay.add(marker);
               }
 
               @Override

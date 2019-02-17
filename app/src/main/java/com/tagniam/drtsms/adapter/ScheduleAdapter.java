@@ -69,6 +69,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   @Override
   public void onTimeClick(ViewGroup container, int position) {
     // this.isRelative = !this.isRelative;
+
     //notifyDataSetChanged();
   }
 

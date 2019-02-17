@@ -64,7 +64,7 @@
   </style>
 
   <style name="ScheduleCard" parent="CardView">
-    <item name="android:layout_height">72dp</item>
+    <item name="android:layout_height">80dp</item>
   </style>
 
   <style name="StopIdInput" parent="AppTheme">
