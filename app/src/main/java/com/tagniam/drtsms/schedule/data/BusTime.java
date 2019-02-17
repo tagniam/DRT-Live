@@ -1,5 +1,7 @@
 package com.tagniam.drtsms.schedule.data;
 
+import android.util.Pair;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +47,20 @@ public interface BusTime {
         ret.add(getRelativeTime(now, time));
       }
 
+      return ret;
+    }
+
+    public static List<Pair<String, String>> getStringTimes(Date now, List<Date> times) {
+      List<Pair<String, String>> ret = new ArrayList<>();
+      for (Date time : times) {
+        // Add absolute time if > 1 hr away
+        Map<TimeUnit, Long> diff = computeDiff(now, time);
+        if (diff.get(TimeUnit.HOURS) > 1) {
+          ret.add(getAbsoluteTimeNew(time));
+        } else {
+          ret.add(getRelativeTimeNew(now, time));
+        }
+      }
       return ret;
     }
 
@@ -112,6 +128,24 @@ public interface BusTime {
       }
 
       return ret.toString();
+    }
+
+    public static Pair<String, String> getAbsoluteTimeNew(Date time) {
+      SimpleDateFormat df = new SimpleDateFormat("hh:mm", Locale.CANADA);
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(time);
+      return new Pair<>(
+              df.format(time),
+              cal.get(Calendar.AM_PM) == Calendar.AM ? "AM" : "PM"
+      );
+    }
+
+    public static Pair<String, String> getRelativeTimeNew(Date now, Date next) {
+      Map<TimeUnit, Long> diff = computeDiff(now, next);
+      return new Pair<>(
+              diff.get(TimeUnit.MINUTES).toString(),
+              "min"
+      );
     }
 
     /**

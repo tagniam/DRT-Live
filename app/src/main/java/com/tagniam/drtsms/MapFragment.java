@@ -1,67 +1,62 @@
 package com.tagniam.drtsms;
 
 import android.Manifest.permission;
-import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Parcel;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
+import com.tagniam.drtsms.adapter.ScheduleAdapter;
 import com.tagniam.drtsms.database.GtfsRoomDatabase;
 import com.tagniam.drtsms.database.stops.Stop;
+import com.tagniam.drtsms.schedule.data.Schedule;
+import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.MapQuestTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
-import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay;
-import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions;
-import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
 
 public class MapFragment extends Fragment {
 
@@ -71,14 +66,26 @@ public class MapFragment extends Fragment {
   private static final double MAP_LOCAL_ZOOM = 18.0;
   private static final double MAP_OVERLAY_MIN_ZOOM = 17.0;
   private static final int FINE_LOCATION_PERMISSION_REQUEST = 0;
+
+  /** Map shit **/
   private MapView map;
   private List<Stop> stops = new ArrayList<>();
   private List<LabelledGeoPoint> points = new ArrayList<>();
   private OnStopClickListener callback;
   private MyLocationNewOverlay locationOverlay;
   private FloatingActionButton locationButton;
-
   private FolderOverlay overlay;
+  private FloatingSearchView searchView;
+
+  /** Bottom sheet **/
+  private RecyclerView scheduleView;
+  private BottomSheetBehavior bottomSheetBehavior;
+  private ScheduleFetcher scheduleFetcher;
+  private Disposable scheduleFetcherDisposable;
+  private BroadcastReceiver timeTickReceiver;
+  private ScheduleAdapter scheduleAdapter;
+
+  /** Schedule fetcher shit **/
 
 
   @Override
@@ -89,7 +96,9 @@ public class MapFragment extends Fragment {
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_map, container, false);
+    View view = inflater.inflate(R.layout.fragment_map, container, false);
+    scheduleView = view.findViewById(R.id.scheduleDisplay);
+    return view;
   }
 
   @Override
@@ -100,7 +109,41 @@ public class MapFragment extends Fragment {
     setupSearchView(view);
     setupLocationButton(view);
     setupMapPoints();
+
+    // Setup schedule view
+    scheduleView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+
+    bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottom_sheet));
+    // Setup bottom sheet  <include layout="@layout/bottom_sheet"/>
+    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+    bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+      @Override
+      public void onStateChanged(@NonNull View bottomSheet, int newState) {
+        switch (newState) {
+          case BottomSheetBehavior.STATE_HIDDEN:
+            showLocationButton();
+            disableDim();
+            // Clear click on map and search when bottom sheet gets hidden
+            clearClick();
+            //stopIdInput.setQuery("", false);
+            searchView.setSearchText("");
+            break;
+          case BottomSheetBehavior.STATE_EXPANDED:
+            hideLocationButton();
+            break;
+          case BottomSheetBehavior.STATE_COLLAPSED:
+            hideLocationButton();
+            break;
+        }
+      }
+
+      @Override
+      public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+      }
+    });
   }
+
 
   @Override
   public void onRequestPermissionsResult(
@@ -178,7 +221,7 @@ public class MapFragment extends Fragment {
    * @param location location, preferably current location
    * @return stop code of nearest stop, or null if no stops found
    */
-  private String clickNearestStop(GeoPoint location) {
+  private Stop getNearestStop(GeoPoint location) {
     int index = -1;
     double minDistance = Double.MAX_VALUE;
     for (int i = 0; i < points.size(); i++) {
@@ -192,12 +235,7 @@ public class MapFragment extends Fragment {
     if (index == -1) {
       return null;
     }
-    // Zoom/center/select nearest stop
-    IGeoPoint point = points.get(index);
-    map.scrollTo((int) point.getLatitude(), (int) point.getLongitude());
-    map.getController().setZoom(MAP_LOCAL_ZOOM);
-    map.getController().setCenter(points.get(index));
-    return stops.get(index).stopCode;
+    return stops.get(index);
   }
 
   @Override
@@ -215,24 +253,6 @@ public class MapFragment extends Fragment {
   public void onDetach() {
     super.onDetach();
     callback = null;
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-    map.onPause();
-    if (locationOverlay != null) {
-      locationOverlay.disableMyLocation();
-    }
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    map.onResume();
-    if (locationOverlay != null) {
-      locationOverlay.enableMyLocation();
-    }
   }
 
   /**
@@ -258,34 +278,32 @@ public class MapFragment extends Fragment {
   }
 
   private void setupSearchView(View view) {
-
     // Setup search view
-    final FloatingSearchView searchView = view.findViewById(R.id.floating_search_view);
+    searchView = view.findViewById(R.id.floating_search_view);
     searchView.setLeftActionMode(FloatingSearchView.LEFT_ACTION_MODE_SHOW_SEARCH);
     searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
       @Override
       public void onSearchTextChanged(String oldQuery, String newQuery) {
         // get suggestions
-
         String query = "%" + newQuery.replace(" ", "%") + "%";
+
         Single.just(query)
-                .map(new Function<String, Cursor>() {
+                .map(new Function<String, List<Stop>>() {
                   @Override
-                  public Cursor apply(String s) throws Exception {
+                  public List<Stop> apply(String s) throws Exception {
                     return GtfsRoomDatabase.getDatabase(getActivity().getApplicationContext())
                             .stopDao()
                             .findStopsByNameOrId(s);
                   }
                 }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableSingleObserver<Cursor>() {
+                .subscribe(new DisposableSingleObserver<List<Stop>>() {
                   @Override
-                  public void onSuccess(Cursor cursor) {
+                  public void onSuccess(List<Stop> stops) {
                     // Construct search suggestions
                     List<SearchSuggestion> suggestions = new ArrayList<>();
-                    while (cursor.moveToNext()) {
-                      String name = cursor.getString(cursor.getColumnIndexOrThrow("stop_name"));
-                      suggestions.add(new QuerySuggestion(name));
+                    for (Stop stop : stops) {
+                      suggestions.add(new StopSuggestion(stop));
                     }
 
                     searchView.swapSuggestions(suggestions);
@@ -303,8 +321,10 @@ public class MapFragment extends Fragment {
       @Override
       public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
         // Cast suggestion to query suggestion
-        QuerySuggestion suggestion = (QuerySuggestion) searchSuggestion;
-        Toast.makeText(getActivity().getApplicationContext(), searchSuggestion.getBody(), Toast.LENGTH_SHORT).show();
+        StopSuggestion suggestion = (StopSuggestion) searchSuggestion;
+        searchView.clearSearchFocus();
+        searchView.setSearchText("");
+        fetchSchedule(suggestion.getStopCode(), suggestion.getStopName());
       }
 
       @Override
@@ -388,8 +408,16 @@ public class MapFragment extends Fragment {
                                                 new DisposableSingleObserver<GeoPoint>() {
                                                   @Override
                                                   public void onSuccess(GeoPoint location) {
-                                                    String stopCode = clickNearestStop(location);
-                                                    if (stopCode == null) {
+                                                    Stop stop = getNearestStop(location);
+
+                                                    // Zoom/center/select nearest stop
+                                                    int index = stops.indexOf(stop);
+                                                    IGeoPoint point = points.get(index);
+                                                    map.scrollTo((int) point.getLatitude(), (int) point.getLongitude());
+                                                    map.getController().setZoom(MAP_LOCAL_ZOOM);
+                                                    map.getController().setCenter(points.get(index));
+
+                                                    if (stop.stopCode == null) {
                                                       // Notify user and set center/zoom to current location
                                                       Toast.makeText(
                                                               getActivity().getApplicationContext(),
@@ -403,7 +431,8 @@ public class MapFragment extends Fragment {
                                                       map.getController().setZoom(MAP_LOCAL_ZOOM);
                                                     } else {
                                                       // Do some magic!
-                                                      callback.onStopClick(stopCode);
+                                                      //callback.onStopClick(stopCode);
+                                                      fetchSchedule(stop.stopCode, stop.stopName);
                                                     }
                                                   }
 
@@ -442,6 +471,137 @@ public class MapFragment extends Fragment {
     locationButton.setVisibility(View.VISIBLE);
   }
 
+  /**
+   * Fetches the schedule.
+   */
+  public void fetchSchedule(final String stopId, final String stopName) {
+    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    // Set
+    TextView stopNameTextView = getActivity().findViewById(R.id.stopName);
+    stopNameTextView.setText(stopName);
+
+    scheduleFetcher = ScheduleFetcher.getFetcher(getActivity().getApplicationContext(), stopId);
+    scheduleFetcherDisposable =
+            Observable.create(scheduleFetcher)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(
+                            new DisposableObserver<Intent>() {
+                              @Override
+                              public void onNext(Intent intent) {
+                                // Unpack intent
+                                if (intent.getAction() == null) {
+                                  return;
+                                }
+                                //updateStatusLine(intent.getAction());
+                                Schedule schedule = ScheduleFetcher.Intents.getScheduleFromIntent(intent);
+                                if (schedule != null) {
+                                  displaySchedule(schedule);
+                                }
+                              }
+
+                              @Override
+                              public void onError(Throwable e) {
+                                Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG)
+                                        .show();
+                              }
+
+                              @Override
+                              public void onComplete() {
+                              }
+                            });
+  }
+
+
+  /**
+   * Display the schedule's information.
+   *
+   * @param schedule schedule object with bus times + routes
+   */
+  private void displaySchedule(final Schedule schedule) {
+    // Display bottom sheet schedule
+    scheduleAdapter = new ScheduleAdapter(getActivity().getApplicationContext(), schedule.getBusTimes(),
+            new Date());
+    scheduleView.setAdapter(scheduleAdapter);
+
+    // Update time every time a minute passes
+    timeTickReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        // Get current time
+        updateSchedule();
+      }
+    };
+
+    getActivity().registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+
+    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+  }
+
+  private void updateSchedule() {
+    scheduleAdapter.updateTimes(new Date());
+    scheduleAdapter.notifyDataSetChanged();
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if (scheduleFetcherDisposable != null && !scheduleFetcherDisposable.isDisposed()) {
+      scheduleFetcherDisposable.dispose();
+    }
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    if (scheduleFetcher != null) {
+      scheduleFetcher.onPause();
+    }
+    if (timeTickReceiver != null) {
+      getActivity().unregisterReceiver(timeTickReceiver);
+    }
+    if (locationOverlay != null) {
+      locationOverlay.disableMyLocation();
+    }
+    map.onPause();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    if (scheduleFetcher != null) {
+      scheduleFetcher.onResume();
+    }
+    if (timeTickReceiver != null) {
+      getActivity().registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+    }
+    if (scheduleAdapter != null) {
+      updateSchedule();
+    }
+    if (locationOverlay != null) {
+      locationOverlay.enableMyLocation();
+    }
+    map.onResume();
+  }
+  /** Clears any selection made. */
+  public void clearClick() {
+    //pointsOverlay.setSelectedPoint(null);
+  }
+
+  public void enableDim() {
+    //mapFrame.getForeground().setAlpha(100);
+    //mapFrame.invalidate();
+  }
+
+  public void disableDim() {
+    //mapFrame.getForeground().setAlpha(0);
+    //mapFrame.invalidate();
+  }
 
   /** Detect when a stop is clicked on the map. */
   public interface OnStopClickListener {

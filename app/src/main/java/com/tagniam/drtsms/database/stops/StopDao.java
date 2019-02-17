@@ -20,7 +20,7 @@ public interface StopDao {
   List<Stop> loadAllStops();
 
   @Query("SELECT stop_id AS _id, * FROM stops WHERE stop_name LIKE :query OR stop_code LIKE :query LIMIT 10")
-  Cursor findStopsByNameOrId(String query);
+  List<Stop> findStopsByNameOrId(String query);
 
   @Query("SELECT stop_name FROM stops WHERE stop_code = :stopCode")
   String getStopName(String stopCode);

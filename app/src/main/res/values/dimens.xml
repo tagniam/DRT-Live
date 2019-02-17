@@ -10,7 +10,7 @@
   <dimen name="card_marginVertical">10dp</dimen>
   <dimen name="card_height">64dp</dimen>
   <dimen name="card_dot_size">3dp</dimen>
-  <dimen name="card_dot_marginHorizontal">8dp</dimen>
+  <dimen name="card_dot_marginHorizontal">2dp</dimen>
 
   <dimen name="stop_id_input_textSize">20sp</dimen>
   <dimen name="stop_id_input_drawablePadding">10dp</dimen>

@@ -63,45 +63,9 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnSto
     });
   }
 
-  /**
-   * Fetches the schedule.
-   */
-  public void fetchSchedule(final String stopId) {
-    scheduleFetcher = ScheduleFetcher.getFetcher(getApplicationContext(), stopId);
-    scheduleFetcherDisposable =
-            Observable.create(scheduleFetcher)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(
-                            new DisposableObserver<Intent>() {
-                              @Override
-                              public void onNext(Intent intent) {
-                                // Unpack intent
-                                if (intent.getAction() == null) {
-                                  return;
-                                }
-                                //updateStatusLine(intent.getAction());
-                                Schedule schedule = ScheduleFetcher.Intents.getScheduleFromIntent(intent);
-                                if (schedule != null) {
-                                  //displaySchedule(schedule);
-                                  Toast.makeText(getApplicationContext(), schedule.getBusTimes().get(0).getRoute(), Toast.LENGTH_SHORT).show();
-                                }
-                              }
-
-                              @Override
-                              public void onError(Throwable e) {
-                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG)
-                                        .show();
-                              }
-
-                              @Override
-                              public void onComplete() {
-                              }
-                            });
-  }
 
   @Override
   public void onStopClick(String stopCode) {
-    fetchSchedule(stopCode);
+    //fetchSchedule(stopCode);
   }
 }

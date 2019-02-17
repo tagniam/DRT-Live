@@ -5,18 +5,28 @@ import android.app.DownloadManager;
 import android.os.Parcel;
 
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
+import com.tagniam.drtsms.database.stops.Stop;
 
 @SuppressLint("ParcelCreator")
-public class QuerySuggestion implements SearchSuggestion {
-    String body;
+public class StopSuggestion implements SearchSuggestion {
 
-    public QuerySuggestion(String body) {
-        this.body = body;
+    public Stop stop;
+
+    public StopSuggestion(Stop stop) {
+        this.stop = stop;
+    }
+
+    public String getStopCode() {
+        return stop.stopCode;
+    }
+
+    public String getStopName() {
+        return stop.stopName;
     }
 
     @Override
     public String getBody() {
-        return body;
+        return getStopCode() + " - " + getStopName();
     }
 
     @Override
