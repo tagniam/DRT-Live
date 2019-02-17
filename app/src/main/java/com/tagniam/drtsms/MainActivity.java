@@ -9,10 +9,22 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.tagniam.drtsms.schedule.data.Schedule;
+import com.tagniam.drtsms.schedule.fetcher.ScheduleFetcher;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements MapFragment.OnStopClickListener {
 
   private BottomNavigationView navigation;
+  private ScheduleFetcher scheduleFetcher;
+  private Disposable scheduleFetcherDisposable;
 
   private void openPrestoApp() {
     Intent intent;
@@ -51,8 +63,45 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnSto
     });
   }
 
+  /**
+   * Fetches the schedule.
+   */
+  public void fetchSchedule(final String stopId) {
+    scheduleFetcher = ScheduleFetcher.getFetcher(getApplicationContext(), stopId);
+    scheduleFetcherDisposable =
+            Observable.create(scheduleFetcher)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(
+                            new DisposableObserver<Intent>() {
+                              @Override
+                              public void onNext(Intent intent) {
+                                // Unpack intent
+                                if (intent.getAction() == null) {
+                                  return;
+                                }
+                                //updateStatusLine(intent.getAction());
+                                Schedule schedule = ScheduleFetcher.Intents.getScheduleFromIntent(intent);
+                                if (schedule != null) {
+                                  //displaySchedule(schedule);
+                                  Toast.makeText(getApplicationContext(), schedule.getBusTimes().get(0).getRoute(), Toast.LENGTH_SHORT).show();
+                                }
+                              }
+
+                              @Override
+                              public void onError(Throwable e) {
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG)
+                                        .show();
+                              }
+
+                              @Override
+                              public void onComplete() {
+                              }
+                            });
+  }
+
   @Override
   public void onStopClick(String stopCode) {
-    // Lol
+    fetchSchedule(stopCode);
   }
 }

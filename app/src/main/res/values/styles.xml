@@ -9,12 +9,13 @@
   </style>
 
   <style name="LocationButton" parent="AppTheme">
-    <item name="android:layout_width">@dimen/action_button_radius</item>
+    <item name="android:layout_width">56dp</item>
     <item name="android:layout_height">@dimen/action_button_radius</item>
-    <item name="android:layout_margin">32dp</item>
+    <item name="android:layout_margin">16dp</item>
     <item name="android:layout_gravity">bottom|end</item>
     <item name="android:src">@drawable/locate</item>
-    <item name="backgroundTint">@color/cardview_light_background</item>
+    <item name="backgroundTint">@color/beta</item>
+    <item name="android:tint">#fff</item>
     <item name="elevation">@dimen/action_button_elevation</item>
     <item name="layout_anchorGravity">bottom|end|right</item>
   </style>
@@ -32,14 +33,11 @@
   </style>
 
   <style name="RouteText" parent="AppTheme">
-    <item name="android:textSize">@dimen/route_text_size</item>
     <item name="android:textColor">@color/colorRouteText</item>
     <item name="android:textStyle">bold</item>
   </style>
 
   <style name="NameText" parent="AppTheme">
-    <item name="android:textSize">@dimen/name_text_size</item>
-    <item name="android:textColor">@color/colorNameText</item>
     <item name="android:singleLine">true</item>
     <item name="android:scrollHorizontally">true</item>
     <item name="android:marqueeRepeatLimit">marquee_forever</item>
@@ -49,14 +47,14 @@
 
   <style name="TimeText" parent="AppTheme">
     <item name="android:textStyle">bold</item>
-    <item name="android:textColor">@color/colorTimeText</item>
-    <item name="android:textSize">@dimen/card_fontSize_large</item>
+    <item name="android:textColor">#000</item>
+    <item name="android:textSize">24sp</item>
     <item name="android:gravity">center</item>
   </style>
 
   <style name="DirectionText" parent="AppTheme">
-    <item name="android:textAllCaps">true</item>
-    <item name="android:textColor">@color/colorDirectionText</item>
+    <item name="android:textAllCaps">false</item>
+    <item name="android:textColor">#999999</item>
     <item name="android:textSize">@dimen/direction_text_size</item>
   </style>
 
@@ -67,9 +65,7 @@
   </style>
 
   <style name="ScheduleCard" parent="CardView">
-    <item name="cardCornerRadius">@dimen/card_corner_radius</item>
-    <item name="android:layout_height">@dimen/card_height</item>
-    <item name="android:layout_margin">@dimen/schedule_card_margin</item>
+    <item name="android:layout_height">72dp</item>
   </style>
 
   <style name="StopIdInput" parent="AppTheme">

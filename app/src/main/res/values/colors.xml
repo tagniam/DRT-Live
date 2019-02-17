@@ -11,4 +11,7 @@
   <color name="colorRouteDirectionBg">#00703C</color>
   <color name="colorDotActive">#EE6B00</color>
   <color name="colorDotNonActive">#D1D3D4</color>
+
+  <color name="alpha">#00703C</color>
+  <color name="beta">#CD3C00</color>
 </resources>

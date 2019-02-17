@@ -6,6 +6,7 @@
   <TextView
     android:id="@+id/time"
     style="@style/TimeText"
+      android:text="23"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
 
