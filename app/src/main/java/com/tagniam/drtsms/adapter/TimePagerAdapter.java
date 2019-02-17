@@ -49,7 +49,7 @@ public class TimePagerAdapter extends PagerAdapter {
   public Object instantiateItem(final ViewGroup container, final int position) {
     LayoutInflater layoutInflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    View view = layoutInflater.inflate(R.layout.time_tab, null);
+    View view = layoutInflater.inflate(R.layout.text_time, null);
     TextView time = view.findViewById(R.id.time);
     TextView timeSubtitle = view.findViewById(R.id.time_subtitle);
 

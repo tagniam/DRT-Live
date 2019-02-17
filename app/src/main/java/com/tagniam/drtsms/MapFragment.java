@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,7 +72,6 @@ public class MapFragment extends Fragment {
   private MapView map;
   private List<Stop> stops = new ArrayList<>();
   private List<LabelledGeoPoint> points = new ArrayList<>();
-  private OnStopClickListener callback;
   private MyLocationNewOverlay locationOverlay;
   private FloatingActionButton locationButton;
   private FolderOverlay overlay;
@@ -98,6 +98,7 @@ public class MapFragment extends Fragment {
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_map, container, false);
     scheduleView = view.findViewById(R.id.scheduleDisplay);
+    scheduleView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
     return view;
   }
 
@@ -106,42 +107,10 @@ public class MapFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     setupMap(view);
-    setupSearchView(view);
-    setupLocationButton(view);
     setupMapPoints();
-
-    // Setup schedule view
-    scheduleView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-
-    bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottom_sheet));
-    // Setup bottom sheet  <include layout="@layout/bottom_sheet"/>
-    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-    bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-      @Override
-      public void onStateChanged(@NonNull View bottomSheet, int newState) {
-        switch (newState) {
-          case BottomSheetBehavior.STATE_HIDDEN:
-            showLocationButton();
-            disableDim();
-            // Clear click on map and search when bottom sheet gets hidden
-            clearClick();
-            //stopIdInput.setQuery("", false);
-            searchView.setSearchText("");
-            break;
-          case BottomSheetBehavior.STATE_EXPANDED:
-            hideLocationButton();
-            break;
-          case BottomSheetBehavior.STATE_COLLAPSED:
-            hideLocationButton();
-            break;
-        }
-      }
-
-      @Override
-      public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-      }
-    });
+    setupSearchView(view);
+    setupBottomSheetBehavior(view);
+    setupLocationButton(view);
   }
 
 
@@ -189,14 +158,22 @@ public class MapFragment extends Fragment {
         .subscribe(
             new DisposableSingleObserver<List<LabelledGeoPoint>>() {
               @Override
-              public void onSuccess(List<LabelledGeoPoint> points) {
+              public void onSuccess(final List<LabelledGeoPoint> points) {
                 // Add points to map
                 overlay = new FolderOverlay();
-                for (LabelledGeoPoint point : points) {
+                for (final LabelledGeoPoint point : points) {
                   Marker marker = new Marker(map);
                   marker.setPosition(new GeoPoint(point.getLatitude(), point.getLongitude()));
                   marker.setInfoWindow(null);
                   marker.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.bus));
+                  marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker, MapView mapView) {
+                      Stop stop = stops.get(points.indexOf(point));
+                      fetchSchedule(stop.stopCode, stop.stopName);
+                      return false;
+                    }
+                  });
                   overlay.add(marker);
                 }
               }
@@ -242,17 +219,11 @@ public class MapFragment extends Fragment {
   public void onAttach(Context context) {
     super.onAttach(context);
 
-    try {
-      callback = (OnStopClickListener) context;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(context.toString() + " must implement OnStopClickListener");
-    }
   }
 
   @Override
   public void onDetach() {
     super.onDetach();
-    callback = null;
   }
 
   /**
@@ -431,7 +402,6 @@ public class MapFragment extends Fragment {
                                                       map.getController().setZoom(MAP_LOCAL_ZOOM);
                                                     } else {
                                                       // Do some magic!
-                                                      //callback.onStopClick(stopCode);
                                                       fetchSchedule(stop.stopCode, stop.stopName);
                                                     }
                                                   }
@@ -476,9 +446,14 @@ public class MapFragment extends Fragment {
    */
   public void fetchSchedule(final String stopId, final String stopName) {
     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-    // Set
+    // Set title bar text
     TextView stopNameTextView = getActivity().findViewById(R.id.stopName);
     stopNameTextView.setText(stopName);
+    // Set progress bar
+    ProgressBar progressBar = getActivity().findViewById(R.id.progressBar);
+    progressBar.setIndeterminate(true);
+
+    clickStop(stopId);
 
     scheduleFetcher = ScheduleFetcher.getFetcher(getActivity().getApplicationContext(), stopId);
     scheduleFetcherDisposable =
@@ -519,6 +494,9 @@ public class MapFragment extends Fragment {
    * @param schedule schedule object with bus times + routes
    */
   private void displaySchedule(final Schedule schedule) {
+    // Set progress bar
+    ProgressBar progressBar = getActivity().findViewById(R.id.progressBar);
+    progressBar.setIndeterminate(false);
     // Display bottom sheet schedule
     scheduleAdapter = new ScheduleAdapter(getActivity().getApplicationContext(), schedule.getBusTimes(),
             new Date());
@@ -588,6 +566,39 @@ public class MapFragment extends Fragment {
     }
     map.onResume();
   }
+
+  private void setupBottomSheetBehavior(View view) {
+    bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottom_sheet));
+    // Setup bottom sheet  <include layout="@layout/sheet_bottom"/>
+    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+    bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+      @Override
+      public void onStateChanged(@NonNull View bottomSheet, int newState) {
+        switch (newState) {
+          case BottomSheetBehavior.STATE_HIDDEN:
+            showLocationButton();
+            //disableDim();
+            // Clear click on map and search when bottom sheet gets hidden
+            clearClick();
+            //stopIdInput.setQuery("", false);
+            searchView.setSearchText("");
+            break;
+          case BottomSheetBehavior.STATE_EXPANDED:
+            hideLocationButton();
+            break;
+          case BottomSheetBehavior.STATE_COLLAPSED:
+            hideLocationButton();
+            break;
+        }
+      }
+
+      @Override
+      public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+      }
+    });
+
+  }
   /** Clears any selection made. */
   public void clearClick() {
     //pointsOverlay.setSelectedPoint(null);
@@ -601,11 +612,5 @@ public class MapFragment extends Fragment {
   public void disableDim() {
     //mapFrame.getForeground().setAlpha(0);
     //mapFrame.invalidate();
-  }
-
-  /** Detect when a stop is clicked on the map. */
-  public interface OnStopClickListener {
-
-    void onStopClick(String stopCode);
   }
 }

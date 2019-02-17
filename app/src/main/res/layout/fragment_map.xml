@@ -34,6 +34,6 @@
       style="@style/LocationButton"
       android:layout_width="149dp" />
 
-  <include layout="@layout/bottom_sheet"/>
+  <include layout="@layout/sheet_bottom"/>
 
 </android.support.design.widget.CoordinatorLayout>

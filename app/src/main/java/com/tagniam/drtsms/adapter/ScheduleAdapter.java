@@ -149,14 +149,14 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
     for (int i = 0; i < numTimes; i++) {
       // Create new dot, by default inactive
       dots[i] = new ImageView(context);
-      dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.nonactive_dot));
+      dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.dot_nonactive));
 
       // Add current dot
       holder.timeDots.addView(dots[i], params);
     }
 
     // First dot will be active
-    dots[0].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.active_dot));
+    dots[0].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.dot_active));
 
     // Listener for when page is scrolled
     holder.timePager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -170,11 +170,11 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
       public void onPageSelected(int position) {
         // Update dot at `position` to be the active dot
         for (int i = 0; i < numTimes; i++) {
-          dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.nonactive_dot));
+          dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.dot_nonactive));
         }
 
         dots[position].setImageDrawable(ContextCompat.getDrawable(context,
-            R.drawable.active_dot));
+            R.drawable.dot_active));
       }
 
       @Override

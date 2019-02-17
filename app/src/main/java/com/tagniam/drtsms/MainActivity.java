@@ -20,11 +20,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements MapFragment.OnStopClickListener {
-
-  private BottomNavigationView navigation;
-  private ScheduleFetcher scheduleFetcher;
-  private Disposable scheduleFetcherDisposable;
+public class MainActivity extends AppCompatActivity {
 
   private void openPrestoApp() {
     Intent intent;
@@ -48,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnSto
     getSupportActionBar().hide();
     setContentView(R.layout.activity_main);
 
-    navigation = findViewById(R.id.navigation);
+    BottomNavigationView navigation = findViewById(R.id.navigation);
     navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
       @Override
       public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -61,11 +57,5 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnSto
         return false;
       }
     });
-  }
-
-
-  @Override
-  public void onStopClick(String stopCode) {
-    //fetchSchedule(stopCode);
   }
 }

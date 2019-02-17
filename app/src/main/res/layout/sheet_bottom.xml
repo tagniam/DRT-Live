@@ -2,6 +2,7 @@
 <android.support.v4.widget.NestedScrollView
   xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet"
   style="@style/BottomSheet"
   android:layout_width="match_parent"
@@ -18,7 +19,7 @@
         android:background="#000">
 
       <ImageView
-          android:id="@+id/imageView"
+          android:id="@+id/busIcon"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginStart="8dp"
@@ -41,15 +42,30 @@
           android:textColor="#fff"
           android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintStart_toEndOf="@+id/imageView"
+          app:layout_constraintStart_toEndOf="@+id/busIcon"
           app:layout_constraintTop_toTopOf="parent" />
+
+      <FrameLayout
+          android:layout_width="match_parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          android:layout_height="4dp">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_gravity="center" />
+
+      </FrameLayout>
 
     </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.RecyclerView
       android:id="@+id/scheduleDisplay"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="wrap_content"
+        >
 
     </android.support.v7.widget.RecyclerView>
 
