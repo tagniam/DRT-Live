@@ -55,10 +55,10 @@ public interface BusTime {
       for (Date time : times) {
         // Add absolute time if > 1 hr away
         Map<TimeUnit, Long> diff = computeDiff(now, time);
-        if (diff.get(TimeUnit.HOURS) > 1) {
-          ret.add(getAbsoluteTimeNew(time));
-        } else {
+        if (diff.get(TimeUnit.DAYS) == 0 && diff.get(TimeUnit.HOURS) == 0) {
           ret.add(getRelativeTimeNew(now, time));
+        } else {
+          ret.add(getAbsoluteTimeNew(time));
         }
       }
       return ret;

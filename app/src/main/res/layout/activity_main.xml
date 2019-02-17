@@ -30,6 +30,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:itemIconTint="@drawable/selector_bottombar_item"
-        app:menu="@menu/navbar" />
+        app:menu="@menu/navbar"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:background="@drawable/shadow"
+        app:layout_constraintBottom_toTopOf="@+id/navigation" />
 
 </android.support.constraint.ConstraintLayout>

@@ -173,7 +173,6 @@ public class MapFragment extends Fragment {
                   items.add(new OverlayItem("", "", point));
                 }
 
-
                 Drawable icon = ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus);
                 ItemizedIconOverlay<OverlayItem> mOverlay =
                         new ItemizedIconOverlay<>(items, icon, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
@@ -191,28 +190,6 @@ public class MapFragment extends Fragment {
                         }, getActivity().getApplicationContext());
 
                 map.getOverlays().add(mOverlay);
-                System.out.println(items.size());
-
-
-                //for (final LabelledGeoPoint point : points) {
-                //  OverlayItem overlayItem = new OverlayItem("", "", point);
-                //  overlayItem.set
-
-
-
-                //  Marker marker = new Marker(map);
-                //  marker.setPosition(new GeoPoint(point.getLatitude(), point.getLongitude()));
-                //  marker.setInfoWindow(null);
-                //  marker.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus));
-                //  marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-                //    @Override
-                //    public boolean onMarkerClick(Marker marker, MapView mapView) {
-                //      Stop stop = stops.get(points.indexOf(point));
-                //      fetchSchedule(stop.stopCode, stop.stopName);
-                //      return false;
-                //    }
-                //  });
-                //  overlay.add(marker);
               }
 
               @Override

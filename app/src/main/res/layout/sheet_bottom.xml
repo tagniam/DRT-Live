@@ -9,14 +9,16 @@
   android:layout_height="wrap_content">
 
   <LinearLayout
+      android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#000">
+        android:layout_height="52dp"
+        android:background="#000" >
+
 
       <ImageView
           android:id="@+id/busIcon"
@@ -38,6 +40,7 @@
           android:layout_marginStart="8dp"
           android:layout_marginTop="8dp"
           android:layout_marginBottom="8dp"
+          android:ellipsize="end"
           android:text="Pickering Station"
           android:textColor="#fff"
           android:textSize="16sp"
@@ -60,6 +63,7 @@
       </FrameLayout>
 
     </android.support.constraint.ConstraintLayout>
+
 
     <android.support.v7.widget.RecyclerView
       android:id="@+id/scheduleDisplay"

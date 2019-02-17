@@ -24,7 +24,7 @@
     <item name="android:background">@android:color/transparent</item>
     <item name="elevation">@dimen/bottom_sheet_elevation</item>
     <item name="behavior_hideable">true</item>
-    <item name="behavior_peekHeight">48dp</item>
+    <item name="behavior_peekHeight">52dp</item>
     <item name="layout_behavior">@string/bottom_sheet_behavior</item>item>
   </style>
 
