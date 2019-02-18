@@ -6,9 +6,14 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.tagniam.drtsms.schedule.data.Schedule;
@@ -41,10 +46,27 @@ public class MainActivity extends AppCompatActivity {
 
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    getSupportActionBar().hide();
+    //getSupportActionBar().hide();
+    getSupportActionBar().setTitle("Map");
     setContentView(R.layout.activity_main);
 
     BottomNavigationView navigation = findViewById(R.id.navigation);
+
+    // Hacky shit to change icon size in bottom nav
+    BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigation.getChildAt(0);
+    for (int i = 0; i < menuView.getChildCount(); i++) {
+      final View iconView = menuView.getChildAt(i).findViewById(android.support.design.R.id.icon);
+      final ViewGroup.LayoutParams layoutParams = iconView.getLayoutParams();
+      final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+      layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, displayMetrics);
+      layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, displayMetrics);
+      if (i == 2) {
+        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44, displayMetrics);
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44, displayMetrics);
+      }
+      iconView.setLayoutParams(layoutParams);
+    }
+
     navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
       @Override
       public boolean onNavigationItemSelected(@NonNull MenuItem item) {
