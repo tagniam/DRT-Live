@@ -22,13 +22,6 @@ public class TimePagerAdapter extends PagerAdapter {
   private List<Pair<String, String>> times;
   private ScheduleAdapter scheduleAdapter;
 
-  /*
-  TimePagerAdapter(Context context, List<String> times, ScheduleAdapter scheduleAdapter) {
-    this.context = context;
-    this.times = times;
-    this.scheduleAdapter = scheduleAdapter;
-  }*/
-
   TimePagerAdapter(Context context, List<Pair<String, String>> times, ScheduleAdapter scheduleAdapter) {
     this.context = context;
     this.times = times;

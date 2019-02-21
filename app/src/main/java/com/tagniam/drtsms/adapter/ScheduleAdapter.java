@@ -33,7 +33,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
 
   private Context context;
   private List<BusTime> busTimes;
-  private boolean isRelative = true;
 
   /**
    * Setup the adapter with a list of bus times.
@@ -64,13 +63,17 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.BusTim
   }
 
   /**
-   * Toggles the time on the displayed schedule from relative to absolute and vice-versa.
+   * Cycles through the time pager.
    */
   @Override
   public void onTimeClick(ViewGroup container, int position) {
     // this.isRelative = !this.isRelative;
-
-    //notifyDataSetChanged();
+    ViewPager vp = container.findViewById(R.id.timePager);
+    int oldPageNumber = vp.getCurrentItem();
+    vp.setCurrentItem(oldPageNumber + 1);
+    // Wrap around if we've reached the last page
+    if (vp.getCurrentItem() == oldPageNumber)
+      vp.setCurrentItem(0);
   }
 
   /**
