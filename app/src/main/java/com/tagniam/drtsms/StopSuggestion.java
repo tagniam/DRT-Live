@@ -10,7 +10,7 @@ import com.tagniam.drtsms.database.stops.Stop;
 @SuppressLint("ParcelCreator")
 public class StopSuggestion implements SearchSuggestion {
 
-    public Stop stop;
+    private Stop stop;
 
     public StopSuggestion(Stop stop) {
         this.stop = stop;

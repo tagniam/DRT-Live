@@ -51,22 +51,6 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     BottomNavigationView navigation = findViewById(R.id.navigation);
-
-    // Hacky shit to change icon size in bottom nav
-    BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigation.getChildAt(0);
-    for (int i = 0; i < menuView.getChildCount(); i++) {
-      final View iconView = menuView.getChildAt(i).findViewById(android.support.design.R.id.icon);
-      final ViewGroup.LayoutParams layoutParams = iconView.getLayoutParams();
-      final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-      layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, displayMetrics);
-      layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 34, displayMetrics);
-      if (i == 2) {
-        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44, displayMetrics);
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44, displayMetrics);
-      }
-      iconView.setLayoutParams(layoutParams);
-    }
-
     navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
       @Override
       public boolean onNavigationItemSelected(@NonNull MenuItem item) {

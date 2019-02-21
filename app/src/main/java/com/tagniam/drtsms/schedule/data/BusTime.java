@@ -35,21 +35,17 @@ public interface BusTime {
   class Helper {
 
     /**
-     * Returns a string listing the next bus times relative to the current time.
+     * Returns a list of string pairs listing the next bus times.
+     * For dates occurring less than an hour away, the relative time is returned
+     * (pair[0] is the number of minutes away, pair[1] is 'mins').
      *
-     * @param now current Date
-     * @param times list of times
-     * @return List<String> that lists the times relative to now
+     * For dates occurring more than an hour away, the absolute time is returned
+     * (pair[0] is hh:mm, pair[1] is AM/PM).
+     *
+     * @param now the current time
+     * @param times list of dates
+     * @return List<Pair<String, String>> listing times
      */
-    public static List<String> getRelativeTimes(Date now, List<Date> times) {
-      List<String> ret = new ArrayList<>();
-      for (Date time : times) {
-        ret.add(getRelativeTime(now, time));
-      }
-
-      return ret;
-    }
-
     public static List<Pair<String, String>> getStringTimes(Date now, List<Date> times) {
       List<Pair<String, String>> ret = new ArrayList<>();
       for (Date time : times) {
@@ -61,21 +57,6 @@ public interface BusTime {
           ret.add(getAbsoluteTimeNew(time));
         }
       }
-      return ret;
-    }
-
-    /**
-     * Returns a list listing the next bus times.
-     *
-     * @param times list of times
-     * @return List<String> that lists the times
-     */
-    public static List<String> getAbsoluteTimes(List<Date> times) {
-      List<String> ret = new ArrayList<>();
-      for (Date time : times) {
-        ret.add(getAbsoluteTime(time));
-      }
-
       return ret;
     }
 

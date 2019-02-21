@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
@@ -56,8 +55,6 @@ import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
-import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
-import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -78,7 +75,7 @@ public class MapFragment extends Fragment {
   private List<LabelledGeoPoint> points = new ArrayList<>();
   private MyLocationNewOverlay locationOverlay;
   private FloatingActionButton locationButton;
-  private FolderOverlay overlay;
+  private FolderOverlay stopOverlay;
   private FloatingSearchView searchView;
 
   /** Bottom sheet **/
@@ -89,8 +86,8 @@ public class MapFragment extends Fragment {
   private BroadcastReceiver timeTickReceiver;
   private ScheduleAdapter scheduleAdapter;
 
-  /** Schedule fetcher shit **/
 
+  /************ Life cycle methods ************/
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -117,149 +114,127 @@ public class MapFragment extends Fragment {
     setupLocationButton(view);
   }
 
-
   @Override
-  public void onRequestPermissionsResult(
-      int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (requestCode == FINE_LOCATION_PERMISSION_REQUEST
-        && grantResults.length == 1
-        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-      locationButton.performClick();
-    }
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+  public void onStart() {
+    super.onStart();
   }
 
-  /**
-   * Gets all the stops from the database and displays them on the map.
-   */
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if (scheduleFetcherDisposable != null && !scheduleFetcherDisposable.isDisposed()) {
+      scheduleFetcherDisposable.dispose();
+    }
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    if (scheduleFetcher != null) {
+      scheduleFetcher.onPause();
+    }
+    if (timeTickReceiver != null) {
+      getActivity().unregisterReceiver(timeTickReceiver);
+    }
+    if (locationOverlay != null) {
+      locationOverlay.disableMyLocation();
+    }
+    map.onPause();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    if (scheduleFetcher != null) {
+      scheduleFetcher.onResume();
+    }
+    if (timeTickReceiver != null) {
+      getActivity().registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+    }
+    if (scheduleAdapter != null) {
+      updateSchedule();
+    }
+    if (locationOverlay != null) {
+      locationOverlay.enableMyLocation();
+    }
+    map.onResume();
+  }
+
+
+  /************ View setup methods ************/
+
   private void setupMapPoints() {
     Single.fromCallable(
-        new Callable<List<Stop>>() {
-          @Override
-          public List<Stop> call() {
-            // Query database for stops
-            return GtfsRoomDatabase.getDatabase(getActivity().getApplicationContext())
-                .stopDao()
-                .loadAllStops();
-          }
-        })
-        .map(
-            new Function<List<Stop>, List<LabelledGeoPoint>>() {
+            new Callable<List<Stop>>() {
               @Override
-              public List<LabelledGeoPoint> apply(List<Stop> busStops) {
-                // Convert stops to points using co-ordinates and stop name
-                stops = new ArrayList<>();
-                stops.addAll(busStops);
-                points = new ArrayList<>();
-                for (Stop stop : busStops) {
-                  points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
-                }
-                return points;
+              public List<Stop> call() {
+                // Query database for stops
+                return GtfsRoomDatabase.getDatabase(getActivity().getApplicationContext())
+                        .stopDao()
+                        .loadAllStops();
               }
             })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(
-            new DisposableSingleObserver<List<LabelledGeoPoint>>() {
-              @Override
-              public void onSuccess(final List<LabelledGeoPoint> points) {
-                // Add points to map
-                overlay = new FolderOverlay();
-                List<OverlayItem> items = new ArrayList<>();
+            .map(
+                    new Function<List<Stop>, List<LabelledGeoPoint>>() {
+                      @Override
+                      public List<LabelledGeoPoint> apply(List<Stop> busStops) {
+                        // Convert stops to points using co-ordinates and stop name
+                        stops = new ArrayList<>();
+                        stops.addAll(busStops);
+                        points = new ArrayList<>();
+                        for (Stop stop : busStops) {
+                          points.add(new LabelledGeoPoint(stop.stopLat, stop.stopLon, stop.stopName));
+                        }
+                        return points;
+                      }
+                    })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                    new DisposableSingleObserver<List<LabelledGeoPoint>>() {
+                      @Override
+                      public void onSuccess(final List<LabelledGeoPoint> points) {
+                        // Add points to map
+                        stopOverlay = new FolderOverlay();
+                        List<OverlayItem> items = new ArrayList<>();
 
-                for (LabelledGeoPoint point : points) {
-                  OverlayItem item = new OverlayItem("", "", point);
-                  item.setMarker(ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus));
-                  items.add(new OverlayItem("", "", point));
-                }
+                        for (LabelledGeoPoint point : points) {
+                          OverlayItem item = new OverlayItem("", "", point);
+                          item.setMarker(ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus));
+                          items.add(new OverlayItem("", "", point));
+                        }
 
-                Drawable icon = ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus);
-                ItemizedIconOverlay<OverlayItem> mOverlay =
-                        new ItemizedIconOverlay<>(items, icon, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                          @Override
-                          public boolean onItemSingleTapUp(int index, OverlayItem item) {
-                            Stop stop = stops.get(index);
-                            fetchSchedule(stop.stopCode, stop.stopName);
-                            return false;
-                          }
+                        Drawable icon = ContextCompat.getDrawable(getActivity(), R.drawable.marker_bus);
+                        ItemizedIconOverlay<OverlayItem> mOverlay =
+                                new ItemizedIconOverlay<>(items, icon, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                                  @Override
+                                  public boolean onItemSingleTapUp(int index, OverlayItem item) {
+                                    Stop stop = stops.get(index);
+                                    fetchSchedule(stop.stopCode, stop.stopName);
+                                    return false;
+                                  }
 
-                          @Override
-                          public boolean onItemLongPress(int index, OverlayItem item) {
-                            return false;
-                          }
-                        }, getActivity().getApplicationContext());
+                                  @Override
+                                  public boolean onItemLongPress(int index, OverlayItem item) {
+                                    return false;
+                                  }
+                                }, getActivity().getApplicationContext());
 
-                map.getOverlays().add(mOverlay);
-              }
+                        map.getOverlays().add(mOverlay);
+                      }
 
-              @Override
-              public void onError(Throwable e) {
-                Toast.makeText(
-                    getActivity().getApplicationContext(),
-                    getActivity()
-                        .getApplicationContext()
-                        .getResources()
-                        .getString(R.string.error_generic),
-                    Toast.LENGTH_SHORT)
-                    .show();
-              }
-            });
-  }
-
-  /**
-   * Clicks the stop nearest to the given location.
-   *
-   * @param location location, preferably current location
-   * @return stop code of nearest stop, or null if no stops found
-   */
-  private Stop getNearestStop(GeoPoint location) {
-    int index = -1;
-    double minDistance = Double.MAX_VALUE;
-    for (int i = 0; i < points.size(); i++) {
-      double distance = location.distanceToAsDouble(points.get(i));
-      if (distance < minDistance) {
-        index = i;
-        minDistance = distance;
-      }
-    }
-
-    if (index == -1) {
-      return null;
-    }
-    return stops.get(index);
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-  }
-
-  /**
-   * Selects the given stop on the map and zooms in/centers on it.
-   *
-   * @param stopCode id of the stop to select
-   */
-  public void clickStop(String stopCode) {
-    // Find stop with the given stopCode
-    for (int i = 0; i < stops.size(); i++) {
-      Stop stop = stops.get(i);
-      if (stop.stopCode.equals(stopCode)) {
-        // Corresponding point will be at the same index
-        final IGeoPoint point = points.get(i);
-
-        // Select, center & zoom to point
-        map.getController().setCenter(point);
-        map.getController().setZoom(MAP_LOCAL_ZOOM);
-        map.scrollTo((int) point.getLatitude(), (int) point.getLongitude());
-        map.getController().animateTo(point);
-      }
-    }
+                      @Override
+                      public void onError(Throwable e) {
+                        Toast.makeText(
+                                getActivity().getApplicationContext(),
+                                getActivity()
+                                        .getApplicationContext()
+                                        .getResources()
+                                        .getString(R.string.error_generic),
+                                Toast.LENGTH_SHORT)
+                                .show();
+                      }
+                    });
   }
 
   private void setupSearchView(View view) {
@@ -343,9 +318,9 @@ public class MapFragment extends Fragment {
               @Override
               public boolean onZoom(ZoomEvent event) {
                 if (event.getZoomLevel() < MAP_OVERLAY_MIN_ZOOM) {
-                  map.getOverlays().remove(overlay);
-                } else if (!map.getOverlays().contains(overlay)) {
-                  map.getOverlays().add(overlay);
+                  map.getOverlays().remove(stopOverlay);
+                } else if (!map.getOverlays().contains(stopOverlay)) {
+                  map.getOverlays().add(stopOverlay);
                 }
                 return false;
               }
@@ -369,7 +344,7 @@ public class MapFragment extends Fragment {
                           new String[]{permission.ACCESS_FINE_LOCATION},
                           FINE_LOCATION_PERMISSION_REQUEST);
                 } else {
-                  // Setup overlay for my location, make sure we don't duplicate an existing one
+                  // Setup stopOverlay for my location, make sure we don't duplicate an existing one
                   if (locationOverlay == null) {
                     locationOverlay =
                             new MyLocationNewOverlay(
@@ -402,7 +377,7 @@ public class MapFragment extends Fragment {
                                                     map.getController().setZoom(MAP_LOCAL_ZOOM);
                                                     map.getController().setCenter(points.get(index));
 
-                                                    if (stop.stopCode == null) {
+                                                    if (stop == null || stop.stopCode == null) {
                                                       // Notify user and set center/zoom to current location
                                                       Toast.makeText(
                                                               getActivity().getApplicationContext(),
@@ -447,17 +422,37 @@ public class MapFragment extends Fragment {
 
   }
 
-  public void hideLocationButton() {
-    locationButton.setVisibility(View.INVISIBLE);
+  private void setupBottomSheetBehavior(View view) {
+    bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottom_sheet));
+    // Setup bottom sheet  <include layout="@layout/sheet_bottom"/>
+    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+    bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+      @Override
+      public void onStateChanged(@NonNull View bottomSheet, int newState) {
+        switch (newState) {
+          case BottomSheetBehavior.STATE_HIDDEN:
+            showLocationButton();
+            searchView.setSearchText("");
+            break;
+          case BottomSheetBehavior.STATE_EXPANDED:
+            hideLocationButton();
+            break;
+          case BottomSheetBehavior.STATE_COLLAPSED:
+            hideLocationButton();
+            break;
+        }
+      }
+
+      @Override
+      public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+      }
+    });
+
   }
 
-  public void showLocationButton() {
-    locationButton.setVisibility(View.VISIBLE);
-  }
+  /************ Schedule display methods ************/
 
-  /**
-   * Fetches the schedule.
-   */
   public void fetchSchedule(final String stopId, final String stopName) {
     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     // Set title bar text
@@ -467,7 +462,7 @@ public class MapFragment extends Fragment {
     ProgressBar progressBar = getActivity().findViewById(R.id.progressBar);
     progressBar.setIndeterminate(true);
 
-    clickStop(stopId);
+    zoomMapToStop(stopId);
 
     scheduleFetcher = ScheduleFetcher.getFetcher(getActivity().getApplicationContext(), stopId);
     scheduleFetcherDisposable =
@@ -482,7 +477,6 @@ public class MapFragment extends Fragment {
                                 if (intent.getAction() == null) {
                                   return;
                                 }
-                                //updateStatusLine(intent.getAction());
                                 Schedule schedule = ScheduleFetcher.Intents.getScheduleFromIntent(intent);
                                 if (schedule != null) {
                                   displaySchedule(schedule);
@@ -491,6 +485,9 @@ public class MapFragment extends Fragment {
 
                               @Override
                               public void onError(Throwable e) {
+                                // Collapse bottom sheet
+                                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
                                 Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG)
                                         .show();
                               }
@@ -501,12 +498,6 @@ public class MapFragment extends Fragment {
                             });
   }
 
-
-  /**
-   * Display the schedule's information.
-   *
-   * @param schedule schedule object with bus times + routes
-   */
   private void displaySchedule(final Schedule schedule) {
     // Set progress bar
     ProgressBar progressBar = getActivity().findViewById(R.id.progressBar);
@@ -535,96 +526,70 @@ public class MapFragment extends Fragment {
     scheduleAdapter.notifyDataSetChanged();
   }
 
-  @Override
-  public void onStart() {
-    super.onStart();
-  }
+  /************ Misc methods ************/
 
   @Override
-  public void onDestroy() {
-    super.onDestroy();
-    if (scheduleFetcherDisposable != null && !scheduleFetcherDisposable.isDisposed()) {
-      scheduleFetcherDisposable.dispose();
+  public void onRequestPermissionsResult(
+      int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    if (requestCode == FINE_LOCATION_PERMISSION_REQUEST
+        && grantResults.length == 1
+        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      locationButton.performClick();
     }
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 
-  @Override
-  public void onPause() {
-    super.onPause();
-    if (scheduleFetcher != null) {
-      scheduleFetcher.onPause();
-    }
-    if (timeTickReceiver != null) {
-      getActivity().unregisterReceiver(timeTickReceiver);
-    }
-    if (locationOverlay != null) {
-      locationOverlay.disableMyLocation();
-    }
-    map.onPause();
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    if (scheduleFetcher != null) {
-      scheduleFetcher.onResume();
-    }
-    if (timeTickReceiver != null) {
-      getActivity().registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
-    }
-    if (scheduleAdapter != null) {
-      updateSchedule();
-    }
-    if (locationOverlay != null) {
-      locationOverlay.enableMyLocation();
-    }
-    map.onResume();
-  }
-
-  private void setupBottomSheetBehavior(View view) {
-    bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottom_sheet));
-    // Setup bottom sheet  <include layout="@layout/sheet_bottom"/>
-    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-    bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-      @Override
-      public void onStateChanged(@NonNull View bottomSheet, int newState) {
-        switch (newState) {
-          case BottomSheetBehavior.STATE_HIDDEN:
-            showLocationButton();
-            //disableDim();
-            // Clear click on map and search when bottom sheet gets hidden
-            clearClick();
-            //stopIdInput.setQuery("", false);
-            searchView.setSearchText("");
-            break;
-          case BottomSheetBehavior.STATE_EXPANDED:
-            hideLocationButton();
-            break;
-          case BottomSheetBehavior.STATE_COLLAPSED:
-            hideLocationButton();
-            break;
-        }
+  /**
+   * Clicks the stop nearest to the given location.
+   *
+   * @param location location, preferably current location
+   * @return stop code of nearest stop, or null if no stops found
+   */
+  private Stop getNearestStop(GeoPoint location) {
+    int index = -1;
+    double minDistance = Double.MAX_VALUE;
+    for (int i = 0; i < points.size(); i++) {
+      double distance = location.distanceToAsDouble(points.get(i));
+      if (distance < minDistance) {
+        index = i;
+        minDistance = distance;
       }
+    }
 
-      @Override
-      public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+    if (index == -1) {
+      return null;
+    }
+    return stops.get(index);
+  }
 
+  /**
+   * Selects the given stop on the map and zooms in/centers on it.
+   *
+   * @param stopCode id of the stop to select
+   */
+  public void zoomMapToStop(String stopCode) {
+    // Find stop with the given stopCode
+    for (int i = 0; i < stops.size(); i++) {
+      Stop stop = stops.get(i);
+      if (stop.stopCode.equals(stopCode)) {
+        // Corresponding point will be at the same index
+        final IGeoPoint point = points.get(i);
+
+        // Select, center & zoom to point
+        map.getController().setCenter(point);
+        map.getController().setZoom(MAP_LOCAL_ZOOM);
+        map.scrollTo((int) point.getLatitude(), (int) point.getLongitude());
+        map.getController().animateTo(point);
       }
-    });
-
-  }
-  /** Clears any selection made. */
-  public void clearClick() {
-    //pointsOverlay.setSelectedPoint(null);
+    }
   }
 
-  public void enableDim() {
-    //mapFrame.getForeground().setAlpha(100);
-    //mapFrame.invalidate();
+  public void hideLocationButton() {
+    locationButton.setVisibility(View.INVISIBLE);
   }
 
-  public void disableDim() {
-    //mapFrame.getForeground().setAlpha(0);
-    //mapFrame.invalidate();
+  public void showLocationButton() {
+    locationButton.setVisibility(View.VISIBLE);
   }
+
 }
