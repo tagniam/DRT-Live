@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -55,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+          case R.id.action_saved:
+            Snackbar.make(findViewById(R.id.map_fragment), "Sorry, that's not implemented yet.", Snackbar.LENGTH_SHORT).show();
+            break;
           case R.id.action_presto:
             openPrestoApp();
             break;
