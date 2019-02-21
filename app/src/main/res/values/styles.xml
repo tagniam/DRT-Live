@@ -6,6 +6,11 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:textViewStyle">@style/OpenSansTextViewStyle</item>
+  </style>
+
+  <style name="OpenSansTextViewStyle">
+    <item name="android:fontFamily">@font/open_sans</item>
   </style>
 
   <style name="LocationButton" parent="AppTheme">
