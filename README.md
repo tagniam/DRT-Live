@@ -1,7 +1,10 @@
 # DRT Live
 
-Track when your next bus is in real-time, no internet required.
+A real-time bus tracker for [Durham Region Transit](https://www.durhamregiontransit.com/en/index.aspx), one of Ontario's largest regional transit systems.
 
 
+## License
+MIT © by J.R. Maingat.
 
-**Not affiliated with Durham Region Transit**
+
+*<sup>\Not affiliated with Durham Region Transit</sup>*
