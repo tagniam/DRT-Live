@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DRT-SMS.iml" filepath="$PROJECT_DIR$/DRT-SMS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DRT-Live.iml" filepath="$PROJECT_DIR$/DRT-Live.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

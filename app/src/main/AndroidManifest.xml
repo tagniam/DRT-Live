@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.tagniam.drtsms">
+  package="com.tagniam.drtlive">
 
   <!-- SMS permissions -->
   <uses-permission android:name="android.permission.RECEIVE_SMS"/>
@@ -24,7 +24,7 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
     <activity
-      android:name=".MainActivity"
+      android:name="com.tagniam.drtlive.MainActivity"
       android:screenOrientation="portrait"
       android:windowSoftInputMode="adjustNothing">
       <intent-filter>
@@ -34,16 +34,16 @@
       </intent-filter>
     </activity>
 
-    <receiver android:name=".schedule.fetcher.SmsScheduleFetcher$SmsReceiver">
+    <receiver android:name="com.tagniam.drtlive.schedule.fetcher.SmsScheduleFetcher$SmsReceiver">
       <intent-filter>
         <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
       </intent-filter>
     </receiver>
 
-    <receiver android:name=".schedule.fetcher.SmsScheduleFetcher$SmsSender">
+    <receiver android:name="com.tagniam.drtlive.schedule.fetcher.SmsScheduleFetcher$SmsSender">
       <intent-filter>
-        <action android:name="com.tagniam.drtsms.schedule.SMS_DELIVERED_ACTION"/>
-        <action android:name="com.tagniam.drtsms.schedule.SMS_SENT_ACTION"/>
+        <action android:name="com.tagniam.drtlive.schedule.SMS_DELIVERED_ACTION"/>
+        <action android:name="com.tagniam.drtlive.schedule.SMS_SENT_ACTION"/>
       </intent-filter>
     </receiver>
 

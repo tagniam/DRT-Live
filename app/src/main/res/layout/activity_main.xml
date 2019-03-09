@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context="com.tagniam.drtsms.MainActivity">
+  tools:context="com.tagniam.drtlive.MainActivity">
 
     <fragment
         android:id="@+id/map_fragment"
-        android:name="com.tagniam.drtsms.MapFragment"
+        android:name="com.tagniam.drtlive.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="56dp"
