@@ -7,4 +7,4 @@ A real-time bus tracker for [Durham Region Transit](https://www.durhamregiontran
 MIT © by J.R. Maingat.
 
 
-*<sup>\Not affiliated with Durham Region Transit</sup>*
+*<sup>Not affiliated with Durham Region Transit</sup>*
