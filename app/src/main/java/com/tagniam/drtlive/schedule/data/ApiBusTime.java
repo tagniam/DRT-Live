@@ -1,62 +1,62 @@
 package com.tagniam.drtlive.schedule.data;
 
-import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.Departure;
+import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.Trip;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ApiBusTime implements BusTime {
+class ApiBusTime implements BusTime {
 
   private String route;
   private String direction;
   private List<Date> times;
 
+
   /**
    * Generate the times of the current route
    *
-   * @param departures, guaranteed to be of the same route and non-empty
+   * @param now the current time
+   * @param trips, guaranteed to be of the same route and non-empty
    */
-  ApiBusTime(List<Departure> departures) {
+  public ApiBusTime(Calendar now, List<Trip> trips) {
     this.times = new ArrayList<>();
-    this.route = departures.get(0).route;
+    this.route = trips.get(0).routeId;
     // TODO put direction in here
     this.direction = "";
 
-    for (Departure departure : departures) {
-      this.times.add(strTimeToDate(departure.strTime));
+    for (Trip trip : trips) {
+      this.times.add(epochTimeToDate(now, trip));
     }
   }
 
   /**
-   * Converts the API response's strTime field to an actual date.
+   * Converts the API response's time field to an actual date.
+   * Can either return the real time if the trip has one, or the scheduled time.
    *
-   * @param strTime strTime response from api
-   * @return strTime in date form
+   * @param now the current time
+   * @param trip
+   * @return trip's time in date form
    */
-  private Date strTimeToDate(String strTime) {
-    Calendar calNow = Calendar.getInstance();
-    Calendar calStrTime = Calendar.getInstance();
-    calStrTime
-        .set(calNow.get(Calendar.YEAR), calNow.get(Calendar.MONTH), calNow.get(Calendar.DATE));
+  private Date epochTimeToDate(Calendar now, Trip trip) {
+    Calendar cal = Calendar.getInstance();
 
-    // Two forms: "x mins" or "xx:xx" (24hr clock)
-    if (strTime.contains("min")) {
-      calStrTime.add(Calendar.MINUTE, Integer.parseInt(strTime.split("\\s+")[0]));
+    // Set time accordingly
+    if (trip.hasRealTime) {
+      cal.setTimeInMillis(trip.realTime);
     } else {
-      String[] time = strTime.split(":");
-      calStrTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
-      calStrTime.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+      cal.setTimeInMillis(trip.scheduledTime);
     }
 
-    // Same day
-    if (calStrTime.after(calNow)) {
-      return calStrTime.getTime();
-    }
+    // Set current date
+    cal.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
 
-    // Next day
-    calStrTime.add(Calendar.DATE, 1);
-    return calStrTime.getTime();
+    // Next day if actual time is before current time
+    if (cal.before(now)) {
+      cal.add(Calendar.DATE, 1);
+    }
+    return cal.getTime();
   }
 
   @Override
@@ -74,3 +74,4 @@ public class ApiBusTime implements BusTime {
     return this.times;
   }
 }
+

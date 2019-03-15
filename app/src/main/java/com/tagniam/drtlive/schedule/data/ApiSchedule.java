@@ -1,14 +1,17 @@
 package com.tagniam.drtlive.schedule.data;
 
+import com.tagniam.drtlive.schedule.exceptions.NullResponseException;
 import com.tagniam.drtlive.schedule.exceptions.StopTimesNotAvailableException;
-import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.Departure;
-import java.io.Serializable;
+import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.StopTimes;
+import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.Trip;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class ApiSchedule implements Schedule, Serializable {
+public class ApiSchedule implements Schedule {
 
   private String stopNumber;
   private List<BusTime> busTimes;
@@ -16,31 +19,29 @@ public class ApiSchedule implements Schedule, Serializable {
   /**
    * Construct a Schedule object from the API response.
    *
+   * @param now current time
    * @param stopNumber stop #
-   * @param departures departures at the stop
+   * @param stopTimes API response
    */
-  public ApiSchedule(String stopNumber, List<Departure> departures)
-      throws StopTimesNotAvailableException {
-    if (departures.isEmpty()) {
-      throw new StopTimesNotAvailableException();
-    }
-
+  public ApiSchedule(Calendar now, String stopNumber, StopTimes stopTimes)
+          throws NullResponseException {
     this.stopNumber = stopNumber;
 
-    // Split departures by route
-    HashMap<String, List<Departure>> departuresByRoutes = new LinkedHashMap<>();
-    for (Departure departure : departures) {
-      if (!departuresByRoutes.containsKey(departure.route)) {
-        departuresByRoutes.put(departure.route, new ArrayList<Departure>());
+    // Split trips by routeId
+    HashMap<String, List<Trip>> tripsByRoute = new LinkedHashMap<>();
+    for (Trip trip : stopTimes.trips) {
+      if (!tripsByRoute.containsKey(trip.routeId)) {
+        tripsByRoute.put(trip.routeId, new ArrayList<Trip>());
       }
-      departuresByRoutes.get(departure.route).add(departure);
+      tripsByRoute.get(trip.routeId).add(trip);
     }
 
-    // Initialize bustimes by departure
     this.busTimes = new ArrayList<>();
-    for (List<Departure> routeDeparture : departuresByRoutes.values()) {
-      this.busTimes.add(new ApiBusTime(routeDeparture));
+    for (List<Trip> trips : tripsByRoute.values()) {
+      this.busTimes.add(new ApiBusTime(now, trips));
     }
+
+
   }
 
   @Override
@@ -53,3 +54,4 @@ public class ApiSchedule implements Schedule, Serializable {
     return this.busTimes;
   }
 }
+
