@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import com.tagniam.drtlive.schedule.exceptions.StopTimesNotAvailableException;
-import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.Departure;
+import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.Trip;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
@@ -12,34 +12,38 @@ import org.junit.Test;
 
 public class ApiScheduleTest {
 
-  private static List<Departure> departures;
+  private static List<Trip> trips;
 
   @Before
   public void setUp() {
-    // Initialize mock list of departures
-    departures = new ArrayList<>();
+    // Initialize mock list of trips
+    trips = new ArrayList<>();
 
-    Departure d1 = new Departure();
-    d1.route = "900";
-    d1.strTime = "12 min";
-    Departure d2 = new Departure();
-    d2.route = "112";
+    Trip d1 = new Trip();
+    d1.routeId = "900";
+    d1.realTime = "12 min";
+
+    Trip d2 = new Trip();
+    d2.routeId = "112";
     d2.strTime = "0 min";
-    Departure d3 = new Departure();
-    d3.route = "900";
+
+    Trip d3 = new Trip();
+    d3.routeId = "900";
     d3.strTime = "09:23";
-    Departure d4 = new Departure();
-    d4.route = "112";
+
+    Trip d4 = new Trip();
+    d4.routeId = "112";
     d4.strTime = "23:45";
-    Departure d5 = new Departure();
-    d5.route = "902";
+
+    Trip d5 = new Trip();
+    d5.routeId = "902";
     d5.strTime = "12:23";
 
-    departures.add(d1);
-    departures.add(d2);
-    departures.add(d3);
-    departures.add(d4);
-    departures.add(d5);
+    trips.add(d1);
+    trips.add(d2);
+    trips.add(d3);
+    trips.add(d4);
+    trips.add(d5);
   }
 
   @Test

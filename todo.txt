@@ -1,0 +1,18 @@
+INPROGRESS
+* switch to new drt web api
+
+
+TODO
+* create bus marker icon
+* investigate runtime error when bustime passes, ie. 0 min
+* refactor MapFragment to use viewmodel
+* add chevron to title bar
+* replace location man icon
+* cluster bus stop icons
+* write integration tests
+* implement saved stops
+* refactor/clean everything
+* add shadow to top of title bar
+* my location button takes too long
+* migrate to google maps api?
+

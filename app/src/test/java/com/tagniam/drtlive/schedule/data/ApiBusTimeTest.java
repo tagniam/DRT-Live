@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.Departure;
+import com.tagniam.drtlive.schedule.fetcher.ApiScheduleFetcher.Trip;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,18 +14,24 @@ import org.junit.Test;
 
 public class ApiBusTimeTest {
 
-  private static List<Departure> departures;
+  private static List<Trip> trips;
 
   @Before
   public void setUp() {
     // Initialize test data departures
-    departures = new ArrayList<>();
+    trips = new ArrayList<>();
 
-    Departure d1 = new Departure();
-    d1.route = "900";
-    d1.strTime = "12 min";
-    Departure d2 = new Departure();
-    d2.route = "900";
+    // Real time
+    Trip d1 = new Trip();
+    d1.routeId = "900";
+    d1.hasRealTime = "12 min";
+
+
+
+
+    // Scheduled time
+    Trip d2 = new Trip();
+    d2.routeId = "900";
     d2.strTime = "09:23";
 
     departures.add(d1);
@@ -34,7 +40,7 @@ public class ApiBusTimeTest {
 
   @Test
   public void test_getRoute() {
-    ApiBusTime apiBusTime = new ApiBusTime(departures);
+    ApiBusTime apiBusTime = new ApiBusTime(trips);
     assertThat(apiBusTime.getRoute(), is("900"));
   }
 
